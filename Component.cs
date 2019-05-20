@@ -18,6 +18,7 @@ namespace LiveSplit.UI.Components
         class Split
         {
             public string name { get; set; }
+            public string alias { get; set; }
             public string address { get; set; }
             public string value { get; set; }
             public string type { get; set; }
@@ -37,6 +38,7 @@ namespace LiveSplit.UI.Components
         {
             public string name { get; set; }
             public Autostart autostart { get; set; }
+            public Dictionary<String, String> alias { get; set; }
             public List<Category> categories { get; set; }
             public List<Split> definitions { get; set; }
         }
@@ -61,6 +63,9 @@ namespace LiveSplit.UI.Components
         private List<string> _splits;
         private bool _inTimer;
         private bool _error;
+        private bool _ready_to_start;
+        private bool _valid_config;
+        private bool _config_checked;
         private USB2SnesW.USB2SnesW _usb2snes;
 
 
@@ -74,6 +79,9 @@ namespace LiveSplit.UI.Components
             _splits = null;
             _inTimer = false;
             _error = false;
+            _ready_to_start = false;
+            _config_checked = false;
+            _valid_config = false;
 
             _update_timer = new Timer() { Interval = 33 };
             _update_timer.Tick += (sender, args) => UpdateSplits();
@@ -83,23 +91,10 @@ namespace LiveSplit.UI.Components
             _state.OnStart += _state_OnStart;
             _usb2snes = new USB2SnesW.USB2SnesW();
         }
-        
-        private bool checkSplits()
+
+        private void ShowMessage(String msg)
         {
-            bool r = true;
-            foreach(var c in _game.categories)
-            {
-                foreach (var s in c.splits)
-                {
-                    var d = _game.definitions.Where(x => x.name == s).FirstOrDefault();
-                    if(d == null)
-                    {
-                        MessageBox.Show(String.Format("Split definition missing: {0}", s));
-                        r = false;
-                    }
-                }
-            }
-            return r;
+            MessageBox.Show(msg, "USB2Snes AutoSplitter");
         }
 
         private bool connect()
@@ -109,16 +104,20 @@ namespace LiveSplit.UI.Components
                 _usb2snes.Connect();
                 if (_usb2snes.Connected())
                 {
+                    _usb2snes.SetName("LiveSplit AutoSplitter");
                     List<String> devices = _usb2snes.GetDevices();
                     if (!devices.Contains(_settings.Device))
+                    {
+                        ShowMessage("Could not find the device" + _settings.Device + " . Check your configuration.");
                         return false;
-                    _usb2snes.SetName("LiveSplit AutoSplitter");
+                    }                    
                     _usb2snes.Attach(_settings.Device);
-                    _usb2snes.Info(); // Info is the only neutral way to know if we are attached to the device
+                    var info =_usb2snes.Info(); // Info is the only neutral way to know if we are attached to the device
+                    return info.version != "";
                 }
                 if (!_usb2snes.Connected())
                 {
-                    MessageBox.Show("Could not connect to sd2snes, check serial port settings.");
+                    ShowMessage("Could not connect to Usb2Snes app. Check if it's running.");
                     return false;
                 }
             }
@@ -134,29 +133,92 @@ namespace LiveSplit.UI.Components
             }
             catch
             {
-                MessageBox.Show("Could not open split config file, check config file settings.");
+                ShowMessage("Could not open split config file, check config file settings.");
                 return false;
             }
-            if (!this.checkSplits())
+            if (!this.checkSplitsSetting())
             {
-                MessageBox.Show("The split config file has missing definitions.");
+                ShowMessage("The split config file has missing definitions.");
                 return false;
             }
 
             return true;
         }
 
-        private void _state_OnStart(object sender, EventArgs e)
+        private bool checkSplitsSetting()
         {
-            if(!_usb2snes.Connected())
+            bool r = true;
+            foreach (var c in _game.categories)
             {
-                if(!this.connect())
+                foreach (var s in c.splits)
                 {
-                    _model.Reset();
-                    return;
+                    var d = _game.definitions.Where(x => x.name == s).FirstOrDefault();
+                    if (d == null)
+                    {
+                        ShowMessage(String.Format("Split definition missing: {0} for category {1}", s, c.name));
+                        r = false;
+                    }
                 }
             }
+            foreach (var a in _game.alias)
+            {
+                var d = _game.definitions.Where(x => x.name == a.Value).FirstOrDefault();
+                if (d == null)
+                {
+                    ShowMessage(String.Format("Alias definition <{0}> does not point to a split name in a category definition : {1}", a.Key, a.Value));
+                    r = false;
+                }
+            }
+            return r;
+        }
 
+        private bool checkRunnableSetting()
+        {
+            bool toret = true;
+            _splits = new List<string>(_game.categories.Where(c => c.name.ToLower() == _state.Run.CategoryName.ToLower()).First()?.splits);
+
+            if (_splits.Count == 0)
+            {
+                ShowMessage("There are no splits for the current category in the split config file, check that the run category is correctly set and exists in the config file.");
+                return false;
+            }
+            if (_state.Run.Count() >_splits.Count())
+            {
+                ShowMessage(String.Format("There is more segment in your splits configuration <{0}> than the Autosplitter setting file <{1}>", _splits.Count(), _state.Run.Count()));
+                _error = true;
+                return false;
+            }
+            foreach (var seg in _state.Run)
+            {
+                if (!_splits.Contains(seg.Name, StringComparer.OrdinalIgnoreCase))
+                {
+                    // Searching into Alias
+                    if (!_game.alias.ContainsKey(seg.Name))
+                    {
+                        ShowMessage(String.Format("Your segment name <{0}> does not exist in the setting file. Neither as a split name or an alias.", seg.Name));
+                        toret = false;
+                    }
+                }
+            }
+            return toret;
+        }
+
+        // Let's build the split list based on the user segment list and not the category definition
+        private void SetSplitList()
+        {
+            _splits.Clear();
+            var catSplits = _game.categories.Where(c => c.name.ToLower() == _state.Run.CategoryName.ToLower()).First().splits;
+            foreach (var seg in _state.Run)
+            {
+                if (catSplits.Contains(seg.Name))
+                    _splits.Add(seg.Name);
+                else
+                    _splits.Add(_game.alias[seg.Name]);
+            }
+        }
+
+        private void _state_OnStart(object sender, EventArgs e)
+        {
             if(_game == null)
             {
                 if(!this.readConfig())
@@ -168,12 +230,15 @@ namespace LiveSplit.UI.Components
 
             _error = false;
 
-            _splits = _game.categories.Where(c => c.name.ToLower() == _state.Run.CategoryName.ToLower()).First()?.splits;
-            if(_splits == null)
+            
+            if (!_usb2snes.Connected())
             {
-                MessageBox.Show("There are no splits for the current category in the split config file, check that the run category is correctly set and exists in the config file.");
+                if (!this.connect())
+                {
+                    _model.Reset();
+                    return;
+                }
             }
-
         }
 
         private void _state_OnReset(object sender, TimerPhase value)
@@ -289,29 +354,40 @@ namespace LiveSplit.UI.Components
             _inTimer = true;
             if (_state.CurrentPhase == TimerPhase.NotRunning)
             {
-                if(_error == false && _settings.Device != null && _game == null && (!_usb2snes.Connected()))
+                if (!_ready_to_start)
                 {
+                    if (!_config_checked)
+                    {
+                        if (this.readConfig())
+                        {
+                            if (_config_checked == false && checkRunnableSetting())
+                            {
+                                _valid_config = true;
+                                SetSplitList();
+                            }
+                        }
+                        _config_checked = true;
+                    }
+                    if (!_valid_config)
+                    {
+                        _inTimer = false;
+                        return;
+                    }
                     if (!_usb2snes.Connected())
                     {
                         if (!this.connect())
                         {
-                            _error = true;
                             _inTimer = false;
                             return;
                         }
-                    }
-
-                    if (_game == null)
-                    {
-                        if (!this.readConfig())
-                        {
-                            _error = true;
-                            _inTimer = false;
-                            return;
-                        }
+                        _ready_to_start = true;
                     }
                 }
-
+                if (!_ready_to_start)
+                {
+                    _inTimer = false;
+                    return;
+                }
                 if (_game != null && _game.autostart.active == "1")
                 {
                     if (_usb2snes.Connected())

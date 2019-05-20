@@ -60,9 +60,26 @@ namespace USB2SnesW
         }
         public bool Connect()
         {
-            var cts = new CancellationTokenSource(100);
-            ws.ConnectAsync(new Uri("ws://localhost:8080"), cts.Token).GetAwaiter().GetResult();
-            return ws.State == WebSocketState.Open;
+            try
+            {
+                var cts = new CancellationTokenSource();
+                var task = ws.ConnectAsync(new Uri("ws://localhost:8080"), cts.Token);
+                int timeoutcpt = 0;
+                while (!task.IsCompleted && timeoutcpt < 10)
+                {
+                    Thread.Sleep(10);
+                    timeoutcpt++;
+                }
+                if (!task.IsCompleted && !task.IsCanceled)
+                {
+                    cts.Cancel();
+                    return false;
+                }
+                return ws.State == WebSocketState.Open;
+            } catch {
+                return false;
+            }
+
         }
         public void SetName(String name)
         {
@@ -74,13 +91,19 @@ namespace USB2SnesW
             var segment = new ArraySegment<byte>(buffer, 0, buffer.Length);
             WebSocketReceiveResult recvResult;
 
-            var task = ws.ReceiveAsync(segment, CancellationToken.None);
+            var cts = new CancellationTokenSource();
+            var task = ws.ReceiveAsync(segment, cts.Token);
             // The CancelationToken stuff is buggy, so fuck it
             int timeoutcpt = 0;
             while (!task.IsCompleted && timeoutcpt < timeout / 10)
             {
                 Thread.Sleep(10);
                 timeoutcpt++;
+            }
+            if (!task.IsCompleted)
+            {
+                cts.Cancel();
+                throw new Exception();
             }
             recvResult = task.Result;
             string rcvMsg = Encoding.UTF8.GetString(buffer.Take(recvResult.Count).ToArray());
@@ -90,8 +113,14 @@ namespace USB2SnesW
         {
             List<String> toret = new List<string>();
             SendCommand(Commands.DeviceList, "");
-            USReply rep = waitForReply(1000);
-            return rep.Results;
+            try
+            {
+                USReply rep = waitForReply(1000);
+                return rep.Results;
+            } catch
+            {
+                return toret;
+            }
         }
         public void Attach(String device)
         {
@@ -143,11 +172,17 @@ namespace USB2SnesW
         public USInfo Info()
         {
             SendCommand(Commands.Info, "");
-            USReply result = waitForReply(100);
             USInfo info = new USInfo();
-            info.version = result.Results[0];
-            info.romPlaying = result.Results[2];
-            info.flags = result.Results.Skip(3).ToList();
+            try
+            {
+                USReply result = waitForReply(100);
+                
+                info.version = result.Results[0];
+                info.romPlaying = result.Results[2];
+                info.flags = result.Results.Skip(3).ToList();
+            } catch {
+
+            }
             return info;
         }
     }

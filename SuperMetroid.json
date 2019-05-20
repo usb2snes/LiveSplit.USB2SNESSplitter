@@ -6,6 +6,14 @@
     "value": "0x1f",
     "type": "eq"
   },
+  "alias": {
+    "Ze Bombs": "Bombs",
+    "Kraid Slow Kill": "Varia Suit",
+    "Wave for the camera": "Wave Beam",
+    "Chozobuster": "Phantoon",
+    "Space Jump Sucks": "Space Jump",
+    "MB: My bad": "Mother Brain 3 Down (Escape Message)"
+  },
   "categories": [
     {
       "name": "Any% KPDR",
@@ -21,6 +29,7 @@
         "Phantoon",
         "Gravity Suit",
         "Maridia Glass Tube",
+        "Space Jump",
         "Botwoon",
         "Draygon",
         "Plasma Beam",
@@ -115,6 +124,12 @@
       "name": "Grappling Beam",
       "address": "0xd877",
       "value": "0x10",
+      "type": "bit"
+    },
+    {
+      "name": "Space Jump",
+      "address": "0xd883",
+      "value": "0x04",
       "type": "bit"
     },
     {
