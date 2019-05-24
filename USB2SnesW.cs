@@ -39,7 +39,9 @@ namespace USB2SnesW
 
         public USB2SnesW()
         {
+            Console.WriteLine("Creating USB2Snes");
             ws = new ClientWebSocket();
+            Console.WriteLine(ws);
         }
 
         private void SendCommand(Commands cmd, String arg)
@@ -54,15 +56,21 @@ namespace USB2SnesW
             req.Opcode = cmd.ToString();
             req.Space = "SNES";
             req.Operands = args;
+            Console.WriteLine(cmd);
             string json = new JavaScriptSerializer().Serialize(req);
             var sendBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(json));
+            Console.WriteLine(json);
             ws.SendAsync(sendBuffer, WebSocketMessageType.Text, true, CancellationToken.None).GetAwaiter().GetResult();
         }
         public bool Connect()
         {
-            try
-            {
                 var cts = new CancellationTokenSource();
+                Console.WriteLine(ws.State);
+                if (ws.State == WebSocketState.Aborted)
+                {
+                    ws.Dispose();
+                    ws = new ClientWebSocket();
+                }
                 var task = ws.ConnectAsync(new Uri("ws://localhost:8080"), cts.Token);
                 int timeoutcpt = 0;
                 while (!task.IsCompleted && timeoutcpt < 10)
@@ -76,10 +84,6 @@ namespace USB2SnesW
                     return false;
                 }
                 return ws.State == WebSocketState.Open;
-            } catch {
-                return false;
-            }
-
         }
         public void SetName(String name)
         {
@@ -97,13 +101,12 @@ namespace USB2SnesW
             int timeoutcpt = 0;
             while (!task.IsCompleted && timeoutcpt < timeout / 10)
             {
-                Thread.Sleep(10);
                 timeoutcpt++;
             }
             if (!task.IsCompleted)
             {
                 cts.Cancel();
-                throw new Exception();
+                throw new Exception("USB2Snes: waitForReply canceled by timeout");
             }
             recvResult = task.Result;
             string rcvMsg = Encoding.UTF8.GetString(buffer.Take(recvResult.Count).ToArray());
@@ -113,15 +116,9 @@ namespace USB2SnesW
         {
             List<String> toret = new List<string>();
             SendCommand(Commands.DeviceList, "");
-            try
-            {
-                USReply rep = waitForReply(1000);
-                return rep.Results;
-            } catch
-            {
-                return toret;
-            }
-        }
+            USReply rep = waitForReply(1000);
+            return rep.Results;
+      }
         public void Attach(String device)
         {
             SendCommand(Commands.Attach, device);
@@ -146,7 +143,10 @@ namespace USB2SnesW
                     Thread.Sleep(10);
                     timeoutcpt++;
                 }
+                if (task.Status != TaskStatus.RanToCompletion)
+                    return new byte[0];
                 var wsResult = task.Result;
+                Console.WriteLine(wsResult.CloseStatusDescription);
                 if (wsResult.CloseStatus.HasValue)
                     return new byte[0];
                 for (int i = 0; i < wsResult.Count; i++)
@@ -175,13 +175,13 @@ namespace USB2SnesW
             USInfo info = new USInfo();
             try
             {
-                USReply result = waitForReply(100);
+                USReply result = waitForReply(50);
                 
                 info.version = result.Results[0];
                 info.romPlaying = result.Results[2];
                 info.flags = result.Results.Skip(3).ToList();
-            } catch {
-
+            } catch(Exception e) {
+                Console.WriteLine(e.Message);
             }
             return info;
         }
