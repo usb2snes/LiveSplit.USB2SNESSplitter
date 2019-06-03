@@ -50,73 +50,53 @@ namespace USB2SnesW
             args.Add(arg);
             SendCommand(cmd, args);
         }
-        private void SendCommand(Commands cmd, List<String> args)
+        private async void SendCommand(Commands cmd, List<String> args)
         {
             USRequest req = new USRequest();
             req.Opcode = cmd.ToString();
             req.Space = "SNES";
             req.Operands = args;
-            Console.WriteLine(cmd);
+            //Console.WriteLine(cmd);
             string json = new JavaScriptSerializer().Serialize(req);
             var sendBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(json));
-            Console.WriteLine(json);
-            ws.SendAsync(sendBuffer, WebSocketMessageType.Text, true, CancellationToken.None).GetAwaiter().GetResult();
+            //Console.WriteLine(json);
+            await ws.SendAsync(sendBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
         }
-        public bool Connect()
+        public async Task Connect()
         {
-                var cts = new CancellationTokenSource();
-                Console.WriteLine(ws.State);
-                if (ws.State == WebSocketState.Aborted)
-                {
-                    ws.Dispose();
-                    ws = new ClientWebSocket();
-                }
-                var task = ws.ConnectAsync(new Uri("ws://localhost:8080"), cts.Token);
-                int timeoutcpt = 0;
-                while (!task.IsCompleted && timeoutcpt < 10)
-                {
-                    Thread.Sleep(10);
-                    timeoutcpt++;
-                }
-                if (!task.IsCompleted && !task.IsCanceled)
-                {
-                    cts.Cancel();
-                    return false;
-                }
-                return ws.State == WebSocketState.Open;
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(500);
+            Console.WriteLine(ws.State);
+            if (ws.State == WebSocketState.Aborted || ws.State == WebSocketState.CloseReceived)
+            {
+                ws.Dispose();
+                ws = new ClientWebSocket();
+            }
+            await ws.ConnectAsync(new Uri("ws://localhost:8080"), cts.Token);
         }
         public void SetName(String name)
         {
             SendCommand(Commands.Name, name);
         }
-        private USReply waitForReply(int timeout)
+        private async Task<USReply> waitForReply(int timeout)
         {
             byte[] buffer = new byte[1024];
             var segment = new ArraySegment<byte>(buffer, 0, buffer.Length);
             WebSocketReceiveResult recvResult;
 
             var cts = new CancellationTokenSource();
+            cts.CancelAfter(timeout);
             var task = ws.ReceiveAsync(segment, cts.Token);
-            // The CancelationToken stuff is buggy, so fuck it
-            int timeoutcpt = 0;
-            while (!task.IsCompleted && timeoutcpt < timeout / 10)
-            {
-                timeoutcpt++;
-            }
-            if (!task.IsCompleted)
-            {
-                cts.Cancel();
-                throw new Exception("USB2Snes: waitForReply canceled by timeout");
-            }
+            await task;
             recvResult = task.Result;
             string rcvMsg = Encoding.UTF8.GetString(buffer.Take(recvResult.Count).ToArray());
             return new JavaScriptSerializer().Deserialize<USReply>(rcvMsg);
         }
-        public List<String> GetDevices()
+        public async Task<List<String>> GetDevices()
         {
             List<String> toret = new List<string>();
             SendCommand(Commands.DeviceList, "");
-            USReply rep = waitForReply(1000);
+            USReply rep = await waitForReply(1000);
             return rep.Results;
       }
         public void Attach(String device)
@@ -124,7 +104,7 @@ namespace USB2SnesW
             SendCommand(Commands.Attach, device);
         }
   
-        public byte[] GetAddress(uint address, uint size)
+        public async Task<byte[]> GetAddress(uint address, uint size)
         {
             List<String> args = new List<String>();
             args.Add(address.ToString("X"));
@@ -135,20 +115,20 @@ namespace USB2SnesW
             int count = 0;
             while (count < size)
             {
-                var task = ws.ReceiveAsync(new ArraySegment<byte>(ReadedData), CancellationToken.None);
-                // The CancelationToken stuff is buggy, so fuck it
-                int timeoutcpt = 0;
-                while (!task.IsCompleted && timeoutcpt != 10)
-                {
-                    Thread.Sleep(10);
-                    timeoutcpt++;
-                }
+                var cts = new CancellationTokenSource();
+                cts.CancelAfter(100);
+                Console.WriteLine("Getting Address");
+                cts.Token.Register(() => { });
+                var task = ws.ReceiveAsync(new ArraySegment<byte>(ReadedData), cts.Token);
+                await task;
+                cts.Dispose();
+                Console.WriteLine("Dispositing the token");
                 if (task.Status != TaskStatus.RanToCompletion)
                     return new byte[0];
                 var wsResult = task.Result;
-                Console.WriteLine(wsResult.CloseStatusDescription);
                 if (wsResult.CloseStatus.HasValue)
                     return new byte[0];
+                
                 for (int i = 0; i < wsResult.Count; i++)
                 {
                     result[i + count] = ReadedData[i];
@@ -163,19 +143,20 @@ namespace USB2SnesW
         }
         public bool Connected()
         {
+            Console.WriteLine("ws Checking connected" + ws.State);
             return ws.State == WebSocketState.Open;
         }
         public void Disconnect()
         {
             ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed", CancellationToken.None).GetAwaiter().GetResult();
         }
-        public USInfo Info()
+        public async Task<USInfo> Info()
         {
             SendCommand(Commands.Info, "");
             USInfo info = new USInfo();
             try
             {
-                USReply result = waitForReply(50);
+                USReply result = await waitForReply(50);
                 
                 info.version = result.Results[0];
                 info.romPlaying = result.Results[2];

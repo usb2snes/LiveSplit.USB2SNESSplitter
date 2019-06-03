@@ -62,15 +62,15 @@ namespace LiveSplit.UI.Components
             }
         }
 
-        private void btnDetect_Click(object sender, EventArgs e)
+        private async void btnDetect_Click(object sender, EventArgs e)
         {
             USB2SnesW.USB2SnesW usb = new USB2SnesW.USB2SnesW();
-            bool ok = usb.Connect();
+            await usb.Connect();
             
-            if (ok)
+            if (usb.Connected())
             {
                 List<String> devices;
-                devices = usb.GetDevices();
+                devices = await usb.GetDevices();
                 if (devices.Count > 0)
                     txtComPort.Text = devices[0];
                 return;

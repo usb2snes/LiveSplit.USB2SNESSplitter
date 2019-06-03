@@ -1,0 +1,296 @@
+{
+  "game": "The Legend of Zelda: A link to the past",
+  "autostart": {
+    "active": "1",
+    "address": "0x10",
+    "value": "0x05",
+    "type": "eq"
+  },
+  "categories": [
+    {
+      "name": "Master Sword",
+      "splits": [
+        "Hyrule Castle",
+        "Eastern Palace",
+        "Desert Palace",
+        "Tower of Hera",
+        "Master Sword"
+      ]
+    },
+    {
+      "name": "Any% NMG",
+      "splits": [
+        "Hyrule Castle",
+        "Eastern Palace",
+        "Desert Palace",
+        "Tower of Hera",
+        "Master Sword",
+        "Agahnim's Tower",
+        "Palace of Darkness",
+        "Thieves' Town",
+        "Skull Woods",
+        "Ice Palace",
+        "Swamp Palace",
+        "Misery Mire",
+        "Turtle Rock",
+        "Ganon's Tower",
+        "Triforce"
+      ]
+    }
+  ],
+  "definitions": [
+    {
+      "name": "Hyrule Castle",
+      "address": "0xA0",
+      "value": "0x12",
+      "type": "eq"
+    },
+    {
+      "name": "Eastern Palace",
+      "address": "0xA0",
+      "value": "0xC8",
+      "type": "eq",
+      "next": [
+        {
+          "address": "0x10",
+          "value": "0x13",
+          "type": "eq"
+        },
+        {
+          "address": "0x12E",
+          "value": "0x2c",
+          "type": "eq"
+        }
+      ]
+    },
+    {
+      "name": "Desert Palace",
+      "address": "0xA0",
+      "value": "0x33",
+      "type": "eq",
+      "next": [
+        {
+          "address": "0x10",
+          "value": "0x13",
+          "type": "eq"
+        },
+        {
+          "address": "0x12E",
+          "value": "0x2c",
+          "type": "eq"
+        }
+      ]
+    },
+    {
+      "name": "Tower of Hera",
+      "address": "0xA0",
+      "value": "0x07",
+      "type": "eq",
+      "next": [
+        {
+          "address": "0x10",
+          "value": "0x13",
+          "type": "eq"
+        },
+        {
+          "address": "0x12E",
+          "value": "0x2c",
+          "type": "eq"
+        }
+      ]
+    },
+    {
+      "name": "Master Sword",
+      "address": "0xA0",
+      "value": "0x80",
+      "type": "eq",
+      "next": [
+        {
+          "address": "0x76",
+          "value": "0x9",
+          "type": "eq"
+        }
+      ]
+    },
+    {
+      "name": "Agahnim's Tower",
+      "address": "0xA0",
+      "value": "0x15",
+      "type": "eq",
+      "next": [
+        {
+          "address": "0x10",
+          "value": "0x13",
+          "type": "eq"
+        },
+        {
+          "address": "0x12E",
+          "value": "0x2c",
+          "type": "eq"
+        }
+      ]
+    },
+    {
+      "name": "Palace of Darkness",
+      "address": "0xA0",
+      "value": "0x5A",
+      "type": "eq",
+      "next": [
+        {
+          "address": "0x10",
+          "value": "0x13",
+          "type": "eq"
+        },
+        {
+          "address": "0x12E",
+          "value": "0x2c",
+          "type": "eq"
+        }
+      ]
+    },
+    {
+      "name": "Thieves' Town",
+      "address": "0xA0",
+      "value": "0xAC",
+      "type": "eq",
+      "next": [
+        {
+          "address": "0x10",
+          "value": "0x13",
+          "type": "eq"
+        },
+        {
+          "address": "0x12E",
+          "value": "0x2c",
+          "type": "eq"
+        }
+      ]
+    },
+    {
+      "name": "Skull Woods",
+      "address": "0xA0",
+      "value": "0x29",
+      "type": "eq",
+      "next": [
+        {
+          "address": "0x10",
+          "value": "0x13",
+          "type": "eq"
+        },
+        {
+          "address": "0x12E",
+          "value": "0x2c",
+          "type": "eq"
+        }
+      ]
+    },
+    {
+      "name": "Ice Palace",
+      "address": "0xA0",
+      "value": "0xDE",
+      "type": "eq",
+      "next": [
+        {
+          "address": "0x10",
+          "value": "0x13",
+          "type": "eq"
+        },
+        {
+          "address": "0x12E",
+          "value": "0x2c",
+          "type": "eq"
+        }
+      ]
+    },
+    {
+      "name": "Swamp Palace",
+      "address": "0xA0",
+      "value": "0x06",
+      "type": "eq",
+      "next": [
+        {
+          "address": "0x10",
+          "value": "0x13",
+          "type": "eq"
+        },
+        {
+          "address": "0x12E",
+          "value": "0x2c",
+          "type": "eq"
+        }
+      ]
+    },
+    {
+      "name": "Misery Mire",
+      "address": "0xA0",
+      "value": "0x90",
+      "type": "eq",
+      "next": [
+        {
+          "address": "0x10",
+          "value": "0x13",
+          "type": "eq"
+        },
+        {
+          "address": "0x12E",
+          "value": "0x2c",
+          "type": "eq"
+        }
+      ]
+    },
+    {
+      "name": "Turtle Rock",
+      "address": "0xA0",
+      "value": "0xA4",
+      "type": "eq",
+      "next": [
+        {
+          "address": "0x10",
+          "value": "0x13",
+          "type": "eq"
+        },
+        {
+          "address": "0x12E",
+          "value": "0x2c",
+          "type": "eq"
+        }
+      ]
+    },
+    {
+      "name": "Ganon's Tower",
+      "address": "0xA0",
+      "value": "0x0D",
+      "type": "eq",
+      "next": [
+        {
+          "address": "0x10",
+          "value": "0x13",
+          "type": "eq"
+        },
+        {
+          "address": "0x12E",
+          "value": "0x2c",
+          "type": "eq"
+        }
+      ]
+    },
+    {
+      "name": "Triforce",
+      "address": "0xA0",
+      "value": "0x19",
+      "type": "eq",
+      "next": [
+        {
+          "address": "0x10",
+          "value": "0x13",
+          "type": "eq"
+        },
+        {
+          "address": "0x12E",
+          "value": "0x2c",
+          "type": "eq"
+        }
+      ]
+    }
+  ]
+}
