@@ -31,8 +31,8 @@ in the split definition
       "name": "Morphing Ball",
       "address": "0xd873",
       "value": "0x04",
-      "type": "bit"
-      more : [
+      "type": "bit",
+      "more" : [
       	{
 	      "address" : "0x4200",
 	      "value" : "0x42",

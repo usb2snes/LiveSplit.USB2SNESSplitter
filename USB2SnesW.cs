@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net.WebSockets;
 using System.Web.Script.Serialization;
 using System.Threading;
+using WebSocketSharp;
 
 namespace USB2SnesW
 {
@@ -35,22 +35,44 @@ namespace USB2SnesW
             Attach,
             Info
         }
-        private ClientWebSocket ws;
+        private WebSocket ws;
 
         public USB2SnesW()
         {
             Console.WriteLine("Creating USB2Snes");
-            ws = new ClientWebSocket();
+            ws = new WebSocket("ws://localhost:8080");
             Console.WriteLine(ws);
         }
-
+        public async Task<bool> Connect()
+        {
+            Console.WriteLine(ws.ReadyState);
+            if (ws.ReadyState == WebSocketState.Open)
+                return false;
+            /*if (ws.ReadyState == WebSocketState.Aborted || ws.State == WebSocketState.CloseReceived)
+            {
+                ws.Dispose();
+                ws = new ClientWebSocket();
+            }*/
+            var tcs = new TaskCompletionSource<bool>();
+            ws.OnOpen += (s, e) => { Console.WriteLine("Ok"); tcs.TrySetResult(true); };
+            ws.OnError += (s, e) => { Console.WriteLine("Error"); tcs.TrySetResult(false); };
+            try
+            {
+                ws.ConnectAsync();
+            } catch
+            {
+                Console.Write("Execption");
+                tcs.TrySetResult(false);
+            }
+            return await tcs.Task;
+        }
         private void SendCommand(Commands cmd, String arg)
         {
             List<String> args = new List<string>();
             args.Add(arg);
             SendCommand(cmd, args);
         }
-        private async void SendCommand(Commands cmd, List<String> args)
+        private void SendCommand(Commands cmd, List<String> args)
         {
             USRequest req = new USRequest();
             req.Opcode = cmd.ToString();
@@ -58,22 +80,9 @@ namespace USB2SnesW
             req.Operands = args;
             //Console.WriteLine(cmd);
             string json = new JavaScriptSerializer().Serialize(req);
-            var sendBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(json));
-            //Console.WriteLine(json);
-            await ws.SendAsync(sendBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
+            ws.Send(json);          
         }
-        public async Task Connect()
-        {
-            var cts = new CancellationTokenSource();
-            cts.CancelAfter(500);
-            Console.WriteLine(ws.State);
-            if (ws.State == WebSocketState.Aborted || ws.State == WebSocketState.CloseReceived)
-            {
-                ws.Dispose();
-                ws = new ClientWebSocket();
-            }
-            await ws.ConnectAsync(new Uri("ws://localhost:8080"), cts.Token);
-        }
+        
         public void SetName(String name)
         {
             SendCommand(Commands.Name, name);
@@ -82,15 +91,43 @@ namespace USB2SnesW
         {
             byte[] buffer = new byte[1024];
             var segment = new ArraySegment<byte>(buffer, 0, buffer.Length);
-            WebSocketReceiveResult recvResult;
+            var tcs = new TaskCompletionSource<USReply>();
+            EventHandler<MessageEventArgs> msgHandler = null;
+            EventHandler<ErrorEventArgs> errorHandler = null;
+            EventHandler<CloseEventArgs> closeHandler = null;
+            msgHandler = (s, e) => {
+                ws.OnMessage -= msgHandler;
+                ws.OnClose -= closeHandler;
+                ws.OnError -= errorHandler;
 
-            var cts = new CancellationTokenSource();
-            cts.CancelAfter(timeout);
-            var task = ws.ReceiveAsync(segment, cts.Token);
-            await task;
-            recvResult = task.Result;
-            string rcvMsg = Encoding.UTF8.GetString(buffer.Take(recvResult.Count).ToArray());
-            return new JavaScriptSerializer().Deserialize<USReply>(rcvMsg);
+                if (e.IsText)
+                    tcs.TrySetResult(new JavaScriptSerializer().Deserialize<USReply>(e.Data));
+                else
+                    tcs.TrySetResult(new USReply());
+
+            };
+            errorHandler = (s, e) => {
+                ws.OnMessage -= msgHandler;
+                ws.OnClose -= closeHandler;
+                ws.OnError -= errorHandler;
+
+                Console.WriteLine("Error in wait for reply : " + e.Message);
+                tcs.SetCanceled();
+            };
+            
+            closeHandler = (s, e) =>
+            {
+                ws.OnMessage -= msgHandler;
+                ws.OnClose -= closeHandler;
+                ws.OnError -= errorHandler;
+
+                Console.WriteLine("Connection closed");
+                tcs.SetCanceled();
+            };
+            ws.OnMessage += msgHandler;
+            ws.OnError += errorHandler;
+            ws.OnClose += closeHandler;
+            return await tcs.Task;
         }
         public async Task<List<String>> GetDevices()
         {
@@ -110,32 +147,48 @@ namespace USB2SnesW
             args.Add(address.ToString("X"));
             args.Add(size.ToString("X"));
             SendCommand(Commands.GetAddress, args);
-            byte[] result = new byte[size];
-            byte[] ReadedData = new byte[1024];
-            int count = 0;
-            while (count < size)
+            var tcs = new TaskCompletionSource<byte[]>();
+            EventHandler<MessageEventArgs> msgHandler = null;
+            EventHandler<ErrorEventArgs> errorHandler = null;
+            EventHandler<CloseEventArgs> closeHandler = null;
+            msgHandler = (s, e) => {
+                ws.OnMessage -= msgHandler;
+                ws.OnClose -= closeHandler;
+                ws.OnError -= errorHandler;
+
+                if (e.IsBinary)
+                    tcs.TrySetResult(e.RawData);
+                else
+                    tcs.TrySetResult(new byte[0]);
+            };
+            errorHandler = (s, e) => {
+                ws.OnMessage -= msgHandler;
+                ws.OnClose -= closeHandler;
+                ws.OnError -= errorHandler;
+
+                Console.WriteLine("Error in get address : " + e.Message);
+                tcs.SetCanceled();
+            };
+
+            closeHandler = (s, e) =>
             {
-                var cts = new CancellationTokenSource();
-                cts.CancelAfter(100);
-                Console.WriteLine("Getting Address");
-                cts.Token.Register(() => { });
-                var task = ws.ReceiveAsync(new ArraySegment<byte>(ReadedData), cts.Token);
-                await task;
-                cts.Dispose();
-                Console.WriteLine("Dispositing the token");
-                if (task.Status != TaskStatus.RanToCompletion)
-                    return new byte[0];
-                var wsResult = task.Result;
-                if (wsResult.CloseStatus.HasValue)
-                    return new byte[0];
-                
-                for (int i = 0; i < wsResult.Count; i++)
-                {
-                    result[i + count] = ReadedData[i];
-                }
-                count += wsResult.Count;
+                ws.OnMessage -= msgHandler;
+                ws.OnClose -= closeHandler;
+                ws.OnError -= errorHandler;
+
+                Console.WriteLine("Connection closed");
+                tcs.SetCanceled();
+            };
+            ws.OnMessage += msgHandler;
+            ws.OnError += errorHandler;
+            ws.OnClose += closeHandler;
+            if (await Task.WhenAny(tcs.Task, Task.Delay(100)) == tcs.Task)
+            {
+                return tcs.Task.Result;
+            } else
+            {
+                return new byte[0];
             }
-            return result;
         }
         public void Reset()
         {
@@ -143,12 +196,13 @@ namespace USB2SnesW
         }
         public bool Connected()
         {
-            Console.WriteLine("ws Checking connected" + ws.State);
-            return ws.State == WebSocketState.Open;
+            bool live = ws.IsAlive;
+            Console.WriteLine("ws Checking connected " + live);
+            return live;
         }
         public void Disconnect()
         {
-            ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed", CancellationToken.None).GetAwaiter().GetResult();
+            ws.Close();
         }
         public async Task<USInfo> Info()
         {

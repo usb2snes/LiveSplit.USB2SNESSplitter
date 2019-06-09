@@ -176,10 +176,10 @@ namespace LiveSplit.UI.Components
             if (!_usb2snes.Connected() || _proto_state != ProtocolState.CONNECTED)
             {
                 SetState(MyState.CONNECTING);
-                Task t = _usb2snes.Connect();
+                Task<bool> t = _usb2snes.Connect();
                 t.ContinueWith((t1) =>
                 {
-                    if (!_usb2snes.Connected())
+                    if (!t1.Result)
                     {
                         SetState(MyState.NONE);
                         _proto_state = ProtocolState.NONE;
@@ -434,6 +434,8 @@ namespace LiveSplit.UI.Components
 
         private bool isConfigReady()
         {
+            if (_state.Layout.HasChanged)
+                _config_checked = false;
             if (!_config_checked)
             {
                 if (this.readConfig())
@@ -467,6 +469,7 @@ namespace LiveSplit.UI.Components
 
         public async void UpdateSplits()
         {
+            Console.WriteLine("Timer tick " + DateTime.Now);
             if (_inTimer == true)
                 return;
 
@@ -484,8 +487,9 @@ namespace LiveSplit.UI.Components
                     _inTimer = false;
                     return;
                 } else  {
+                    if (_update_timer.Interval == 1000)
                         _update_timer.Interval = 33;
-                        _ready_to_start = true;
+                    _ready_to_start = true;
                 }
                 if (_game != null && _game.autostart.active == "1")
                 {
@@ -583,15 +587,16 @@ namespace LiveSplit.UI.Components
                         }
                         uint value = (uint)data[0];
                         uint word = (uint)(data[0] + (data[1] << 8));
+                        Console.WriteLine("Address checked : " + split.address + " - value : "+ value);
                         bool ok = checkSplit(split, value, word);
-                        if (split.next != null && ok)
+                        if (orignSplit.next != null && ok)
                         {
-                            if (split.posToCheck != split.next.Count())
+                            Console.WriteLine("Next count :" + orignSplit.next.Count + " - Pos to check : " + orignSplit.posToCheck);
+                            if (orignSplit.posToCheck < orignSplit.next.Count())
                             {
                                 orignSplit.posToCheck++;
                                 ok = false;
-                            } else
-                            {
+                            } else {
                                 orignSplit.posToCheck = 0;
                             }
                         }
