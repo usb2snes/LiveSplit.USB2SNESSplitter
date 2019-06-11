@@ -47,7 +47,7 @@ namespace USB2SnesW
         {
             Console.WriteLine(ws.ReadyState);
             if (ws.ReadyState == WebSocketState.Open)
-                return false;
+                return true;
             /*if (ws.ReadyState == WebSocketState.Aborted || ws.State == WebSocketState.CloseReceived)
             {
                 ws.Dispose();
