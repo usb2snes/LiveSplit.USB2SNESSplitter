@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Threading;
 using WebSocketSharp;
+using System.Diagnostics;
 
 namespace USB2SnesW
 {
@@ -45,7 +46,7 @@ namespace USB2SnesW
         }
         public async Task<bool> Connect()
         {
-            Console.WriteLine(ws.ReadyState);
+            Debug.WriteLine("ws.ReadyState: " + ws.ReadyState);
             if (ws.ReadyState == WebSocketState.Open)
                 return true;
             /*if (ws.ReadyState == WebSocketState.Aborted || ws.State == WebSocketState.CloseReceived)
@@ -59,9 +60,9 @@ namespace USB2SnesW
             try
             {
                 ws.ConnectAsync();
-            } catch
+            } catch (Exception e)
             {
-                Console.Write("Execption");
+                Console.WriteLine("Exception: " + e);
                 tcs.TrySetResult(false);
             }
             return await tcs.Task;
@@ -80,17 +81,16 @@ namespace USB2SnesW
             req.Operands = args;
             //Console.WriteLine(cmd);
             string json = new JavaScriptSerializer().Serialize(req);
-            ws.Send(json);          
+            ws.Send(json);
         }
         
         public void SetName(String name)
         {
             SendCommand(Commands.Name, name);
         }
-        private async Task<USReply> waitForReply(int timeout)
+
+        private async Task<USReply> waitForReply()
         {
-            byte[] buffer = new byte[1024];
-            var segment = new ArraySegment<byte>(buffer, 0, buffer.Length);
             var tcs = new TaskCompletionSource<USReply>();
             EventHandler<MessageEventArgs> msgHandler = null;
             EventHandler<ErrorEventArgs> errorHandler = null;
@@ -112,7 +112,8 @@ namespace USB2SnesW
                 ws.OnError -= errorHandler;
 
                 Console.WriteLine("Error in wait for reply : " + e.Message);
-                tcs.SetCanceled();
+                // errorHandler and closeHandler can both be called for the same event, and SetCanceled is not re-entrant
+                tcs.TrySetCanceled();
             };
             
             closeHandler = (s, e) =>
@@ -121,8 +122,9 @@ namespace USB2SnesW
                 ws.OnClose -= closeHandler;
                 ws.OnError -= errorHandler;
 
-                Console.WriteLine("Connection closed");
-                tcs.SetCanceled();
+                Console.WriteLine("wsAttach: Connection closed");
+                // errorHandler and closeHandler can both be called for the same event, and SetCanceled is not re-entrant
+                tcs.TrySetCanceled();
             };
             ws.OnMessage += msgHandler;
             ws.OnError += errorHandler;
@@ -131,9 +133,8 @@ namespace USB2SnesW
         }
         public async Task<List<String>> GetDevices()
         {
-            List<String> toret = new List<string>();
             SendCommand(Commands.DeviceList, "");
-            USReply rep = await waitForReply(1000);
+            USReply rep = await waitForReply();
             return rep.Results;
       }
         public void Attach(String device)
@@ -197,7 +198,7 @@ namespace USB2SnesW
         public bool Connected()
         {
             bool live = ws.IsAlive;
-            Console.WriteLine("ws Checking connected " + live);
+            Debug.WriteLine("ws Checking connected " + live);
             return live;
         }
         public void Disconnect()
@@ -210,7 +211,7 @@ namespace USB2SnesW
             USInfo info = new USInfo();
             try
             {
-                USReply result = await waitForReply(50);
+                USReply result = await waitForReply();
                 
                 info.version = result.Results[0];
                 info.romPlaying = result.Results[2];
