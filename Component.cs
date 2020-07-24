@@ -272,7 +272,6 @@ namespace LiveSplit.UI.Components
         private bool readConfig()
         {
 
-            ShowMessage("hi");
             try
             {
                 var jsonStr = File.ReadAllText(_settings.ConfigFile);
