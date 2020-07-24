@@ -13,6 +13,8 @@ using USB2SnesW;
 using System.Drawing;
 using System.Collections;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("LiveSplit.USB2SNESSplitterTests")]
+
 namespace LiveSplit.UI.Components
 {
     public class USB2SNESComponent : IComponent
@@ -30,7 +32,8 @@ namespace LiveSplit.UI.Components
             CONNECTED,
             ATTACHED
         }
-        class Split
+
+        internal class Split
         {
             public string name { get; set; }
             public string alias { get; set; }
@@ -43,6 +46,52 @@ namespace LiveSplit.UI.Components
 
             public uint addressint { get { return Convert.ToUInt32(address, 16); } }
             public uint valueint { get { return Convert.ToUInt32(value, 16); } }
+
+
+            public bool check(uint value, uint word)
+            {
+                bool ret = false;
+                switch (this.type)
+                {
+                    case "bit":
+                        if ((value & this.valueint) != 0) { ret = true; }
+                        break;
+                    case "eq":
+                        if (value == this.valueint) { ret = true; }
+                        break;
+                    case "gt":
+                        if (value > this.valueint) { ret = true; }
+                        break;
+                    case "lt":
+                        if (value < this.valueint) { ret = true; }
+                        break;
+                    case "gte":
+                        if (value >= this.valueint) { ret = true; }
+                        break;
+                    case "lte":
+                        if (value <= this.valueint) { ret = true; }
+                        break;
+                    case "wbit":
+                        if ((word & this.valueint) != 0) { ret = true; }
+                        break;
+                    case "weq":
+                        if (word == this.valueint) { ret = true; }
+                        break;
+                    case "wgt":
+                        if (word > this.valueint) { ret = true; }
+                        break;
+                    case "wlt":
+                        if (word < this.valueint) { ret = true; }
+                        break;
+                    case "wgte":
+                        if (word >= this.valueint) { ret = true; }
+                        break;
+                    case "wlte":
+                        if (word <= this.valueint) { ret = true; }
+                        break;
+                }
+                return ret;
+            }
 
         }
 
@@ -109,7 +158,7 @@ namespace LiveSplit.UI.Components
         private Color _connecting_color = Color.FromArgb(128, 128, 0);
         bool _stateChanged;
 
-        public USB2SNESComponent(LiveSplitState state)
+        private void init(LiveSplitState state, USB2SnesW.USB2SnesW usb2snesw)
         {
             _state = state;
             _mystate = MyState.NONE;
@@ -129,9 +178,20 @@ namespace LiveSplit.UI.Components
 
             _state.OnReset += _state_OnReset;
             _state.OnStart += _state_OnStart;
-            _usb2snes = new USB2SnesW.USB2SnesW();
             HorizontalWidth = 3;
             VerticalHeight = 3;
+            _usb2snes = usb2snesw;
+        }
+
+        public USB2SNESComponent(LiveSplitState state)
+        {
+            init(state, new USB2SnesW.USB2SnesW());
+        }
+
+        internal USB2SNESComponent(LiveSplitState state, USB2SnesW.USB2SnesW usb2snesw)
+        {
+            init(state, usb2snesw);
+
         }
 
         private void ShowMessage(String msg)
@@ -155,7 +215,8 @@ namespace LiveSplit.UI.Components
             try
             {
                 devices = await _usb2snes.GetDevices();
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine("Exception getting devices: " + e);
                 devices = new List<String>();
@@ -203,17 +264,21 @@ namespace LiveSplit.UI.Components
             }
             else
             {
-                if ( connected)
+                if (connected)
                     wsAttach(prevState);
             }
         }
 
         private bool readConfig()
         {
+
+            ShowMessage("hi");
             try
             {
                 var jsonStr = File.ReadAllText(_settings.ConfigFile);
-                _game = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<Game>(jsonStr);
+                _game = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<Game>(
+                    jsonStr
+                );
             }
             catch (Exception e)
             {
@@ -307,27 +372,6 @@ namespace LiveSplit.UI.Components
         {
             Console.WriteLine("On START?");
             return;
-            /*
-            if(_game == null)
-            {
-                if(!this.readConfig())
-                {
-                    _model.Reset();
-                    return;
-                }
-            }
-
-            _error = false;
-
-            
-            if (!_usb2snes.Connected())
-            {
-                if (!this.connect())
-                {
-                    _model.Reset();
-                    return;
-                }
-            }*/
         }
 
         private void _state_OnReset(object sender, TimerPhase value)
@@ -350,7 +394,6 @@ namespace LiveSplit.UI.Components
             }
             _state.OnStart -= _state_OnStart;
             _state.OnReset -= _state_OnReset;
-            //_state.OnUndoSplit -= OnUndoSplit;
         }
 
         public Control GetSettingsControl(LayoutMode mode)
@@ -395,51 +438,6 @@ namespace LiveSplit.UI.Components
             {
                 _model.Split();
             }
-        }
-
-        private bool checkSplit(Split split, uint value, uint word)
-        {
-            bool ret = false;
-            switch (split.type)
-            {
-                case "bit":
-                    if ((value & split.valueint) != 0) { ret = true; }
-                    break;
-                case "eq":
-                    if (value == split.valueint) { ret = true; }
-                    break;
-                case "gt":
-                    if (value > split.valueint) { ret = true; }
-                    break;
-                case "lt":
-                    if (value < split.valueint) { ret = true; }
-                    break;
-                case "gte":
-                    if (value >= split.valueint) { ret = true; }
-                    break;
-                case "lte":
-                    if (value <= split.valueint) { ret = true; }
-                    break;
-                case "wbit":
-                    if ((word & split.valueint) != 0) { ret = true; }
-                    break;
-                case "weq":
-                    if (word == split.valueint) { ret = true; }
-                    break;
-                case "wgt":
-                    if (word > split.valueint) { ret = true; }
-                    break;
-                case "wlt":
-                    if (word < split.valueint) { ret = true; }
-                    break;
-                case "wgte":
-                    if (word >= split.valueint) { ret = true; }
-                    break;
-                case "wlte":
-                    if (word <= split.valueint) { ret = true; }
-                    break;
-            }
-            return ret;
         }
 
         private bool isConfigReady()
@@ -656,7 +654,7 @@ UpdateSplits()
             uint value = (uint)data[0];
             uint word = (uint)(data[0] + (data[1] << 8));
             Debug.WriteLine("Address checked : " + split.address + " - value : " + value);
-            return checkSplit(split, value, word);
+            return split.check(value, word);
         }
 
         public void DrawHorizontal(Graphics g, LiveSplitState state, float height, Region clipRegion)

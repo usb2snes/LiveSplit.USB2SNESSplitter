@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 namespace USB2SnesW
 {
-    class USB2SnesW
+    internal class USB2SnesW
     {
         class USRequest
         {
