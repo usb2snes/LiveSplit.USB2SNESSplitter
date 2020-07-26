@@ -11,6 +11,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using USB2SnesW;
 using System.Drawing;
+using System.Collections;
+
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("LiveSplit.USB2SNESSplitterTests")]
 
 namespace LiveSplit.UI.Components
 {
@@ -29,7 +32,8 @@ namespace LiveSplit.UI.Components
             CONNECTED,
             ATTACHED
         }
-        class Split
+
+        internal class Split
         {
             public string name { get; set; }
             public string alias { get; set; }
@@ -42,6 +46,52 @@ namespace LiveSplit.UI.Components
 
             public uint addressint { get { return Convert.ToUInt32(address, 16); } }
             public uint valueint { get { return Convert.ToUInt32(value, 16); } }
+
+
+            public bool check(uint value, uint word)
+            {
+                bool ret = false;
+                switch (this.type)
+                {
+                    case "bit":
+                        if ((value & this.valueint) != 0) { ret = true; }
+                        break;
+                    case "eq":
+                        if (value == this.valueint) { ret = true; }
+                        break;
+                    case "gt":
+                        if (value > this.valueint) { ret = true; }
+                        break;
+                    case "lt":
+                        if (value < this.valueint) { ret = true; }
+                        break;
+                    case "gte":
+                        if (value >= this.valueint) { ret = true; }
+                        break;
+                    case "lte":
+                        if (value <= this.valueint) { ret = true; }
+                        break;
+                    case "wbit":
+                        if ((word & this.valueint) != 0) { ret = true; }
+                        break;
+                    case "weq":
+                        if (word == this.valueint) { ret = true; }
+                        break;
+                    case "wgt":
+                        if (word > this.valueint) { ret = true; }
+                        break;
+                    case "wlt":
+                        if (word < this.valueint) { ret = true; }
+                        break;
+                    case "wgte":
+                        if (word >= this.valueint) { ret = true; }
+                        break;
+                    case "wlte":
+                        if (word <= this.valueint) { ret = true; }
+                        break;
+                }
+                return ret;
+            }
 
         }
 
@@ -100,17 +150,15 @@ namespace LiveSplit.UI.Components
         private MyState _mystate;
         private ProtocolState _proto_state;
         private bool _inTimer;
-        private bool _error;
-        private bool _ready_to_start;
         private bool _valid_config;
         private bool _config_checked;
         private USB2SnesW.USB2SnesW _usb2snes;
         private Color _ok_color = Color.FromArgb(0, 128, 0);
         private Color _error_color = Color.FromArgb(128, 0, 0);
-        private Color _connecting_color = Color.FromArgb(128, 128,0);
+        private Color _connecting_color = Color.FromArgb(128, 128, 0);
         bool _stateChanged;
 
-        public USB2SNESComponent(LiveSplitState state)
+        private void init(LiveSplitState state, USB2SnesW.USB2SnesW usb2snesw)
         {
             _state = state;
             _mystate = MyState.NONE;
@@ -121,20 +169,29 @@ namespace LiveSplit.UI.Components
             _stateChanged = false;
             _splits = null;
             _inTimer = false;
-            _error = false;
-            _ready_to_start = false;
             _config_checked = false;
             _valid_config = false;
 
             _update_timer = new Timer() { Interval = 1000 };
-            _update_timer.Tick += (sender, args) => UpdateSplits();
+            _update_timer.Tick += (sender, args) => UpdateSplitsWrapper();
             _update_timer.Enabled = true;
 
             _state.OnReset += _state_OnReset;
             _state.OnStart += _state_OnStart;
-            _usb2snes = new USB2SnesW.USB2SnesW();
             HorizontalWidth = 3;
             VerticalHeight = 3;
+            _usb2snes = usb2snesw;
+        }
+
+        public USB2SNESComponent(LiveSplitState state)
+        {
+            init(state, new USB2SnesW.USB2SnesW());
+        }
+
+        internal USB2SNESComponent(LiveSplitState state, USB2SnesW.USB2SnesW usb2snesw)
+        {
+            init(state, usb2snesw);
+
         }
 
         private void ShowMessage(String msg)
@@ -143,14 +200,28 @@ namespace LiveSplit.UI.Components
         }
         private void SetState(MyState state)
         {
-            Console.WriteLine("Setting state to " + state);
+            if (_mystate == state)
+            {
+                return;
+            }
+            Debug.WriteLine("Setting state to " + state);
             _stateChanged = true;
             _mystate = state;
         }
 
         private async void wsAttach(ProtocolState prevState)
         {
-            List<String> devices = await _usb2snes.GetDevices();
+            List<String> devices;
+            try
+            {
+                devices = await _usb2snes.GetDevices();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception getting devices: " + e);
+                devices = new List<String>();
+            }
+
             if (!devices.Contains(_settings.Device))
             {
                 if (prevState == ProtocolState.NONE)
@@ -162,9 +233,7 @@ namespace LiveSplit.UI.Components
             if (info.version == "")
             {
                 SetState(MyState.ERROR);
-            }
-            else
-            {
+            } else {
                 SetState(MyState.READY);
                 _proto_state = ProtocolState.ATTACHED;
             }
@@ -173,7 +242,8 @@ namespace LiveSplit.UI.Components
         private void connect()
         {
             ProtocolState prevState = _proto_state;
-            if (!_usb2snes.Connected() || _proto_state != ProtocolState.CONNECTED)
+            var connected = _usb2snes.Connected();
+            if (_proto_state != ProtocolState.CONNECTED || !connected)
             {
                 SetState(MyState.CONNECTING);
                 Task<bool> t = _usb2snes.Connect();
@@ -185,27 +255,29 @@ namespace LiveSplit.UI.Components
                         _proto_state = ProtocolState.NONE;
                         return;
                     }
-                    _usb2snes.SetName("LiveSplit AutoSpliter");
+                    _usb2snes.SetName("LiveSplit AutoSplitter");
                     _proto_state = ProtocolState.CONNECTED;
                     wsAttach(prevState);
                 });
-            } else
-            {
-                if (_usb2snes.Connected())
+            } else {
+                if (connected)
                     wsAttach(prevState);
             }
         }
 
         private bool readConfig()
         {
+
             try
             {
                 var jsonStr = File.ReadAllText(_settings.ConfigFile);
-                _game = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<Game>(jsonStr);
+                _game = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<Game>(
+                    jsonStr
+                );
             }
             catch (Exception e)
             {
-                ShowMessage("Could not open split config file, check config file settings." + e.Message);
+                ShowMessage("Could not open split config file, check config file settings. " + e.Message);
                 return false;
             }
             if (!this.checkSplitsSetting())
@@ -257,10 +329,9 @@ namespace LiveSplit.UI.Components
                 ShowMessage("There are no splits for the current category in the split config file, check that the run category is correctly set and exists in the config file.");
                 return false;
             }
-            if (_state.Run.Count() >_splits.Count())
+            if (_state.Run.Count() > _splits.Count())
             {
-                ShowMessage(String.Format("There is more segment in your splits configuration <{0}> than the Autosplitter setting file <{1}>", _splits.Count(), _state.Run.Count()));
-                _error = true;
+                ShowMessage(String.Format("There are more segments in your splits configuration <{0}> than the Autosplitter setting file <{1}>", _splits.Count(), _state.Run.Count()));
                 return false;
             }
             foreach (var seg in _state.Run)
@@ -296,34 +367,13 @@ namespace LiveSplit.UI.Components
         {
             Console.WriteLine("On START?");
             return;
-            /*
-            if(_game == null)
-            {
-                if(!this.readConfig())
-                {
-                    _model.Reset();
-                    return;
-                }
-            }
-
-            _error = false;
-
-            
-            if (!_usb2snes.Connected())
-            {
-                if (!this.connect())
-                {
-                    _model.Reset();
-                    return;
-                }
-            }*/
         }
 
         private void _state_OnReset(object sender, TimerPhase value)
         {
             if (_usb2snes.Connected())
             {
-                if(_settings.ResetSNES)
+                if (_settings.ResetSNES)
                 {
                     _usb2snes.Reset();
                 }
@@ -339,7 +389,6 @@ namespace LiveSplit.UI.Components
             }
             _state.OnStart -= _state_OnStart;
             _state.OnReset -= _state_OnReset;
-            //_state.OnUndoSplit -= OnUndoSplit;
         }
 
         public Control GetSettingsControl(LayoutMode mode)
@@ -371,8 +420,7 @@ namespace LiveSplit.UI.Components
         {
             if (_game.name == "Super Metroid" && _usb2snes.Connected())
             {
-                var data = new byte[512];
-                data = await _usb2snes.GetAddress((uint)(0xF509DA), (uint)512);
+                var data = await _usb2snes.GetAddress((uint)(0xF509DA), (uint)512);
                 int ms = (data[0] + (data[1] << 8)) * (1000 / 60);
                 int sec = data[2] + (data[3] << 8);
                 int min = data[4] + (data[5] << 8);
@@ -380,56 +428,9 @@ namespace LiveSplit.UI.Components
                 var gt = new TimeSpan(0, hr, min, sec, ms);
                 _state.SetGameTime(gt);
                 _model.Split();
-            }
-            else
-            {
+            } else {
                 _model.Split();
             }
-        }
-
-        private bool checkSplit(Split split, uint value, uint word)
-        {
-            bool ret = false;
-            switch (split.type)
-            {
-                case "bit":
-                    if ((value & split.valueint) != 0) { ret = true; }
-                    break;
-                case "eq":
-                    if (value == split.valueint) { ret = true; }
-                    break;
-                case "gt":
-                    if (value > split.valueint) { ret = true; }
-                    break;
-                case "lt":
-                    if (value < split.valueint) { ret = true; }
-                    break;
-                case "gte":
-                    if (value >= split.valueint) { ret = true; }
-                    break;
-                case "lte":
-                    if (value <= split.valueint) { ret = true; }
-                    break;
-                case "wbit":
-                    if ((word & split.valueint) != 0) { ret = true; }
-                    break;
-                case "weq":
-                    if (word == split.valueint) { ret = true; }
-                    break;
-                case "wgt":
-                    if (word > split.valueint) { ret = true; }
-                    break;
-                case "wlt":
-                    if (word < split.valueint) { ret = true; }
-                    break;
-                case "wgte":
-                    if (word >= split.valueint) { ret = true; }
-                    break;
-                case "wlte":
-                    if (word <= split.valueint) { ret = true; }
-                    break;
-            }
-            return ret;
         }
 
         private bool isConfigReady()
@@ -455,10 +456,13 @@ namespace LiveSplit.UI.Components
 
         private bool isConnectionReady()
         {
-            Console.WriteLine("Checking connection");
-            if (_usb2snes.Connected() && _proto_state == ProtocolState.ATTACHED)
+            Debug.WriteLine("Checking connection");
+            if (_proto_state == ProtocolState.ATTACHED)
                 return true;
-            if (!_usb2snes.Connected())
+
+            // this method actually does a BLOCKING request-response cycle (!!)
+            bool connected = _usb2snes.Connected();
+            if (!connected)
             {
                 SetState(MyState.NONE);
                 _proto_state = ProtocolState.NONE;
@@ -467,48 +471,62 @@ namespace LiveSplit.UI.Components
             return false;
         }
 
-        public async void UpdateSplits()
+        private async void UpdateSplitsWrapper()
         {
-            Console.WriteLine("Timer tick " + DateTime.Now);
-            if (_inTimer == true)
-                return;
 
+            Debug.WriteLine("Timer tick " + DateTime.Now);
+            // "_inTimer" is a very questionable attempt at locking, but it's probably fine here.
+            if (_inTimer)
+            {
+                Debug.WriteLine("In timer already! !!!");
+                return;
+            }
             _inTimer = true;
+            try
+            {
+                await UpdateSplits();
+            }
+            catch (Exception e)
+            {
+                ShowMessage("Something bad happened: " + e.ToString());
+                connect();
+            }
+            _inTimer = false;
+        }
+
+        public async
+        Task
+UpdateSplits()
+        {
             if (_state.CurrentPhase == TimerPhase.NotRunning)
             {
                 if (!isConfigReady())
                 {
-                    _inTimer = false;
                     return;
                 }
                 if (!isConnectionReady())
                 {
                     _update_timer.Interval = 1000;
-                    _inTimer = false;
                     return;
-                } else  {
-                    if (_update_timer.Interval == 1000)
-                        _update_timer.Interval = 33;
-                    _ready_to_start = true;
+                } else {
+                    _update_timer.Interval = 33;
                 }
                 if (_game != null && _game.autostart.active == "1")
                 {
                     if (_proto_state == ProtocolState.ATTACHED)
                     {
-                        var data = new byte[64];
+                        byte[] data;
                         try
                         {
-                            data = await _usb2snes.GetAddress((0xF50000 + _game.autostart.addressint), (uint)64);
+                            data = await _usb2snes.GetAddress((0xF50000 + _game.autostart.addressint), (uint)2);
                         }
                         catch
                         {
-                            _inTimer = false;
                             return;
                         }
                         if (data.Count() == 0)
                         {
-                            Console.WriteLine("Get address failed to return result");
-                            _inTimer = false;
+                            Debug.WriteLine("Get address failed to return result");
                             return;
                         }
                         uint value = (uint)data[0];
@@ -555,9 +573,7 @@ namespace LiveSplit.UI.Components
                         }
                     }
                 }
-            }
-            else if (_state.CurrentPhase == TimerPhase.Running)
-            {
+            } else if (_state.CurrentPhase == TimerPhase.Running) {
                 if (_splits != null)
                 {
                     if (_proto_state == ProtocolState.ATTACHED)
@@ -569,29 +585,10 @@ namespace LiveSplit.UI.Components
                         {
                             split = split.next[split.posToCheck - 1];
                         }
-                        var data = new byte[64];
-                        try
-                        {
-                            data = await _usb2snes.GetAddress((0xF50000 + split.addressint), (uint)64);
-                        }
-                        catch
-                        {
-                            _inTimer = false;
-                            return;
-                        }
-                        if (data.Count() == 0)
-                        {
-                            Console.WriteLine("Get address failed to return result");
-                            _inTimer = false;
-                            return;
-                        }
-                        uint value = (uint)data[0];
-                        uint word = (uint)(data[0] + (data[1] << 8));
-                        Console.WriteLine("Address checked : " + split.address + " - value : "+ value);
-                        bool ok = checkSplit(split, value, word);
+                        bool ok = await (doCheckSplit(split));
                         if (orignSplit.next != null && ok)
                         {
-                            Console.WriteLine("Next count :" + orignSplit.next.Count + " - Pos to check : " + orignSplit.posToCheck);
+                            Debug.WriteLine("Next count :" + orignSplit.next.Count + " - Pos to check : " + orignSplit.posToCheck);
                             if (orignSplit.posToCheck < orignSplit.next.Count())
                             {
                                 orignSplit.posToCheck++;
@@ -604,25 +601,11 @@ namespace LiveSplit.UI.Components
                         {
                             foreach (var moreSplit in split.more)
                             {
-                                try
+                                if (!ok)
                                 {
-                                    data = await _usb2snes.GetAddress((0xF50000 + split.addressint), (uint)64);
+                                    break;
                                 }
-                                catch
-                                {
-                                    _inTimer = false;
-                                    return;
-                                }
-                                if (data.Count() == 0)
-                                {
-                                    Console.WriteLine("Get address failed to return result");
-                                    _inTimer = false;
-                                    return;
-                                }
-                                value = (uint)data[0];
-                                word = (uint)(data[0] + (data[1] << 8));
-
-                                ok = ok && checkSplit(moreSplit, value, word);
+                                ok = ok && await doCheckSplit(moreSplit);
                             }
                         }
 
@@ -630,10 +613,33 @@ namespace LiveSplit.UI.Components
                         {
                             DoSplit();
                         }
+                    } else {
+                        connect();
                     }
                 }
             }
-            _inTimer = false;
+        }
+
+        async Task<bool> doCheckSplit(Split split)
+        {
+            byte[] data;
+            try
+            {
+                data = await _usb2snes.GetAddress((0xF50000 + split.addressint), (uint)2);
+            }
+            catch
+            {
+                return false;
+            }
+            if (data.Count() == 0)
+            {
+                Console.WriteLine("Get address failed to return result");
+                return false;
+            }
+            uint value = (uint)data[0];
+            uint word = (uint)(data[0] + (data[1] << 8));
+            Debug.WriteLine("Address checked : " + split.address + " - value : " + value);
+            return split.check(value, word);
         }
 
         public void DrawHorizontal(Graphics g, LiveSplitState state, float height, Region clipRegion)

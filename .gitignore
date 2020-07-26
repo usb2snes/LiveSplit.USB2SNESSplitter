@@ -1,0 +1,7 @@
+.vs
+obj
+*~
+*.swp
+LiveSplit.USB2SNESSplitter.csproj.user
+bin/*
+packages/*
