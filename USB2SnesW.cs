@@ -186,8 +186,7 @@ namespace USB2SnesW
             if (await Task.WhenAny(tcs.Task, Task.Delay(100)) == tcs.Task)
             {
                 return tcs.Task.Result;
-            } else
-            {
+            } else {
                 return new byte[0];
             }
         }

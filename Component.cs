@@ -233,9 +233,7 @@ namespace LiveSplit.UI.Components
             if (info.version == "")
             {
                 SetState(MyState.ERROR);
-            }
-            else
-            {
+            } else {
                 SetState(MyState.READY);
                 _proto_state = ProtocolState.ATTACHED;
             }
@@ -261,9 +259,7 @@ namespace LiveSplit.UI.Components
                     _proto_state = ProtocolState.CONNECTED;
                     wsAttach(prevState);
                 });
-            }
-            else
-            {
+            } else {
                 if (connected)
                     wsAttach(prevState);
             }
@@ -432,9 +428,7 @@ namespace LiveSplit.UI.Components
                 var gt = new TimeSpan(0, hr, min, sec, ms);
                 _state.SetGameTime(gt);
                 _model.Split();
-            }
-            else
-            {
+            } else {
                 _model.Split();
             }
         }
@@ -514,9 +508,7 @@ UpdateSplits()
                 {
                     _update_timer.Interval = 1000;
                     return;
-                }
-                else
-                {
+                } else {
                     _update_timer.Interval = 33;
                 }
                 if (_game != null && _game.autostart.active == "1")
@@ -581,9 +573,7 @@ UpdateSplits()
                         }
                     }
                 }
-            }
-            else if (_state.CurrentPhase == TimerPhase.Running)
-            {
+            } else if (_state.CurrentPhase == TimerPhase.Running) {
                 if (_splits != null)
                 {
                     if (_proto_state == ProtocolState.ATTACHED)
@@ -603,9 +593,7 @@ UpdateSplits()
                             {
                                 orignSplit.posToCheck++;
                                 ok = false;
-                            }
-                            else
-                            {
+                            } else {
                                 orignSplit.posToCheck = 0;
                             }
                         }
@@ -625,9 +613,7 @@ UpdateSplits()
                         {
                             DoSplit();
                         }
-                    }
-                    else
-                    {
+                    } else {
                         connect();
                     }
                 }
