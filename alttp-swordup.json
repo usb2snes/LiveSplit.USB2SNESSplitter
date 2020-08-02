@@ -1,5 +1,5 @@
 {
-  "game": "The Legend of Zelda: A link to the past",
+  "name": "The Legend of Zelda: A link to the past",
   "autostart": {
     "active": "1",
     "address": "0x10",

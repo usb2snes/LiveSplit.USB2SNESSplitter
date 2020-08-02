@@ -33,93 +33,6 @@ namespace LiveSplit.UI.Components
             ATTACHED
         }
 
-        internal class Split
-        {
-            public string name { get; set; }
-            public string alias { get; set; }
-            public string address { get; set; }
-            public string value { get; set; }
-            public string type { get; set; }
-            public List<Split> more { get; set; }
-            public List<Split> next { get; set; }
-            public int posToCheck { get; set; } = 0;
-
-            public uint addressint { get { return Convert.ToUInt32(address, 16); } }
-            public uint valueint { get { return Convert.ToUInt32(value, 16); } }
-
-
-            public bool check(uint value, uint word)
-            {
-                bool ret = false;
-                switch (this.type)
-                {
-                    case "bit":
-                        if ((value & this.valueint) != 0) { ret = true; }
-                        break;
-                    case "eq":
-                        if (value == this.valueint) { ret = true; }
-                        break;
-                    case "gt":
-                        if (value > this.valueint) { ret = true; }
-                        break;
-                    case "lt":
-                        if (value < this.valueint) { ret = true; }
-                        break;
-                    case "gte":
-                        if (value >= this.valueint) { ret = true; }
-                        break;
-                    case "lte":
-                        if (value <= this.valueint) { ret = true; }
-                        break;
-                    case "wbit":
-                        if ((word & this.valueint) != 0) { ret = true; }
-                        break;
-                    case "weq":
-                        if (word == this.valueint) { ret = true; }
-                        break;
-                    case "wgt":
-                        if (word > this.valueint) { ret = true; }
-                        break;
-                    case "wlt":
-                        if (word < this.valueint) { ret = true; }
-                        break;
-                    case "wgte":
-                        if (word >= this.valueint) { ret = true; }
-                        break;
-                    case "wlte":
-                        if (word <= this.valueint) { ret = true; }
-                        break;
-                }
-                return ret;
-            }
-
-        }
-
-        class Category
-        {
-            public string name { get; set; }
-            public List<string> splits { get; set; }
-        }
-
-        class Game
-        {
-            public string name { get; set; }
-            public Autostart autostart { get; set; }
-            public Dictionary<String, String> alias { get; set; }
-            public List<Category> categories { get; set; }
-            public List<Split> definitions { get; set; }
-        }
-
-        class Autostart
-        {
-            public string active { get; set; }
-            public string address { get; set; }
-            public string value { get; set; }
-            public string type { get; set; }
-
-            public uint addressint { get { return Convert.ToUInt32(address, 16); } }
-            public uint valueint { get { return Convert.ToUInt32(value, 16); } }
-        }
 
         public string ComponentName => "USB2SNES Auto Splitter";
 
@@ -271,9 +184,9 @@ namespace LiveSplit.UI.Components
             try
             {
                 var jsonStr = File.ReadAllText(_settings.ConfigFile);
-                _game = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<Game>(
-                    jsonStr
-                );
+                var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+                serializer.RegisterConverters(new[] { new ConfigFileJsonConverter() });
+                _game = serializer.Deserialize<Game>(jsonStr);
             }
             catch (Exception e)
             {
