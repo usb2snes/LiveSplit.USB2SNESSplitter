@@ -3,5 +3,6 @@ obj
 *~
 *.swp
 LiveSplit.USB2SNESSplitter.csproj.user
+websocket-sharp.dll
 bin/*
 packages/*
