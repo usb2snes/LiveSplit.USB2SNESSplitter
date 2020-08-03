@@ -63,8 +63,6 @@ namespace LiveSplit.UI.Components
         private MyState _mystate;
         private ProtocolState _proto_state;
         private bool _inTimer;
-        private bool _valid_config;
-        private bool _config_checked;
         private USB2SnesW.USB2SnesW _usb2snes;
         private Color _ok_color = Color.FromArgb(0, 128, 0);
         private Color _error_color = Color.FromArgb(128, 0, 0);
@@ -80,10 +78,8 @@ namespace LiveSplit.UI.Components
             _model = new TimerModel() { CurrentState = _state };
             _state.RegisterTimerModel(_model);
             _stateChanged = false;
-            _splits = null;
+            _splits = new List<string>();
             _inTimer = false;
-            _config_checked = false;
-            _valid_config = false;
 
             _update_timer = new Timer() { Interval = 1000 };
             _update_timer.Tick += (sender, args) => UpdateSplitsWrapper();
@@ -147,7 +143,6 @@ namespace LiveSplit.UI.Components
             {
                 SetState(MyState.ERROR);
             } else {
-                SetState(MyState.READY);
                 _proto_state = ProtocolState.ATTACHED;
             }
         }
@@ -180,7 +175,6 @@ namespace LiveSplit.UI.Components
 
         private bool readConfig()
         {
-
             try
             {
                 var jsonStr = File.ReadAllText(_settings.ConfigFile);
@@ -190,21 +184,16 @@ namespace LiveSplit.UI.Components
             }
             catch (Exception e)
             {
-                ShowMessage("Could not open split config file, check config file settings. " + e.Message);
-                return false;
-            }
-            if (!this.checkSplitsSetting())
-            {
-                ShowMessage("The split config file has missing definitions.");
+                _settings.SetError("Could not open split config file, check config file settings.\n" + e.Message);
                 return false;
             }
 
-            return true;
+            return checkSplitsSetting();
         }
 
         private bool checkSplitsSetting()
         {
-            bool r = true;
+            var errorMessages = new List<string>();
             foreach (var c in _game.categories)
             {
                 foreach (var s in c.splits)
@@ -212,11 +201,11 @@ namespace LiveSplit.UI.Components
                     var d = _game.definitions.Where(x => x.name == s).FirstOrDefault();
                     if (d == null)
                     {
-                        ShowMessage(String.Format("Split definition missing: {0} for category {1}", s, c.name));
-                        r = false;
+                        errorMessages.Add($"Split definition missing: {s} for category {c.name}");
                     }
                 }
             }
+
             if (_game.alias != null)
             {
                 foreach (var a in _game.alias)
@@ -224,42 +213,62 @@ namespace LiveSplit.UI.Components
                     var d = _game.definitions.Where(x => x.name == a.Value).FirstOrDefault();
                     if (d == null)
                     {
-                        ShowMessage(String.Format("Alias definition <{0}> does not point to a split name in a category definition : {1}", a.Key, a.Value));
-                        r = false;
+                        errorMessages.Add($"Alias definition <{a.Key}> does not point to a split name in a category definition : {a.Value}");
                     }
                 }
             }
-            return r;
+
+            if (errorMessages.Count > 0)
+            {
+                _settings.SetError(string.Join("\n", errorMessages));
+                return false;
+            }
+
+            return true;
         }
 
         private bool checkRunnableSetting()
         {
-            bool toret = true;
-            _splits = new List<string>(_game.categories.Where(c => c.name.ToLower() == _state.Run.CategoryName.ToLower()).First()?.splits);
+            if (!string.Equals(_state.Run.GameName, _game.name, StringComparison.OrdinalIgnoreCase))
+            {
+                _settings.SetError($"Game name from splits [{_state.Run.GameName}] does not match game name from config file [{_game.name}]");
+                return false;
+            }
 
-            if (_splits.Count == 0)
+            Category category = _game.categories.Where(c => c.name.ToLower() == _state.Run.CategoryName.ToLower()).FirstOrDefault();
+            if (category == null)
             {
-                ShowMessage("There are no splits for the current category in the split config file, check that the run category is correctly set and exists in the config file.");
+                _settings.SetError($"Category name from splits [{_state.Run.CategoryName}] not found in config file.");
                 return false;
             }
-            if (_state.Run.Count() > _splits.Count())
-            {
-                ShowMessage(String.Format("There are more segments in your splits configuration <{0}> than the Autosplitter setting file <{1}>", _splits.Count(), _state.Run.Count()));
-                return false;
-            }
+
+            var unrecognizedSegmentNames = new List<string>();
             foreach (var seg in _state.Run)
             {
-                if (!_splits.Contains(seg.Name, StringComparer.OrdinalIgnoreCase))
+                if (!category.splits.Contains(seg.Name, StringComparer.OrdinalIgnoreCase))
                 {
                     // Searching into Alias
                     if (!_game.alias.ContainsKey(seg.Name))
                     {
-                        ShowMessage(String.Format("Your segment name <{0}> does not exist in the setting file. Neither as a split name or an alias.", seg.Name));
-                        toret = false;
+                        unrecognizedSegmentNames.Add(seg.Name);
                     }
                 }
             }
-            return toret;
+
+            if (unrecognizedSegmentNames.Count > 0)
+            {
+                string segmentList = string.Join("\n", unrecognizedSegmentNames.Select(name => $"[{name}]"));
+                _settings.SetError($"Segment names in splits could not be found in config file:\n{segmentList}");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(_settings.Device))
+            {
+                _settings.SetError("You must specify a Device name");
+                return false;
+            }
+
+            return true;
         }
 
         // Let's build the split list based on the user segment list and not the category definition
@@ -348,23 +357,17 @@ namespace LiveSplit.UI.Components
 
         private bool isConfigReady()
         {
-            if (_state.Layout.HasChanged)
-                _config_checked = false;
-            if (!_config_checked)
+            if (this.readConfig())
             {
-                if (this.readConfig())
+                if (checkRunnableSetting())
                 {
-                    if (_config_checked == false && checkRunnableSetting())
-                    {
-                        _valid_config = true;
-                        SetSplitList();
-                    }
+                    _settings.SetError(null);
+                    SetSplitList();
+                    return true;
                 }
-                _config_checked = true;
             }
-            if (!_valid_config)
-                return false;
-            return true;
+
+            return false;
         }
 
         private bool isConnectionReady()
@@ -415,6 +418,7 @@ UpdateSplits()
             {
                 if (!isConfigReady())
                 {
+                    SetState(MyState.ERROR);
                     return;
                 }
                 if (!isConnectionReady())
@@ -424,6 +428,9 @@ UpdateSplits()
                 } else {
                     _update_timer.Interval = 33;
                 }
+
+                SetState(MyState.READY);
+
                 if (_game != null && _game.autostart.active == "1")
                 {
                     if (_proto_state == ProtocolState.ATTACHED)
@@ -487,7 +494,7 @@ UpdateSplits()
                     }
                 }
             } else if (_state.CurrentPhase == TimerPhase.Running) {
-                if (_splits != null)
+                if (_mystate == MyState.READY)
                 {
                     if (_proto_state == ProtocolState.ATTACHED)
                     {
