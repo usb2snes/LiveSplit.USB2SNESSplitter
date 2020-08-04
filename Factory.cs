@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using LiveSplit.Model;
 using LiveSplit.UI.Components;
 
@@ -18,5 +19,24 @@ namespace LiveSplit.UI.Components
         public string XMLURL => "";
 
         public IComponent Create(LiveSplitState state) => new USB2SNESComponent(state);
+
+        static Factory()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            {
+                string resourceName = "LiveSplit." + new AssemblyName(args.Name).Name + ".dll";
+                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                {
+                    if (stream != null)
+                    {
+                        byte[] assemblyData = new byte[stream.Length];
+                        stream.Read(assemblyData, 0, assemblyData.Length);
+                        return Assembly.Load(assemblyData);
+                    }
+                }
+
+                return null;
+            };
+        }
     }
 }

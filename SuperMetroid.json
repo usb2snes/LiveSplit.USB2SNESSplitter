@@ -1,5 +1,5 @@
 {
-  "game": "Super Metroid",
+  "name": "Super Metroid",
   "autostart": {
     "active": "1",
     "address": "0x0998",

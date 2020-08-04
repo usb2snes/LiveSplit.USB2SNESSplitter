@@ -58,10 +58,16 @@
       <HintPath>..\..\bin\Release\UpdateManager.dll</HintPath>
     </Reference>
     <Reference Include="websocket-sharp">
-      <HintPath>..\websocket-sharp.dll</HintPath>
+      <HintPath>.\websocket-sharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\Autostart.cs" />
+    <Compile Include="Config\Category.cs" />
+    <Compile Include="Config\Game.cs" />
+    <Compile Include="Config\ConfigFileJsonConverter.cs" />
+    <Compile Include="Config\Split.cs" />
     <Compile Include="USB2SnesW.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="ComponentSettings.cs">
@@ -80,12 +86,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="SuperMetroid.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="alttp-swordup.json" />
+    <None Include="SuperMetroid.json" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="websocket-sharp.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

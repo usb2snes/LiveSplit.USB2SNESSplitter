@@ -23,6 +23,8 @@ namespace LiveSplit.UI.Components
             txtComPort.DataBindings.Add("Text", this, "Device", false, DataSourceUpdateMode.OnPropertyChanged);
             txtConfigFile.DataBindings.Add("Text", this, "ConfigFile", false, DataSourceUpdateMode.OnPropertyChanged);
             chkReset.DataBindings.Add("Checked", this, "ResetSNES", false, DataSourceUpdateMode.OnPropertyChanged);
+
+            errorIcon.Image = SystemIcons.Error.ToBitmap();
         }
         public void SetSettings(XmlNode node)
         {
@@ -42,6 +44,12 @@ namespace LiveSplit.UI.Components
         public int GetSettingsHashCode()
         {
             return CreateSettingsNode(null, null);
+        }
+
+        internal void SetError(string message)
+        {
+            errorMessage.Text = message;
+            errorPanel.Visible = !string.IsNullOrEmpty(message);
         }
 
         private int CreateSettingsNode(XmlDocument document, XmlElement parent)

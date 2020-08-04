@@ -35,6 +35,11 @@
             this.btnBrowse = new System.Windows.Forms.Button();
             this.btnDetect = new System.Windows.Forms.Button();
             this.chkReset = new System.Windows.Forms.CheckBox();
+            this.errorPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.errorMessage = new System.Windows.Forms.Label();
+            this.errorIcon = new System.Windows.Forms.PictureBox();
+            this.errorPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorIcon)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -100,10 +105,48 @@
             this.chkReset.Text = "Reset SNES on Timer reset";
             this.chkReset.UseVisualStyleBackColor = true;
             // 
+            // errorPanel
+            // 
+            this.errorPanel.AutoSize = true;
+            this.errorPanel.ColumnCount = 2;
+            this.errorPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.errorPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.errorPanel.Controls.Add(this.errorIcon, 0, 0);
+            this.errorPanel.Controls.Add(this.errorMessage, 1, 0);
+            this.errorPanel.Location = new System.Drawing.Point(13, 92);
+            this.errorPanel.Name = "errorPanel";
+            this.errorPanel.RowCount = 1;
+            this.errorPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.errorPanel.Size = new System.Drawing.Size(453, 38);
+            this.errorPanel.TabIndex = 7;
+            this.errorPanel.Visible = false;
+            // 
+            // errorMessage
+            // 
+            this.errorMessage.AutoSize = true;
+            this.errorMessage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.errorMessage.Location = new System.Drawing.Point(41, 0);
+            this.errorMessage.MaximumSize = new System.Drawing.Size(409, 0);
+            this.errorMessage.Name = "errorMessage";
+            this.errorMessage.Size = new System.Drawing.Size(409, 38);
+            this.errorMessage.TabIndex = 1;
+            this.errorMessage.Text = "Error Message";
+            this.errorMessage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // errorIcon
+            // 
+            this.errorIcon.Location = new System.Drawing.Point(3, 3);
+            this.errorIcon.Name = "errorIcon";
+            this.errorIcon.Size = new System.Drawing.Size(32, 32);
+            this.errorIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.errorIcon.TabIndex = 2;
+            this.errorIcon.TabStop = false;
+            // 
             // ComponentSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.errorPanel);
             this.Controls.Add(this.chkReset);
             this.Controls.Add(this.btnDetect);
             this.Controls.Add(this.btnBrowse);
@@ -114,6 +157,9 @@
             this.Name = "ComponentSettings";
             this.Padding = new System.Windows.Forms.Padding(7);
             this.Size = new System.Drawing.Size(476, 512);
+            this.errorPanel.ResumeLayout(false);
+            this.errorPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorIcon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -128,5 +174,8 @@
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.Button btnDetect;
         private System.Windows.Forms.CheckBox chkReset;
+        private System.Windows.Forms.TableLayoutPanel errorPanel;
+        private System.Windows.Forms.Label errorMessage;
+        private System.Windows.Forms.PictureBox errorIcon;
     }
 }
