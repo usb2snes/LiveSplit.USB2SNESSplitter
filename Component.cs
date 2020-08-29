@@ -242,15 +242,17 @@ namespace LiveSplit.UI.Components
                 return false;
             }
 
+            var trimStartChars = new char[] { '-' };
             var unrecognizedSegmentNames = new List<string>();
             foreach (var seg in _state.Run)
             {
-                if (!category.splits.Contains(seg.Name, StringComparer.OrdinalIgnoreCase))
+                var segmentName = seg.Name.TrimStart(trimStartChars);
+                if (!category.splits.Contains(segmentName, StringComparer.OrdinalIgnoreCase))
                 {
                     // Searching into Alias
-                    if (!_game.alias.ContainsKey(seg.Name))
+                    if (!_game.alias.ContainsKey(segmentName))
                     {
-                        unrecognizedSegmentNames.Add(seg.Name);
+                        unrecognizedSegmentNames.Add(segmentName);
                     }
                 }
             }
@@ -275,13 +277,15 @@ namespace LiveSplit.UI.Components
         private void SetSplitList()
         {
             _splits.Clear();
+            var trimStartChars = new char[] { '-' };
             var catSplits = _game.categories.Where(c => c.name.ToLower() == _state.Run.CategoryName.ToLower()).First().splits;
             foreach (var seg in _state.Run)
             {
-                if (catSplits.Contains(seg.Name))
-                    _splits.Add(seg.Name);
+                var segmentName = seg.Name.TrimStart(trimStartChars);
+                if (catSplits.Contains(segmentName))
+                    _splits.Add(segmentName);
                 else
-                    _splits.Add(_game.alias[seg.Name]);
+                    _splits.Add(_game.alias[segmentName]);
             }
         }
 
