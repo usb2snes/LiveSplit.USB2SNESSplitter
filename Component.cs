@@ -342,7 +342,7 @@ namespace LiveSplit.UI.Components
             }
         }
 
-        public async void DoSplit()
+        public async Task DoSplit()
         {
             if (_game.name == "Super Metroid" && _usb2snes.Connected())
             {
@@ -509,7 +509,7 @@ UpdateSplits()
                         {
                             split = split.next[split.posToCheck - 1];
                         }
-                        bool ok = await (doCheckSplit(split));
+                        bool ok = await doCheckSplit(split);
                         if (orignSplit.next != null && ok)
                         {
                             Debug.WriteLine("Next count :" + orignSplit.next.Count + " - Pos to check : " + orignSplit.posToCheck);
@@ -535,7 +535,7 @@ UpdateSplits()
 
                         if (ok)
                         {
-                            DoSplit();
+                            await DoSplit();
                         }
                     } else {
                         connect();
