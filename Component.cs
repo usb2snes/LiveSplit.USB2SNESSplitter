@@ -1,17 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using LiveSplit.Model;
 using LiveSplit.Options;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using USB2SnesW;
-using System.Drawing;
-using System.Collections;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("LiveSplit.USB2SNESSplitterTests")]
 
@@ -19,20 +16,23 @@ namespace LiveSplit.UI.Components
 {
     public class USB2SNESComponent : IComponent
     {
-        enum MyState
+        enum ConfigState
         {
             NONE,
             ERROR,
-            CONNECTING,
             READY,
         };
-        enum ProtocolState // Only when attached we are good
+
+        enum ProtocolState
         {
             NONE,
-            CONNECTED,
-            ATTACHED
+            CONNECTING,
+            FAILED_TO_CONNECT,
+            DEVICE_NOT_FOUND,
+            ATTACHING,
+            FAILED_TO_ATTACH,
+            ATTACHED,
         }
-
 
         public string ComponentName => "USB2SNES Auto Splitter";
 
@@ -60,20 +60,22 @@ namespace LiveSplit.UI.Components
         private TimerModel _model;
         private Game _game;
         private List<string> _splits;
-        private MyState _mystate;
+        private ConfigState _config_state;
         private ProtocolState _proto_state;
+        private string _attached_device;
         private bool _inTimer;
         private USB2SnesW.USB2SnesW _usb2snes;
         private Color _ok_color = Color.FromArgb(0, 128, 0);
         private Color _error_color = Color.FromArgb(128, 0, 0);
         private Color _connecting_color = Color.FromArgb(128, 128, 0);
-        bool _stateChanged;
+        private bool _stateChanged;
 
         private void init(LiveSplitState state, USB2SnesW.USB2SnesW usb2snesw)
         {
             _state = state;
-            _mystate = MyState.NONE;
+            _config_state = ConfigState.NONE;
             _proto_state = ProtocolState.NONE;
+            _attached_device = string.Empty;
             _settings = new ComponentSettings();
             _model = new TimerModel() { CurrentState = _state };
             _state.RegisterTimerModel(_model);
@@ -100,76 +102,113 @@ namespace LiveSplit.UI.Components
         internal USB2SNESComponent(LiveSplitState state, USB2SnesW.USB2SnesW usb2snesw)
         {
             init(state, usb2snesw);
-
         }
 
-        private void ShowMessage(String msg)
+        private void SetConfigState(ConfigState state)
         {
-            MessageBox.Show(msg, "USB2Snes AutoSplitter");
-        }
-        private void SetState(MyState state)
-        {
-            if (_mystate == state)
+            if (_config_state != state)
             {
-                return;
-            }
-            Debug.WriteLine("Setting state to " + state);
-            _stateChanged = true;
-            _mystate = state;
-        }
-
-        private async void wsAttach(ProtocolState prevState)
-        {
-            List<String> devices;
-            try
-            {
-                devices = await _usb2snes.GetDevices();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Exception getting devices: " + e);
-                devices = new List<String>();
-            }
-
-            if (!devices.Contains(_settings.Device))
-            {
-                if (prevState == ProtocolState.NONE)
-                    ShowMessage("Could not find the device : " + _settings.Device + " . Check your configuration or activate your device.");
-                return;
-            }
-            _usb2snes.Attach(_settings.Device);
-            var info = await _usb2snes.Info(); // Info is the only neutral way to know if we are attached to the device
-            if (info.version == "")
-            {
-                SetState(MyState.ERROR);
-            } else {
-                _proto_state = ProtocolState.ATTACHED;
+                _stateChanged = true;
+                _config_state = state;
             }
         }
 
-        private void connect()
+        private void SetProtocolState(ProtocolState state)
         {
-            ProtocolState prevState = _proto_state;
-            var connected = _usb2snes.Connected();
-            if (_proto_state != ProtocolState.CONNECTED || !connected)
+            if (_proto_state != state)
             {
-                SetState(MyState.CONNECTING);
-                Task<bool> t = _usb2snes.Connect();
-                t.ContinueWith((t1) =>
+                _stateChanged = true;
+                _proto_state = state;
+            }
+        }
+
+        private void CheckConfig()
+        {
+            if (readConfig() && checkRunnableSetting())
+            {
+                SetSplitList();
+                _settings.SetError(null);
+                SetConfigState(ConfigState.READY);
+            }
+            else
+            {
+                SetConfigState(ConfigState.ERROR);
+            }
+        }
+
+        private void CheckConnection()
+        {
+            if (!_usb2snes.Connected())
+            {
+                if (_proto_state != ProtocolState.CONNECTING)
                 {
-                    if (!t1.Result)
+                    SetProtocolState(ProtocolState.CONNECTING);
+                    _attached_device = string.Empty;
+
+                    Task<bool> t = _usb2snes.Connect();
+                    t.ContinueWith((t1) =>
                     {
-                        SetState(MyState.NONE);
-                        _proto_state = ProtocolState.NONE;
-                        return;
+                        if (t1.Result)
+                        {
+                            _usb2snes.SetName("LiveSplit AutoSplitter");
+                            CheckAttachment();
+                        }
+                        else
+                        {
+                            SetProtocolState(ProtocolState.FAILED_TO_CONNECT);
+                        }
+                    });
+                }
+            }
+            else
+            {
+                CheckAttachment();
+            }
+        }
+
+        private async void CheckAttachment()
+        {
+            if (string.IsNullOrEmpty(_attached_device) || _attached_device != _settings.Device)
+            {
+                if (_proto_state != ProtocolState.ATTACHING)
+                {
+                    SetProtocolState(ProtocolState.ATTACHING);
+
+                    List<String> devices;
+                    try
+                    {
+                        devices = await _usb2snes.GetDevices();
                     }
-                    _usb2snes.SetName("LiveSplit AutoSplitter");
-                    _proto_state = ProtocolState.CONNECTED;
-                    wsAttach(prevState);
-                });
-            } else {
-                if (connected)
-                    wsAttach(prevState);
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Exception getting devices: " + e);
+                        devices = new List<String>();
+                    }
+
+                    string device = _settings.Device;
+                    if (!devices.Contains(device))
+                    {
+                        SetProtocolState(ProtocolState.DEVICE_NOT_FOUND);
+                    }
+                    else
+                    {
+                        _usb2snes.Attach(device);
+                        var info = await _usb2snes.Info(); // Info is the only neutral way to know if we are attached to the device
+                        if (string.IsNullOrEmpty(info.version))
+                        {
+                            SetProtocolState(ProtocolState.FAILED_TO_ATTACH);
+                        }
+                        else
+                        {
+                            _attached_device = device;
+                            SetProtocolState(ProtocolState.ATTACHED);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                SetProtocolState(ProtocolState.ATTACHED);
             }
         }
 
@@ -332,8 +371,7 @@ namespace LiveSplit.UI.Components
             _settings.SetSettings(settings);
         }
 
-        public void Update(IInvalidator invalidator, LiveSplitState state, float width, float height,
-            LayoutMode mode)
+        public void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
         {
             if (invalidator != null && _stateChanged)
             {
@@ -359,41 +397,8 @@ namespace LiveSplit.UI.Components
             }
         }
 
-        private bool isConfigReady()
-        {
-            if (this.readConfig())
-            {
-                if (checkRunnableSetting())
-                {
-                    _settings.SetError(null);
-                    SetSplitList();
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private bool isConnectionReady()
-        {
-            Debug.WriteLine("Checking connection");
-            if (_proto_state == ProtocolState.ATTACHED)
-                return true;
-
-            // this method actually does a BLOCKING request-response cycle (!!)
-            bool connected = _usb2snes.Connected();
-            if (!connected)
-            {
-                SetState(MyState.NONE);
-                _proto_state = ProtocolState.NONE;
-            }
-            this.connect();
-            return false;
-        }
-
         private async void UpdateSplitsWrapper()
         {
-
             Debug.WriteLine("Timer tick " + DateTime.Now);
             // "_inTimer" is a very questionable attempt at locking, but it's probably fine here.
             if (_inTimer)
@@ -408,36 +413,31 @@ namespace LiveSplit.UI.Components
             }
             catch (Exception e)
             {
-                ShowMessage("Something bad happened: " + e.ToString());
-                connect();
+                Log.Error($"{ComponentName} failed to update splits: {e}");
+                CheckConnection();
             }
             _inTimer = false;
         }
 
-        public async
-        Task
-UpdateSplits()
+        public async Task UpdateSplits()
         {
-            if (_state.CurrentPhase == TimerPhase.NotRunning)
+            if (_config_state != ConfigState.READY || _state.CurrentPhase == TimerPhase.NotRunning)
             {
-                if (!isConfigReady())
-                {
-                    SetState(MyState.ERROR);
-                    return;
-                }
-                if (!isConnectionReady())
-                {
-                    _update_timer.Interval = 1000;
-                    return;
-                } else {
-                    _update_timer.Interval = 33;
-                }
+                CheckConfig();
+            }
 
-                SetState(MyState.READY);
+            CheckConnection();
 
-                if (_game != null && _game.autostart.active == "1")
+            if (_config_state != ConfigState.READY || _proto_state != ProtocolState.ATTACHED)
+            {
+                _update_timer.Interval = 1000;
+            }
+            else
+            {
+                _update_timer.Interval = 33;
+                if (_state.CurrentPhase == TimerPhase.NotRunning)
                 {
-                    if (_proto_state == ProtocolState.ATTACHED)
+                    if (_game.autostart.active == "1")
                     {
                         byte[] data;
                         try
@@ -448,11 +448,13 @@ UpdateSplits()
                         {
                             return;
                         }
+
                         if (data.Count() == 0)
                         {
                             Debug.WriteLine("Get address failed to return result");
                             return;
                         }
+
                         uint value = (uint)data[0];
                         uint word = (uint)(data[0] + (data[1] << 8));
 
@@ -497,48 +499,44 @@ UpdateSplits()
                         }
                     }
                 }
-            } else if (_state.CurrentPhase == TimerPhase.Running) {
-                if (_mystate == MyState.READY)
+                else if (_state.CurrentPhase == TimerPhase.Running)
                 {
-                    if (_proto_state == ProtocolState.ATTACHED)
+                    var splitName = _splits[_state.CurrentSplitIndex];
+                    var split = _game.definitions.Where(x => x.name == splitName).First();
+                    var orignSplit = split;
+                    if (split.next != null && split.posToCheck != 0)
                     {
-                        var splitName = _splits[_state.CurrentSplitIndex];
-                        var split = _game.definitions.Where(x => x.name == splitName).First();
-                        var orignSplit = split;
-                        if (split.next != null && split.posToCheck != 0)
+                        split = split.next[split.posToCheck - 1];
+                    }
+                    bool ok = await doCheckSplit(split);
+                    if (orignSplit.next != null && ok)
+                    {
+                        Debug.WriteLine("Next count :" + orignSplit.next.Count + " - Pos to check : " + orignSplit.posToCheck);
+                        if (orignSplit.posToCheck < orignSplit.next.Count())
                         {
-                            split = split.next[split.posToCheck - 1];
+                            orignSplit.posToCheck++;
+                            ok = false;
                         }
-                        bool ok = await doCheckSplit(split);
-                        if (orignSplit.next != null && ok)
+                        else
                         {
-                            Debug.WriteLine("Next count :" + orignSplit.next.Count + " - Pos to check : " + orignSplit.posToCheck);
-                            if (orignSplit.posToCheck < orignSplit.next.Count())
+                            orignSplit.posToCheck = 0;
+                        }
+                    }
+                    if (split.more != null)
+                    {
+                        foreach (var moreSplit in split.more)
+                        {
+                            if (!ok)
                             {
-                                orignSplit.posToCheck++;
-                                ok = false;
-                            } else {
-                                orignSplit.posToCheck = 0;
+                                break;
                             }
+                            ok = ok && await doCheckSplit(moreSplit);
                         }
-                        if (split.more != null)
-                        {
-                            foreach (var moreSplit in split.more)
-                            {
-                                if (!ok)
-                                {
-                                    break;
-                                }
-                                ok = ok && await doCheckSplit(moreSplit);
-                            }
-                        }
+                    }
 
-                        if (ok)
-                        {
-                            await DoSplit();
-                        }
-                    } else {
-                        connect();
+                    if (ok)
+                    {
+                        await DoSplit();
                     }
                 }
             }
@@ -576,14 +574,19 @@ UpdateSplits()
         {
             VerticalHeight = 3 + PaddingTop + PaddingBottom;
             HorizontalWidth = width;
-            Color col;
-            Console.WriteLine(_mystate);
-            switch (_mystate)
+            Color col = _error_color;
+            if (_config_state == ConfigState.READY)
             {
-                case MyState.READY: col = _ok_color; break;
-                case MyState.CONNECTING: col = _connecting_color; break;
-                default: col = _error_color; break;
+                if (_proto_state == ProtocolState.ATTACHED)
+                {
+                    col = _ok_color;
+                }
+                else if (_proto_state == ProtocolState.CONNECTING || _proto_state == ProtocolState.ATTACHING)
+                {
+                    col = _connecting_color;
+                }
             }
+
             Brush b = new SolidBrush(col);
             g.FillRectangle(b, 0, 0, width, 3);
         }
