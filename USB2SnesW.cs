@@ -1,17 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
-using System.Threading;
 using WebSocketSharp;
-using System.Diagnostics;
+using LiveSplit.Options;
 
 namespace USB2SnesW
 {
     internal class USB2SnesW
     {
+        private sealed class WebSocketConnectionListener : IDisposable
+        {
+            private readonly WebSocket m_webSocket;
+            private readonly TaskCompletionSource<bool> m_taskCompletionSource;
+            private bool m_disposed = false;
+
+            internal WebSocketConnectionListener(WebSocket webSocket, TaskCompletionSource<bool> taskCompletionSource)
+            {
+                m_webSocket = webSocket;
+                m_taskCompletionSource = taskCompletionSource;
+
+                m_webSocket.OnClose += OnWebSocketClose;
+                m_webSocket.OnError += OnWebSocketError;
+                m_webSocket.OnOpen += OnWebSocketOpen;
+            }
+
+            public void Dispose()
+            {
+                if (!m_disposed)
+                {
+                    m_disposed = true;
+
+                    m_webSocket.OnClose -= OnWebSocketClose;
+                    m_webSocket.OnError -= OnWebSocketError;
+                    m_webSocket.OnOpen -= OnWebSocketOpen;
+                }
+            }
+
+            private void OnWebSocketClose(object sender, CloseEventArgs e)
+            {
+                m_taskCompletionSource.TrySetResult(false);
+            }
+
+            private void OnWebSocketError(object sender, ErrorEventArgs e)
+            {
+                m_taskCompletionSource.TrySetResult(false);
+            }
+
+            private void OnWebSocketOpen(object sender, EventArgs e)
+            {
+                m_taskCompletionSource.TrySetResult(true);
+            }
+        }
+
         class USRequest
         {
             public String Opcode;
@@ -44,29 +87,29 @@ namespace USB2SnesW
             ws = new WebSocket("ws://localhost:8080");
             Console.WriteLine(ws);
         }
+
         public async Task<bool> Connect()
         {
-            Debug.WriteLine("ws.ReadyState: " + ws.ReadyState);
             if (ws.ReadyState == WebSocketState.Open)
                 return true;
-            /*if (ws.ReadyState == WebSocketState.Aborted || ws.State == WebSocketState.CloseReceived)
-            {
-                ws.Dispose();
-                ws = new ClientWebSocket();
-            }*/
+
             var tcs = new TaskCompletionSource<bool>();
-            ws.OnOpen += (s, e) => { Console.WriteLine("Ok"); tcs.TrySetResult(true); };
-            ws.OnError += (s, e) => { Console.WriteLine("Error"); tcs.TrySetResult(false); };
-            try
+            using (WebSocketConnectionListener listener = new WebSocketConnectionListener(ws, tcs))
             {
-                ws.ConnectAsync();
-            } catch (Exception e)
-            {
-                Console.WriteLine("Exception: " + e);
-                tcs.TrySetResult(false);
+                try
+                {
+                    ws.ConnectAsync();
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"Error when connecting to Usb2Snes: {e}");
+                    tcs.TrySetResult(false);
+                }
+
+                return await tcs.Task;
             }
-            return await tcs.Task;
         }
+
         private void SendCommand(Commands cmd, String arg)
         {
             List<String> args = new List<string>();
