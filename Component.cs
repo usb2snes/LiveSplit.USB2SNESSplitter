@@ -34,15 +34,18 @@ namespace LiveSplit.UI.Components
             ATTACHED,
         }
 
+        private const float BorderThickness = 1.5f;
+        private const float TextPadding = 2f;
+
         public string ComponentName => "USB2SNES Auto Splitter";
 
         public float HorizontalWidth { get; set; }
 
-        public float MinimumHeight => 3;
+        public float MinimumHeight => 2 * BorderThickness;
 
         public float VerticalHeight { get; set; }
 
-        public float MinimumWidth => 3;
+        public float MinimumWidth => 2 * BorderThickness;
 
         public float PaddingTop => 1;
 
@@ -572,23 +575,69 @@ namespace LiveSplit.UI.Components
 
         public void DrawVertical(Graphics g, LiveSplitState state, float width, Region clipRegion)
         {
-            VerticalHeight = 3 + PaddingTop + PaddingBottom;
-            HorizontalWidth = width;
-            Color col = _error_color;
-            if (_config_state == ConfigState.READY)
+            Color borderColor = _error_color;
+            string statusMessage = string.Empty;
+            if (_config_state == ConfigState.ERROR)
             {
-                if (_proto_state == ProtocolState.ATTACHED)
+                borderColor = _error_color;
+                statusMessage = $"Configuration error - check Layout Settings for {ComponentName}";
+            }
+            else if (_config_state == ConfigState.READY)
+            {
+                switch (_proto_state)
                 {
-                    col = _ok_color;
-                }
-                else if (_proto_state == ProtocolState.CONNECTING || _proto_state == ProtocolState.ATTACHING)
-                {
-                    col = _connecting_color;
+                    case ProtocolState.CONNECTING:
+                        borderColor = _connecting_color;
+                        statusMessage = "Connecting to Usb2Snes";
+                        break;
+
+                    case ProtocolState.FAILED_TO_CONNECT:
+                        borderColor = _error_color;
+                        statusMessage = "Failed to connect to Usb2Snes";
+                        break;
+
+                    case ProtocolState.DEVICE_NOT_FOUND:
+                        borderColor = _error_color;
+                        statusMessage = $"Device {_settings.Device} not found. Ensure device is running a game and connected to your PC";
+                        break;
+
+                    case ProtocolState.ATTACHING:
+                        borderColor = _connecting_color;
+                        statusMessage = $"Attaching to {_settings.Device}";
+                        break;
+
+                    case ProtocolState.FAILED_TO_ATTACH:
+                        borderColor = _error_color;
+                        statusMessage = $"Failed to attach to {_settings.Device}";
+                        break;
+
+                    case ProtocolState.ATTACHED:
+                        borderColor = _ok_color;
+                        statusMessage = "Ready";
+                        break;
                 }
             }
 
-            Brush b = new SolidBrush(col);
-            g.FillRectangle(b, 0, 0, width, 3);
+            float borderWidth = width - BorderThickness;
+            float borderHeight = BorderThickness;
+
+            if (_settings.ShowStatusMessage)
+            {
+                float textWidth = borderWidth - BorderThickness - 2 * TextPadding;
+
+                float textHeight = g.MeasureString(statusMessage, state.LayoutSettings.TextFont, (int)textWidth).Height;
+                borderHeight += textHeight + TextPadding;
+
+                Brush textBrush = new SolidBrush(state.LayoutSettings.TextColor);
+                RectangleF textRectangle = new RectangleF(TextPadding + BorderThickness, TextPadding + BorderThickness, textWidth, textHeight);
+                g.DrawString(statusMessage, state.LayoutSettings.TextFont, textBrush, textRectangle);
+            }
+
+            Pen borderPen = new Pen(borderColor, BorderThickness);
+            g.DrawRectangle(borderPen, BorderThickness / 2, PaddingTop + BorderThickness / 2, borderWidth, borderHeight);
+
+            HorizontalWidth = width;
+            VerticalHeight = borderHeight + BorderThickness + PaddingTop + PaddingBottom;
         }
     }
 }
