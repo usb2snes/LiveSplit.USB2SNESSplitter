@@ -36,6 +36,7 @@ namespace LiveSplit.UI.Components
 
         private const float BorderThickness = 1.5f;
         private const float TextPadding = 2f;
+        private readonly TimeSpan ReadyAutoHideTime = TimeSpan.FromSeconds(3);
 
         public string ComponentName => "USB2SNES Auto Splitter";
 
@@ -65,6 +66,8 @@ namespace LiveSplit.UI.Components
         private List<string> _splits;
         private ConfigState _config_state;
         private ProtocolState _proto_state;
+        private Stopwatch _ready_timer;
+        private Size _desired_form_size;
         private string _attached_device;
         private bool _inTimer;
         private USB2SnesW.USB2SnesW _usb2snes;
@@ -78,6 +81,8 @@ namespace LiveSplit.UI.Components
             _state = state;
             _config_state = ConfigState.NONE;
             _proto_state = ProtocolState.NONE;
+            _ready_timer = new Stopwatch();
+            _desired_form_size = Size.Empty;
             _attached_device = string.Empty;
             _settings = new ComponentSettings();
             _model = new TimerModel() { CurrentState = _state };
@@ -376,7 +381,13 @@ namespace LiveSplit.UI.Components
 
         public void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
         {
-            if (invalidator != null && _stateChanged)
+            if (_desired_form_size != Size.Empty)
+            {
+                state.Form.Size = _desired_form_size;
+                _desired_form_size = Size.Empty;
+            }
+
+            if (invalidator != null && (_stateChanged || _ready_timer.IsRunning))
             {
                 _stateChanged = false;
                 invalidator.Invalidate(0, 0, width, height);
@@ -577,51 +588,74 @@ namespace LiveSplit.UI.Components
         {
             Color borderColor = _error_color;
             string statusMessage = string.Empty;
-            if (_config_state == ConfigState.ERROR)
+
+            if (_config_state == ConfigState.READY && _proto_state == ProtocolState.ATTACHED)
             {
-                borderColor = _error_color;
-                statusMessage = $"Configuration error - check Layout Settings for {ComponentName}";
-            }
-            else if (_config_state == ConfigState.READY)
-            {
-                switch (_proto_state)
+                borderColor = _ok_color;
+
+                TimeSpan elapsedTime = _ready_timer.Elapsed;
+                if (elapsedTime == TimeSpan.Zero)
                 {
-                    case ProtocolState.CONNECTING:
-                        borderColor = _connecting_color;
-                        statusMessage = "Connecting to Usb2Snes";
-                        break;
+                    _ready_timer.Start();
+                }
 
-                    case ProtocolState.FAILED_TO_CONNECT:
-                        borderColor = _error_color;
-                        statusMessage = "Failed to connect to Usb2Snes";
-                        break;
+                if (elapsedTime < ReadyAutoHideTime)
+                {
+                    statusMessage = $"Ready (hiding in {Math.Ceiling((ReadyAutoHideTime - elapsedTime).TotalSeconds)})";
+                }
+                else if (_ready_timer.IsRunning)
+                {
+                    _ready_timer.Stop();
+                }
+            }
+            else
+            {
+                if (_ready_timer.IsRunning)
+                {
+                    _ready_timer.Reset();
+                }
 
-                    case ProtocolState.DEVICE_NOT_FOUND:
-                        borderColor = _error_color;
-                        statusMessage = $"Device {_settings.Device} not found. Ensure device is running a game and connected to your PC";
-                        break;
+                if (_config_state == ConfigState.ERROR)
+                {
+                    borderColor = _error_color;
+                    statusMessage = $"Configuration error - check Layout Settings for {ComponentName}";
+                }
+                else if (_config_state == ConfigState.READY)
+                {
+                    switch (_proto_state)
+                    {
+                        case ProtocolState.CONNECTING:
+                            borderColor = _connecting_color;
+                            statusMessage = "Connecting to Usb2Snes";
+                            break;
 
-                    case ProtocolState.ATTACHING:
-                        borderColor = _connecting_color;
-                        statusMessage = $"Attaching to {_settings.Device}";
-                        break;
+                        case ProtocolState.FAILED_TO_CONNECT:
+                            borderColor = _error_color;
+                            statusMessage = "Failed to connect to Usb2Snes";
+                            break;
 
-                    case ProtocolState.FAILED_TO_ATTACH:
-                        borderColor = _error_color;
-                        statusMessage = $"Failed to attach to {_settings.Device}";
-                        break;
+                        case ProtocolState.DEVICE_NOT_FOUND:
+                            borderColor = _error_color;
+                            statusMessage = $"Device {_settings.Device} not found. Ensure device is running a game and connected to your PC";
+                            break;
 
-                    case ProtocolState.ATTACHED:
-                        borderColor = _ok_color;
-                        statusMessage = "Ready";
-                        break;
+                        case ProtocolState.ATTACHING:
+                            borderColor = _connecting_color;
+                            statusMessage = $"Attaching to {_settings.Device}";
+                            break;
+
+                        case ProtocolState.FAILED_TO_ATTACH:
+                            borderColor = _error_color;
+                            statusMessage = $"Failed to attach to {_settings.Device}";
+                            break;
+                    }
                 }
             }
 
             float borderWidth = width - BorderThickness;
             float borderHeight = BorderThickness;
 
-            if (_settings.ShowStatusMessage)
+            if (_settings.ShowStatusMessage && !string.IsNullOrEmpty(statusMessage))
             {
                 float textWidth = borderWidth - BorderThickness - 2 * TextPadding;
 
@@ -636,8 +670,14 @@ namespace LiveSplit.UI.Components
             Pen borderPen = new Pen(borderColor, BorderThickness);
             g.DrawRectangle(borderPen, BorderThickness / 2, PaddingTop + BorderThickness / 2, borderWidth, borderHeight);
 
-            HorizontalWidth = width;
-            VerticalHeight = borderHeight + BorderThickness + PaddingTop + PaddingBottom;
+            // Changing the height of this component will change the height of the whole timer form, which breaks people's ability
+            // to set a size for their layout. So, if we're changing the height, save the size of the timer form to restore it next update.
+            float newHeight = borderHeight + BorderThickness + PaddingTop + PaddingBottom;
+            if (VerticalHeight != newHeight)
+            {
+                _desired_form_size = state.Form.Size;
+                VerticalHeight = newHeight;
+            }
         }
     }
 }
