@@ -64,7 +64,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config\Autostart.cs" />
-    <Compile Include="Config\Category.cs" />
     <Compile Include="Config\Game.cs" />
     <Compile Include="Config\ConfigFileJsonConverter.cs" />
     <Compile Include="Config\Split.cs" />

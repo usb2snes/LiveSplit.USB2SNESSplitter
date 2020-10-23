@@ -6,38 +6,6 @@
     "value": "0x05",
     "type": "eq"
   },
-  "categories": [
-    {
-      "name": "Master Sword",
-      "splits": [
-        "Hyrule Castle",
-        "Eastern Palace",
-        "Desert Palace",
-        "Tower of Hera",
-        "Master Sword"
-      ]
-    },
-    {
-      "name": "Any% NMG",
-      "splits": [
-        "Hyrule Castle",
-        "Eastern Palace",
-        "Desert Palace",
-        "Tower of Hera",
-        "Master Sword",
-        "Agahnim's Tower",
-        "Palace of Darkness",
-        "Thieves' Town",
-        "Skull Woods",
-        "Ice Palace",
-        "Swamp Palace",
-        "Misery Mire",
-        "Turtle Rock",
-        "Ganon's Tower",
-        "Triforce"
-      ]
-    }
-  ],
   "definitions": [
     {
       "name": "Hyrule Castle",

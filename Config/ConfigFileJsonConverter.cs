@@ -15,7 +15,6 @@ namespace LiveSplit.UI.Components
                 name = serializer.ConvertToType<string>(LookupKeys(dictionary, "name", "game")),
                 autostart = serializer.ConvertToType<Autostart>(LookupKeys(dictionary, "autostart")),
                 alias = serializer.ConvertToType<Dictionary<string, string>>(LookupKeys(dictionary, "alias")),
-                categories = serializer.ConvertToType<List<Category>>(LookupKeys(dictionary, "categories")),
                 definitions = serializer.ConvertToType<List<Split>>(LookupKeys(dictionary, "definitions")),
             };
         }

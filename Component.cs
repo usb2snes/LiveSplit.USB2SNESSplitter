@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -62,7 +61,6 @@ namespace LiveSplit.UI.Components
         private ComponentSettings _settings;
         private LiveSplitState _state;
         private TimerModel _model;
-        private Game _game;
         private List<string> _splits;
         private ConfigState _config_state;
         private ProtocolState _proto_state;
@@ -84,7 +82,10 @@ namespace LiveSplit.UI.Components
             _ready_timer = new Stopwatch();
             _desired_form_size = Size.Empty;
             _attached_device = string.Empty;
-            _settings = new ComponentSettings();
+            _settings = new ComponentSettings(_state)
+            {
+                Dock = DockStyle.Fill,
+            };
             _model = new TimerModel() { CurrentState = _state };
             _state.RegisterTimerModel(_model);
             _stateChanged = false;
@@ -132,10 +133,9 @@ namespace LiveSplit.UI.Components
 
         private void CheckConfig()
         {
-            if (readConfig() && checkRunnableSetting())
+            _splits = _settings.GetSplits();
+            if (_splits != null)
             {
-                SetSplitList();
-                _settings.SetError(null);
                 SetConfigState(ConfigState.READY);
             }
             else
@@ -220,122 +220,6 @@ namespace LiveSplit.UI.Components
             }
         }
 
-        private bool readConfig()
-        {
-            try
-            {
-                var jsonStr = File.ReadAllText(_settings.ConfigFile);
-                var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
-                serializer.RegisterConverters(new[] { new ConfigFileJsonConverter() });
-                _game = serializer.Deserialize<Game>(jsonStr);
-            }
-            catch (Exception e)
-            {
-                _settings.SetError("Could not open split config file, check config file settings.\n" + e.Message);
-                return false;
-            }
-
-            return checkSplitsSetting();
-        }
-
-        private bool checkSplitsSetting()
-        {
-            var errorMessages = new List<string>();
-            foreach (var c in _game.categories)
-            {
-                foreach (var s in c.splits)
-                {
-                    var d = _game.definitions.Where(x => x.name == s).FirstOrDefault();
-                    if (d == null)
-                    {
-                        errorMessages.Add($"Split definition missing: {s} for category {c.name}");
-                    }
-                }
-            }
-
-            if (_game.alias != null)
-            {
-                foreach (var a in _game.alias)
-                {
-                    var d = _game.definitions.Where(x => x.name == a.Value).FirstOrDefault();
-                    if (d == null)
-                    {
-                        errorMessages.Add($"Alias definition <{a.Key}> does not point to a split name in a category definition : {a.Value}");
-                    }
-                }
-            }
-
-            if (errorMessages.Count > 0)
-            {
-                _settings.SetError(string.Join("\n", errorMessages));
-                return false;
-            }
-
-            return true;
-        }
-
-        private bool checkRunnableSetting()
-        {
-            if (!string.Equals(_state.Run.GameName, _game.name, StringComparison.OrdinalIgnoreCase))
-            {
-                _settings.SetError($"Game name from splits [{_state.Run.GameName}] does not match game name from config file [{_game.name}]");
-                return false;
-            }
-
-            Category category = _game.categories.Where(c => c.name.ToLower() == _state.Run.CategoryName.ToLower()).FirstOrDefault();
-            if (category == null)
-            {
-                _settings.SetError($"Category name from splits [{_state.Run.CategoryName}] not found in config file.");
-                return false;
-            }
-
-            var trimStartChars = new char[] { '-' };
-            var unrecognizedSegmentNames = new List<string>();
-            foreach (var seg in _state.Run)
-            {
-                var segmentName = seg.Name.TrimStart(trimStartChars);
-                if (!category.splits.Contains(segmentName, StringComparer.OrdinalIgnoreCase))
-                {
-                    // Searching into Alias
-                    if (!_game.alias.ContainsKey(segmentName))
-                    {
-                        unrecognizedSegmentNames.Add(segmentName);
-                    }
-                }
-            }
-
-            if (unrecognizedSegmentNames.Count > 0)
-            {
-                string segmentList = string.Join("\n", unrecognizedSegmentNames.Select(name => $"[{name}]"));
-                _settings.SetError($"Segment names in splits could not be found in config file:\n{segmentList}");
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(_settings.Device))
-            {
-                _settings.SetError("You must specify a Device name");
-                return false;
-            }
-
-            return true;
-        }
-
-        // Let's build the split list based on the user segment list and not the category definition
-        private void SetSplitList()
-        {
-            _splits.Clear();
-            var trimStartChars = new char[] { '-' };
-            var catSplits = _game.categories.Where(c => c.name.ToLower() == _state.Run.CategoryName.ToLower()).First().splits;
-            foreach (var seg in _state.Run)
-            {
-                var segmentName = seg.Name.TrimStart(trimStartChars);
-                if (catSplits.Contains(segmentName))
-                    _splits.Add(segmentName);
-                else
-                    _splits.Add(_game.alias[segmentName]);
-            }
-        }
-
         private void _state_OnStart(object sender, EventArgs e)
         {
             Console.WriteLine("On START?");
@@ -379,6 +263,11 @@ namespace LiveSplit.UI.Components
             _settings.SetSettings(settings);
         }
 
+        public int GetSettingsHashCode()
+        {
+            return _settings.GetSettingsHashCode();
+        }
+
         public void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
         {
             if (_desired_form_size != Size.Empty)
@@ -396,7 +285,7 @@ namespace LiveSplit.UI.Components
 
         public async Task DoSplit()
         {
-            if (_game.name == "Super Metroid" && _usb2snes.Connected())
+            if (_settings.Config.name == "Super Metroid" && _usb2snes.Connected())
             {
                 var data = await _usb2snes.GetAddress((uint)(0xF509DA), (uint)512);
                 int ms = (data[0] + (data[1] << 8)) * (1000 / 60);
@@ -451,12 +340,12 @@ namespace LiveSplit.UI.Components
                 _update_timer.Interval = 33;
                 if (_state.CurrentPhase == TimerPhase.NotRunning)
                 {
-                    if (_game.autostart.active == "1")
+                    if (_settings.Config.autostart.active == "1")
                     {
                         byte[] data;
                         try
                         {
-                            data = await _usb2snes.GetAddress((0xF50000 + _game.autostart.addressint), (uint)2);
+                            data = await _usb2snes.GetAddress((0xF50000 + _settings.Config.autostart.addressint), (uint)2);
                         }
                         catch
                         {
@@ -472,43 +361,43 @@ namespace LiveSplit.UI.Components
                         uint value = (uint)data[0];
                         uint word = (uint)(data[0] + (data[1] << 8));
 
-                        switch (_game.autostart.type)
+                        switch (_settings.Config.autostart.type)
                         {
                             case "bit":
-                                if ((value & _game.autostart.valueint) != 0) { _model.Start(); }
+                                if ((value & _settings.Config.autostart.valueint) != 0) { _model.Start(); }
                                 break;
                             case "eq":
-                                if (value == _game.autostart.valueint) { _model.Start(); }
+                                if (value == _settings.Config.autostart.valueint) { _model.Start(); }
                                 break;
                             case "gt":
-                                if (value > _game.autostart.valueint) { _model.Start(); }
+                                if (value > _settings.Config.autostart.valueint) { _model.Start(); }
                                 break;
                             case "lt":
-                                if (value < _game.autostart.valueint) { _model.Start(); }
+                                if (value < _settings.Config.autostart.valueint) { _model.Start(); }
                                 break;
                             case "gte":
-                                if (value >= _game.autostart.valueint) { _model.Start(); }
+                                if (value >= _settings.Config.autostart.valueint) { _model.Start(); }
                                 break;
                             case "lte":
-                                if (value <= _game.autostart.valueint) { _model.Start(); }
+                                if (value <= _settings.Config.autostart.valueint) { _model.Start(); }
                                 break;
                             case "wbit":
-                                if ((word & _game.autostart.valueint) != 0) { _model.Start(); }
+                                if ((word & _settings.Config.autostart.valueint) != 0) { _model.Start(); }
                                 break;
                             case "weq":
-                                if (word == _game.autostart.valueint) { _model.Start(); }
+                                if (word == _settings.Config.autostart.valueint) { _model.Start(); }
                                 break;
                             case "wgt":
-                                if (word > _game.autostart.valueint) { _model.Start(); }
+                                if (word > _settings.Config.autostart.valueint) { _model.Start(); }
                                 break;
                             case "wlt":
-                                if (word < _game.autostart.valueint) { _model.Start(); }
+                                if (word < _settings.Config.autostart.valueint) { _model.Start(); }
                                 break;
                             case "wgte":
-                                if (word >= _game.autostart.valueint) { _model.Start(); }
+                                if (word >= _settings.Config.autostart.valueint) { _model.Start(); }
                                 break;
                             case "wlte":
-                                if (word <= _game.autostart.valueint) { _model.Start(); }
+                                if (word <= _settings.Config.autostart.valueint) { _model.Start(); }
                                 break;
                         }
                     }
@@ -516,7 +405,7 @@ namespace LiveSplit.UI.Components
                 else if (_state.CurrentPhase == TimerPhase.Running)
                 {
                     var splitName = _splits[_state.CurrentSplitIndex];
-                    var split = _game.definitions.Where(x => x.name == splitName).First();
+                    var split = _settings.Config.definitions.Where(x => x.name == splitName).First();
                     var orignSplit = split;
                     if (split.next != null && split.posToCheck != 0)
                     {

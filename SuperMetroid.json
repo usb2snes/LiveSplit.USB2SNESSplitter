@@ -14,69 +14,6 @@
     "Space Jump Sucks": "Space Jump",
     "MB: My bad": "Mother Brain 3 Down (Escape Message)"
   },
-  "categories": [
-    {
-      "name": "Any% KPDR",
-      "splits": [
-        "Morphing Ball",
-        "Bombs",
-        "Charge Beam",
-        "Varia Suit",
-        "Hi Jump",
-        "Speed Booster",
-        "Wave Beam",
-        "Power Bombs (Red Tower)",
-        "Phantoon",
-        "Gravity Suit",
-        "Maridia Glass Tube",
-        "Space Jump",
-        "Botwoon",
-        "Draygon",
-        "Plasma Beam",
-        "Ice Beam",
-        "Ridley",
-        "Golden 4",
-        "Metroid Rooms",
-        "Mother Brain 1 Down",
-        "Mother Brain 3 Down (Escape Message)",
-        "Ship"
-      ]
-    },
-    {
-      "name": "100%",
-      "splits": [
-        "Bombs",
-        "Charge Beam",
-        "Varia Suit",
-        "Wave Beam",
-        "Grappling Beam",
-        "Power Bombs (Red Tower)",
-        "Phantoon",
-        "Gravity Suit",
-        "Power Bomb (Etecoons)",
-        "Maridia Glass Tube",
-        "Draygon",
-        "Plasma Beam",
-        "Ice Beam",
-        "Golden Torizo",
-        "Ridley",
-        "Reserve Tank (Norfair)",
-        "X-Ray",
-        "Golden 4",
-        "Mother Brain 1 Down",
-        "Ship"
-      ]
-    },
-    {
-      "name": "Any% Glitched",
-      "splits": [
-        "Bombs",
-        "Power Bombs (Red Tower)",
-        "X-Ray",
-        "Ship"
-      ]
-    }
-  ],
   "definitions": [
     {
       "name": "Morphing Ball",
