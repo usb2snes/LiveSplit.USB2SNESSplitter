@@ -36,6 +36,13 @@ namespace LiveSplit.UI.Components
         private const float BorderThickness = 1.5f;
         private const float TextPadding = 2f;
         private readonly TimeSpan ReadyAutoHideTime = TimeSpan.FromSeconds(3);
+        // This is a bit ugly, but it's to deal with the way LiveSplit handles sizing. When first starting up, or when the layout changes,
+        // LiveSplit attempts to force the window's size to whatever's specified in the layout settings. Then, once everything has stabilized,
+        // further changes to the size of components do not cause the whole window to be resized to match the layout settings. If we show the
+        // status message right away, that will affect the "stable" size of this component, which means that once everything is ready and the
+        // message is hidden, the window will be smaller than the layout settings specify. So, we delay showing the status message for a bit
+        // to give LiveSplit a chance to lock in the correct size.
+        private readonly TimeSpan ShowStatusMessageDelay = TimeSpan.FromSeconds(0.5);
 
         public string ComponentName => "USB2SNES Auto Splitter";
 
@@ -64,8 +71,8 @@ namespace LiveSplit.UI.Components
         private List<string> _splits;
         private ConfigState _config_state;
         private ProtocolState _proto_state;
+        private DateTime _first_draw_time = DateTime.MinValue;
         private Stopwatch _ready_timer;
-        private Size _desired_form_size;
         private string _attached_device;
         private bool _inTimer;
         private USB2SnesW.USB2SnesW _usb2snes;
@@ -80,7 +87,6 @@ namespace LiveSplit.UI.Components
             _config_state = ConfigState.NONE;
             _proto_state = ProtocolState.NONE;
             _ready_timer = new Stopwatch();
-            _desired_form_size = Size.Empty;
             _attached_device = string.Empty;
             _settings = new ComponentSettings(_state)
             {
@@ -270,12 +276,6 @@ namespace LiveSplit.UI.Components
 
         public void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
         {
-            if (_desired_form_size != Size.Empty)
-            {
-                state.Form.Size = _desired_form_size;
-                _desired_form_size = Size.Empty;
-            }
-
             if (invalidator != null && (_stateChanged || _ready_timer.IsRunning))
             {
                 _stateChanged = false;
@@ -302,7 +302,6 @@ namespace LiveSplit.UI.Components
 
         private async void UpdateSplitsWrapper()
         {
-            Debug.WriteLine("Timer tick " + DateTime.Now);
             // "_inTimer" is a very questionable attempt at locking, but it's probably fine here.
             if (_inTimer)
             {
@@ -475,6 +474,11 @@ namespace LiveSplit.UI.Components
 
         public void DrawVertical(Graphics g, LiveSplitState state, float width, Region clipRegion)
         {
+            if (_first_draw_time == DateTime.MinValue)
+            {
+                _first_draw_time = DateTime.Now;
+            }
+
             Color borderColor = _error_color;
             string statusMessage = string.Empty;
 
@@ -499,7 +503,7 @@ namespace LiveSplit.UI.Components
             }
             else
             {
-                if (_ready_timer.IsRunning)
+                if (_ready_timer.Elapsed != TimeSpan.Zero)
                 {
                     _ready_timer.Reset();
                 }
@@ -544,7 +548,7 @@ namespace LiveSplit.UI.Components
             float borderWidth = width - BorderThickness;
             float borderHeight = BorderThickness;
 
-            if (_settings.ShowStatusMessage && !string.IsNullOrEmpty(statusMessage))
+            if (_settings.ShowStatusMessage && !string.IsNullOrEmpty(statusMessage) && (DateTime.Now - _first_draw_time) > ShowStatusMessageDelay)
             {
                 float textWidth = borderWidth - BorderThickness - 2 * TextPadding;
 
@@ -561,12 +565,7 @@ namespace LiveSplit.UI.Components
 
             // Changing the height of this component will change the height of the whole timer form, which breaks people's ability
             // to set a size for their layout. So, if we're changing the height, save the size of the timer form to restore it next update.
-            float newHeight = borderHeight + BorderThickness + PaddingTop + PaddingBottom;
-            if (VerticalHeight != newHeight)
-            {
-                _desired_form_size = state.Form.Size;
-                VerticalHeight = newHeight;
-            }
+            VerticalHeight = borderHeight + BorderThickness + PaddingTop + PaddingBottom;
         }
     }
 }

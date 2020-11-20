@@ -240,7 +240,6 @@ namespace USB2SnesW
         public bool Connected()
         {
             bool live = ws.IsAlive;
-            Debug.WriteLine("ws Checking connected " + live);
             return live;
         }
         public void Disconnect()
