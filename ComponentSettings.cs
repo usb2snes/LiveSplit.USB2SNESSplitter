@@ -2,15 +2,17 @@
 using LiveSplit.Options;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using System.Xml;
 
 namespace LiveSplit.UI.Components
 {
-    public partial class ComponentSettings : UserControl
+    public partial class ComponentSettings : UserControl, INotifyPropertyChanged
     {
         private class AutosplitSelection
         {
@@ -22,25 +24,72 @@ namespace LiveSplit.UI.Components
             public string AutosplitName { get; set; }
         }
 
-        private const string SegmentNameElementName = "SegmentName";
-        private const string SplitElementName = "Split";
-        private const string SplitsElementName = "Splits";
+        private const string GamesElementName = "Games";
         private static readonly IEnumerable<string> _emptySplitChoices = new List<string> { string.Empty };
 
         private readonly LiveSplitState _state;
+        private string _currentGameName = null;
+        private string _currentCategoryName = null;
+        private Binding _configBinding = null;
         private string _previousConfigJson = null;
         private IEnumerable<string> _splitChoices = _emptySplitChoices;
         private List<string> _cachedSplits = null;
         private bool _settingsChanged = false;
+        private Dictionary<string, GameSettings> _gameSettingsMap = new Dictionary<string, GameSettings>();
         private Dictionary<ISegment, AutosplitSelection> _segmentMap = new Dictionary<ISegment, AutosplitSelection>();
-        private Dictionary<string /*segment name*/, string /*autosplit name*/> _segmentNameMap = new Dictionary<string, string>();
+        private string _device = string.Empty;
+        private bool _resetSNES = false;
+        private bool _showStatusMessage = true;
 
-        public string Device { get; set; } = string.Empty;
-        public string ConfigFile { get; set; } = string.Empty;
-        public bool ResetSNES { get; set; } = false;
-        public bool ShowStatusMessage { get; set; } = true;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Device
+        {
+            get => _device;
+            set => SetAndNotifyIfChanged(ref _device, value);
+        }
+
+        public bool ResetSNES
+        {
+            get => _resetSNES;
+            set => SetAndNotifyIfChanged(ref _resetSNES, value);
+        }
+
+        public bool ShowStatusMessage
+        {
+            get => _showStatusMessage;
+            set => SetAndNotifyIfChanged(ref _showStatusMessage, value);
+        }
 
         internal Game Config { get; private set; }
+
+        private GameSettings CurrentGameSettings
+        {
+            get
+            {
+                if (!_gameSettingsMap.TryGetValue(_currentGameName, out GameSettings gameSettings))
+                {
+                    gameSettings = new GameSettings(_currentGameName, string.Empty);
+                    _gameSettingsMap[_currentGameName] = gameSettings;
+                }
+
+                return gameSettings;
+            }
+        }
+
+        private CategorySettings CurrentCategorySettings
+        {
+            get
+            {
+                if (!CurrentGameSettings.CategoryMap.TryGetValue(_currentCategoryName, out CategorySettings categorySettings))
+                {
+                    categorySettings = new CategorySettings(_currentCategoryName);
+                    CurrentGameSettings.CategoryMap[_currentCategoryName] = categorySettings;
+                }
+
+                return categorySettings;
+            }
+        }
 
         private IEnumerable<string> SplitChoices
         {
@@ -63,6 +112,8 @@ namespace LiveSplit.UI.Components
                             comboBox.SelectedItem = string.Empty;
                         }
                     }
+
+                    RefreshSplitSelections();
                 }
             }
         }
@@ -70,13 +121,18 @@ namespace LiveSplit.UI.Components
         public ComponentSettings(LiveSplitState state)
         {
             _state = state;
+            _currentGameName = _state.Run.GameName;
+            _currentCategoryName = _state.Run.CategoryName;
+            _state.RunManuallyModified += OnRunModified;
 
             InitializeComponent();
 
             txtDevice.DataBindings.Add(nameof(TextBox.Text), this, nameof(Device), false, DataSourceUpdateMode.OnPropertyChanged);
-            txtConfigFile.DataBindings.Add(nameof(TextBox.Text), this, nameof(ConfigFile), false, DataSourceUpdateMode.OnPropertyChanged);
             chkReset.DataBindings.Add(nameof(CheckBox.Checked), this, nameof(ResetSNES), false, DataSourceUpdateMode.OnPropertyChanged);
             chkStatus.DataBindings.Add(nameof(CheckBox.Checked), this, nameof(ShowStatusMessage), false, DataSourceUpdateMode.OnPropertyChanged);
+
+            UpdateConfigBinding();
+            PopulateSplitsPanel();
 
             errorIcon.Image = SystemIcons.Error.ToBitmap();
         }
@@ -105,8 +161,8 @@ namespace LiveSplit.UI.Components
                     break;
             }
 
-            SetupSplitsPanel();
-            _state.RunManuallyModified += (sender, args) => SetupSplitsPanel();
+            UpdateConfigBinding();
+            RefreshSplitSelections();
         }
 
         public XmlNode GetSettings(XmlDocument document)
@@ -149,34 +205,87 @@ namespace LiveSplit.UI.Components
             return _cachedSplits;
         }
 
+        private static string GetLabelTextFromSegmentName(string segmentName)
+        {
+            return $"{segmentName}:";
+        }
+
+        private static string GetSegmentNameFromLabelText(string labelText)
+        {
+            return labelText.Substring(0, labelText.Length - 1);
+        }
+
+        private void OnRunModified(object sender, EventArgs e)
+        {
+            if (_state.Run.GameName != _currentGameName ||_state.Run.CategoryName != _currentCategoryName)
+            {
+                SaveCurrentRunToSettings();
+                _segmentMap.Clear();
+
+                _currentGameName = _state.Run.GameName;
+                _currentCategoryName = _state.Run.CategoryName;
+
+                UpdateConfigBinding();
+            }
+
+            PopulateSplitsPanel();
+        }
+
         private bool ReadConfig()
         {
+            string configJson;
             try
             {
-                var jsonStr = File.ReadAllText(ConfigFile);
-                if (jsonStr != _previousConfigJson)
-                {
-                    _settingsChanged = true;
-                    var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
-                    serializer.RegisterConverters(new[] { new ConfigFileJsonConverter() });
-                    Config = serializer.Deserialize<Game>(jsonStr);
-                    SplitChoices = _emptySplitChoices.Concat(Config.definitions.Select(split => split.name).OrderBy(name => name));
-                    _previousConfigJson = jsonStr;
-                }
+                configJson = File.ReadAllText(CurrentGameSettings.ConfigFile);
             }
             catch (Exception e)
             {
+                _previousConfigJson = string.Empty;
                 errorMessage.Text = "Could not read config file.\n" + e.Message;
                 return false;
             }
 
-            return true;
+            if (configJson != _previousConfigJson)
+            {
+                _previousConfigJson = configJson;
+                _settingsChanged = true;
+                try
+                {
+                    Config = Game.FromJSON(configJson);
+                    SplitChoices = _emptySplitChoices.Concat(Config.definitions.Select(split => split.name).OrderBy(name => name));
+                }
+                catch (Exception e)
+                {
+                    Config = null;
+                    errorMessage.Text = "Could not parse config file.\n" + e.Message;
+                    return false;
+                }
+            }
+
+            return Config != null;
         }
 
-        private void SetupSplitsPanel()
+        private void SaveCurrentRunToSettings()
         {
-            ReadConfig();
+            var splitMap = CurrentCategorySettings.SplitMap;
+            splitMap.Clear();
+            foreach (var entry in _segmentMap)
+            {
+                splitMap[entry.Key.Name] = entry.Value.AutosplitName;
+            }
+        }
 
+        private void SetAndNotifyIfChanged<T>(ref T backingField, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            if (!EqualityComparer<T>.Default.Equals(backingField, newValue))
+            {
+                backingField = newValue;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void PopulateSplitsPanel()
+        {
             bool segmentsChanged = false;
             if (_state.Run.Count == splitsPanel.RowCount)
             {
@@ -184,7 +293,7 @@ namespace LiveSplit.UI.Components
                 foreach (var segment in _state.Run)
                 {
                     var label = (Label)splitsPanel.GetControlFromPosition(0, row);
-                    if (label?.Text != segment.Name)
+                    if (label == null || GetSegmentNameFromLabelText(label.Text) != segment.Name)
                     {
                         segmentsChanged = true;
                         break;
@@ -215,7 +324,7 @@ namespace LiveSplit.UI.Components
                         Anchor = AnchorStyles.Left,
                         AutoSize = true,
                         Margin = new Padding(3),
-                        Text = $"{segment.Name}:",
+                        Text = GetLabelTextFromSegmentName(segment.Name),
                     };
 
                     // Add this segment to the map if it's not already there
@@ -228,20 +337,15 @@ namespace LiveSplit.UI.Components
                     if (string.IsNullOrEmpty(splitSelection.AutosplitName))
                     {
                         // This segment doesn't have an autosplit specified, so let's see if we can find a good default
-                        if (_segmentNameMap.TryGetValue(segment.Name, out string autosplitName))
+                        if (CurrentCategorySettings.SplitMap.TryGetValue(segment.Name, out string autosplitName))
                         {
                             // We found a match for this segment's name in our loaded layout settings
                             splitSelection.AutosplitName = autosplitName;
                         }
-                        else if (Config.definitions.Find(split => split.name == segment.Name) != null)
+                        else
                         {
-                            // We found an autosplit with the same name as this segment
-                            splitSelection.AutosplitName = segment.Name;
-                        }
-                        else if (Config.alias.TryGetValue(segment.Name, out autosplitName))
-                        {
-                            // We found an autosplit alias with the same name as this segment
-                            splitSelection.AutosplitName = autosplitName;
+                            // Check if the config has a split definition or alias whose name matches this segment
+                            splitSelection.AutosplitName = Config?.GetAutosplitNameFromSegmentName(segment.Name) ?? string.Empty;
                         }
                     }
 
@@ -265,6 +369,51 @@ namespace LiveSplit.UI.Components
                     ++rowIndex;
                 }
             }
+
+            RefreshSplitSelections();
+        }
+
+        private void RefreshSplitSelections()
+        {
+            for (int row = 0; row < splitsPanel.RowCount; ++row)
+            {
+                var comboBox = (ComboBox)splitsPanel.GetControlFromPosition(1, row);
+                if (string.IsNullOrEmpty((string)comboBox.SelectedItem))
+                {
+                    // This segment doesn't have an autosplit specified, so let's see if we can find a good default
+                    var label = (Label)splitsPanel.GetControlFromPosition(0, row);
+                    string segmentName = GetSegmentNameFromLabelText(label.Text);
+                    string newSelection;
+                    if (CurrentCategorySettings.SplitMap.TryGetValue(segmentName, out string autosplitName) && !string.IsNullOrEmpty(autosplitName))
+                    {
+                        // We found a match for this segment's name in our loaded layout settings
+                        newSelection = autosplitName;
+                    }
+                    else
+                    {
+                        // Check if the config has a split definition or alias whose name matches this segment
+                        newSelection = Config?.GetAutosplitNameFromSegmentName(segmentName) ?? string.Empty;
+                    }
+
+                    comboBox.SelectedItem = newSelection;
+                }
+            }
+        }
+
+        private void UpdateConfigBinding()
+        {
+            if (_configBinding?.DataSource != CurrentGameSettings)
+            {
+                if (_configBinding != null)
+                {
+                    txtConfigFile.DataBindings.Remove(_configBinding);
+                }
+
+                _configBinding = new Binding(nameof(TextBox.Text), CurrentGameSettings, nameof(GameSettings.ConfigFile), false, DataSourceUpdateMode.OnPropertyChanged);
+                txtConfigFile.DataBindings.Add(_configBinding);
+
+                ReadConfig();
+            }
         }
 
         private bool ValidateSettings()
@@ -283,7 +432,7 @@ namespace LiveSplit.UI.Components
 
             foreach (var segment in _state.Run)
             {
-                if (!Config.definitions.Any(split => split.name == _segmentMap[segment].AutosplitName))
+                if (!_segmentMap.TryGetValue(segment, out var autosplitSelection) || !Config.definitions.Any(split => split.name == autosplitSelection.AutosplitName))
                 {
                     errorMessage.Text = $"Invalid split selection for segment [{segment.Name}]";
                     return false;
@@ -297,34 +446,23 @@ namespace LiveSplit.UI.Components
         {
             return SettingsHelper.CreateSetting(document, parent, "Version", 3) ^
             SettingsHelper.CreateSetting(document, parent, nameof(Device), Device) ^
-            SettingsHelper.CreateSetting(document, parent, nameof(ConfigFile), ConfigFile) ^
             SettingsHelper.CreateSetting(document, parent, nameof(ResetSNES), ResetSNES) ^
             SettingsHelper.CreateSetting(document, parent, nameof(ShowStatusMessage), ShowStatusMessage) ^
-            CreateSplitSettingsNode(document, parent);
+            CreateGamesSettingsNode(document, parent);
         }
 
-        private int CreateSplitSettingsNode(XmlDocument document, XmlElement parent)
+        private int CreateGamesSettingsNode(XmlDocument document, XmlElement parent)
         {
-            var splitsElement = document?.CreateElement(SplitsElementName);
-            parent?.AppendChild(splitsElement);
+            SaveCurrentRunToSettings();
+
+            var gamesElement = document?.CreateElement(GamesElementName);
+            parent?.AppendChild(gamesElement);
 
             int result = 0;
             int count = 1;
-            foreach (ISegment segment in _state.Run)
+            foreach (var gameSettings in _gameSettingsMap.Values.Where(g => !g.IsEmpty))
             {
-                if (_segmentMap.TryGetValue(segment, out var splitSelection))
-                {
-                    var splitElement = document?.CreateElement(SplitElementName);
-                    splitsElement?.AppendChild(splitElement);
-
-                    result ^= count *
-                    (
-                        SettingsHelper.CreateSetting(document, splitElement, SegmentNameElementName, segment.Name) ^
-                        SettingsHelper.CreateSetting(document, splitElement, nameof(AutosplitSelection.AutosplitName), splitSelection.AutosplitName)
-                    );
-
-                    ++count;
-                }
+                result ^= count++ * gameSettings.ToXml(document, gamesElement);
             }
 
             return result;
@@ -333,9 +471,20 @@ namespace LiveSplit.UI.Components
         private void LoadSettings_1(XmlElement element)
         {
             Device = SettingsHelper.ParseString(element[nameof(Device)]);
-            ConfigFile = SettingsHelper.ParseString(element[nameof(ConfigFile)]);
             ResetSNES = SettingsHelper.ParseBool(element[nameof(ResetSNES)]);
             ShowStatusMessage = false;
+
+            // If loading an older version of the component that only stored a single config file, try to read the config to figure out which
+            // game it was for. If the config fails to open or parse, just ignore it.
+            string configFile = SettingsHelper.ParseString(element["ConfigFile"]);
+            try
+            {
+                Game config = Game.FromJSON(File.ReadAllText(configFile));
+                _gameSettingsMap[config.name] = new GameSettings(config.name, configFile);
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private void LoadSettings_2(XmlElement element)
@@ -348,12 +497,11 @@ namespace LiveSplit.UI.Components
         {
             LoadSettings_2(settingsElement);
 
-            _segmentNameMap.Clear();
-            foreach (var splitElement in settingsElement[SplitsElementName].ChildNodes.Cast<XmlElement>())
+            _gameSettingsMap.Clear();
+            foreach (var gameElement in settingsElement[GamesElementName].ChildNodes.Cast<XmlElement>())
             {
-                string segmentName = SettingsHelper.ParseString(splitElement[SegmentNameElementName]);
-                string autosplitName = SettingsHelper.ParseString(splitElement[nameof(AutosplitSelection.AutosplitName)]);
-                _segmentNameMap[segmentName] = autosplitName;
+                GameSettings gameSettings = GameSettings.FromXml(gameElement);
+                _gameSettingsMap[gameSettings.Name] = gameSettings;
             }
         }
 

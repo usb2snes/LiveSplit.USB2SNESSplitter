@@ -67,6 +67,8 @@
     <Compile Include="Config\Game.cs" />
     <Compile Include="Config\ConfigFileJsonConverter.cs" />
     <Compile Include="Config\Split.cs" />
+    <Compile Include="Settings\CategorySettings.cs" />
+    <Compile Include="Settings\GameSettings.cs" />
     <Compile Include="USB2SnesW.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="ComponentSettings.cs">
