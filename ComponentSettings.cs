@@ -334,7 +334,11 @@ namespace LiveSplit.UI.Components
                         _segmentMap[segment] = splitSelection;
                     }
 
-                    if (string.IsNullOrEmpty(splitSelection.AutosplitName))
+                    if (splitSelection.AutosplitName != segment.Name && Config?.definitions.Any(split => split.name == segment.Name) == true)
+                    {
+                        splitSelection.AutosplitName = segment.Name;
+                    }
+                    else if (string.IsNullOrEmpty(splitSelection.AutosplitName))
                     {
                         // This segment doesn't have an autosplit specified, so let's see if we can find a good default
                         if (CurrentCategorySettings.SplitMap.TryGetValue(segment.Name, out string autosplitName))
@@ -356,11 +360,19 @@ namespace LiveSplit.UI.Components
                         DropDownStyle = ComboBoxStyle.DropDownList,
                     };
 
+                    bool ShouldBeEnabled()
+                    {
+                        var selection = (string)comboBox.SelectedItem;
+                        return string.IsNullOrEmpty(selection) || selection != segment.Name;
+                    }
+
+                    comboBox.Enabled = ShouldBeEnabled();
                     comboBox.DataBindings.Add(nameof(ComboBox.SelectedItem), splitSelection, nameof(AutosplitSelection.AutosplitName), false, DataSourceUpdateMode.OnPropertyChanged);
                     comboBox.MouseWheel += (s, e) => ((HandledMouseEventArgs)e).Handled = true;
                     comboBox.SelectedValueChanged += (s, e) =>
                     {
                         comboBox.DataBindings[0].WriteValue();
+                        comboBox.Enabled = ShouldBeEnabled();
                         _settingsChanged = true;
                     };
 
