@@ -6,14 +6,6 @@
     "value": "0x1f",
     "type": "eq"
   },
-  "alias": {
-    "Ze Bombs": "Bombs",
-    "Kraid Slow Kill": "Varia Suit",
-    "Wave for the camera": "Wave Beam",
-    "Chozobuster": "Phantoon",
-    "Space Jump Sucks": "Space Jump",
-    "MB: My bad": "Mother Brain 3 Down (Escape Message)"
-  },
   "definitions": [
     {
       "name": "Morphing Ball",
