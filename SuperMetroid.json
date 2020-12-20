@@ -3,171 +3,2479 @@
   "autostart": {
     "active": "1",
     "address": "0x0998",
-    "value": "0x1f",
+    "value": "0x1F",
     "type": "eq"
+  },
+  "alias": {
+    "G4": "Statues Room",
+    "Ship": "Zebes Escape"
   },
   "definitions": [
     {
-      "name": "Morphing Ball",
-      "address": "0xd873",
-      "value": "0x04",
-      "type": "bit"
+      "name": "Landing Site",
+      "address": "0x079B",
+      "value": "0x91F8",
+      "type": "weq"
     },
     {
-      "name": "Bombs",
-      "address": "0xd870",
-      "value": "0x80",
-      "type": "bit"
+      "name": "Gauntlet Entrance",
+      "address": "0x079B",
+      "value": "0x92B3",
+      "type": "weq"
     },
     {
-      "name": "Charge Beam",
-      "address": "0xd872",
-      "value": "0x80",
-      "type": "bit"
+      "name": "Parlor and Alcatraz",
+      "address": "0x079B",
+      "value": "0x92FD",
+      "type": "weq"
     },
     {
-      "name": "Varia Suit",
-      "address": "0xd876",
-      "value": "0x01",
-      "type": "bit"
+      "name": "Crateria Power Bomb Room",
+      "address": "0x079B",
+      "value": "0x93AA",
+      "type": "weq"
     },
     {
-      "name": "Hi Jump",
-      "address": "0xd876",
+      "name": "Crateria Save Room",
+      "address": "0x079B",
+      "value": "0x93D5",
+      "type": "weq"
+    },
+    {
+      "name": "West Ocean",
+      "address": "0x079B",
+      "value": "0x93FE",
+      "type": "weq"
+    },
+    {
+      "name": "Bowling Alley Path",
+      "address": "0x079B",
+      "value": "0x9461",
+      "type": "weq"
+    },
+    {
+      "name": "Crateria Kihunter Room",
+      "address": "0x079B",
+      "value": "0x948C",
+      "type": "weq"
+    },
+    {
+      "name": "Forgotten Highway Elevator",
+      "address": "0x079B",
+      "value": "0x94CC",
+      "type": "weq"
+    },
+    {
+      "name": "East Ocean",
+      "address": "0x079B",
+      "value": "0x94FD",
+      "type": "weq"
+    },
+    {
+      "name": "Forgotten Highway Kago Room",
+      "address": "0x079B",
+      "value": "0x9552",
+      "type": "weq"
+    },
+    {
+      "name": "Crab Maze",
+      "address": "0x079B",
+      "value": "0x957D",
+      "type": "weq"
+    },
+    {
+      "name": "Forgotten Highway Elbow",
+      "address": "0x079B",
+      "value": "0x95A8",
+      "type": "weq"
+    },
+    {
+      "name": "Crateria Tube",
+      "address": "0x079B",
+      "value": "0x95D4",
+      "type": "weq"
+    },
+    {
+      "name": "The Moat",
+      "address": "0x079B",
+      "value": "0x95FF",
+      "type": "weq"
+    },
+    {
+      "name": "Red Brinstar Elevator Room",
+      "address": "0x079B",
+      "value": "0x962A",
+      "type": "weq"
+    },
+    {
+      "name": "Gauntlet Energy Tank Room",
+      "address": "0x079B",
+      "value": "0x965B",
+      "type": "weq"
+    },
+    {
+      "name": "West Ocean Bridge",
+      "address": "0x079B",
+      "value": "0x968F",
+      "type": "weq"
+    },
+    {
+      "name": "Climb",
+      "address": "0x079B",
+      "value": "0x96BA",
+      "type": "weq"
+    },
+    {
+      "name": "Pit Room",
+      "address": "0x079B",
+      "value": "0x975C",
+      "type": "weq"
+    },
+    {
+      "name": "Blue Brinstar Elevator Room",
+      "address": "0x079B",
+      "value": "0x97B5",
+      "type": "weq"
+    },
+    {
+      "name": "Bomb Torizo Room",
+      "address": "0x079B",
+      "value": "0x9804",
+      "type": "weq"
+    },
+    {
+      "name": "Flyway",
+      "address": "0x079B",
+      "value": "0x9879",
+      "type": "weq"
+    },
+    {
+      "name": "Pre-Map Flyway",
+      "address": "0x079B",
+      "value": "0x98E2",
+      "type": "weq"
+    },
+    {
+      "name": "Terminator Room",
+      "address": "0x079B",
+      "value": "0x990D",
+      "type": "weq"
+    },
+    {
+      "name": "Green Brinstar Elevator Room",
+      "address": "0x079B",
+      "value": "0x9938",
+      "type": "weq"
+    },
+    {
+      "name": "Lower Mushrooms",
+      "address": "0x079B",
+      "value": "0x9969",
+      "type": "weq"
+    },
+    {
+      "name": "Crateria Map Room",
+      "address": "0x079B",
+      "value": "0x9994",
+      "type": "weq"
+    },
+    {
+      "name": "Green Pirates Shaft",
+      "address": "0x079B",
+      "value": "0x99BD",
+      "type": "weq"
+    },
+    {
+      "name": "Crateria Super Room",
+      "address": "0x079B",
+      "value": "0x99F9",
+      "type": "weq"
+    },
+    {
+      "name": "Final Missile Bombway",
+      "address": "0x079B",
+      "value": "0x9A44",
+      "type": "weq"
+    },
+    {
+      "name": "The Final Missile",
+      "address": "0x079B",
+      "value": "0x9A90",
+      "type": "weq"
+    },
+    {
+      "name": "Green Brinstar Main Shaft",
+      "address": "0x079B",
+      "value": "0x9AD9",
+      "type": "weq"
+    },
+    {
+      "name": "Spore Spawn Super Room",
+      "address": "0x079B",
+      "value": "0x9B5B",
+      "type": "weq"
+    },
+    {
+      "name": "Brinstar Pre-Map Room",
+      "address": "0x079B",
+      "value": "0x9B9D",
+      "type": "weq"
+    },
+    {
+      "name": "Early Supers Room",
+      "address": "0x079B",
+      "value": "0x9BC8",
+      "type": "weq"
+    },
+    {
+      "name": "Brinstar Reserve Tank Room",
+      "address": "0x079B",
+      "value": "0x9C07",
+      "type": "weq"
+    },
+    {
+      "name": "Brinstar Map Room",
+      "address": "0x079B",
+      "value": "0x9C35",
+      "type": "weq"
+    },
+    {
+      "name": "Green Brinstar Fireflea Room",
+      "address": "0x079B",
+      "value": "0x9C5E",
+      "type": "weq"
+    },
+    {
+      "name": "Green Brinstar Missile Station",
+      "address": "0x079B",
+      "value": "0x9C89",
+      "type": "weq"
+    },
+    {
+      "name": "Dachora Room",
+      "address": "0x079B",
+      "value": "0x9CB3",
+      "type": "weq"
+    },
+    {
+      "name": "Big Pink",
+      "address": "0x079B",
+      "value": "0x9D19",
+      "type": "weq"
+    },
+    {
+      "name": "Spore Spawn Kihunter Room",
+      "address": "0x079B",
+      "value": "0x9D9C",
+      "type": "weq"
+    },
+    {
+      "name": "Spore Spawn Room",
+      "address": "0x079B",
+      "value": "0x9DC7",
+      "type": "weq"
+    },
+    {
+      "name": "Pink Brinstar Power Bomb Room",
+      "address": "0x079B",
+      "value": "0x9E11",
+      "type": "weq"
+    },
+    {
+      "name": "Green Hill Zone",
+      "address": "0x079B",
+      "value": "0x9E52",
+      "type": "weq"
+    },
+    {
+      "name": "Morph Ball Room",
+      "address": "0x079B",
+      "value": "0x9E9F",
+      "type": "weq"
+    },
+    {
+      "name": "Construction Zone",
+      "address": "0x079B",
+      "value": "0x9F11",
+      "type": "weq"
+    },
+    {
+      "name": "Blue Brinstar Energy Tank Room",
+      "address": "0x079B",
+      "value": "0x9F64",
+      "type": "weq"
+    },
+    {
+      "name": "Noob Bridge",
+      "address": "0x079B",
+      "value": "0x9FBA",
+      "type": "weq"
+    },
+    {
+      "name": "Green Brinstar Beetom Room",
+      "address": "0x079B",
+      "value": "0x9FE5",
+      "type": "weq"
+    },
+    {
+      "name": "Etecoon Energy Tank Room",
+      "address": "0x079B",
+      "value": "0xA011",
+      "type": "weq"
+    },
+    {
+      "name": "Etecoon Super Room",
+      "address": "0x079B",
+      "value": "0xA051",
+      "type": "weq"
+    },
+    {
+      "name": "Dachora Energy Charge Station",
+      "address": "0x079B",
+      "value": "0xA07B",
+      "type": "weq"
+    },
+    {
+      "name": "Spore Spawn Farming Room",
+      "address": "0x079B",
+      "value": "0xA0A4",
+      "type": "weq"
+    },
+    {
+      "name": "Waterway Energy Tank Room",
+      "address": "0x079B",
+      "value": "0xA0D2",
+      "type": "weq"
+    },
+    {
+      "name": "First Missile Room",
+      "address": "0x079B",
+      "value": "0xA107",
+      "type": "weq"
+    },
+    {
+      "name": "Pink Brinstar Hopper Room",
+      "address": "0x079B",
+      "value": "0xA130",
+      "type": "weq"
+    },
+    {
+      "name": "Hopper Energy Tank Room",
+      "address": "0x079B",
+      "value": "0xA15B",
+      "type": "weq"
+    },
+    {
+      "name": "Big Pink Save Room",
+      "address": "0x079B",
+      "value": "0xA184",
+      "type": "weq"
+    },
+    {
+      "name": "Blue Brinstar Boulder Room",
+      "address": "0x079B",
+      "value": "0xA1AD",
+      "type": "weq"
+    },
+    {
+      "name": "Billy Mays Room",
+      "address": "0x079B",
+      "value": "0xA1D8",
+      "type": "weq"
+    },
+    {
+      "name": "Green Brinstar Save Room",
+      "address": "0x079B",
+      "value": "0xA201",
+      "type": "weq"
+    },
+    {
+      "name": "Etecoon Save Room",
+      "address": "0x079B",
+      "value": "0xA22A",
+      "type": "weq"
+    },
+    {
+      "name": "Red Tower",
+      "address": "0x079B",
+      "value": "0xA253",
+      "type": "weq"
+    },
+    {
+      "name": "Red Brinstar Fireflea Room",
+      "address": "0x079B",
+      "value": "0xA293",
+      "type": "weq"
+    },
+    {
+      "name": "X-Ray Scope Room",
+      "address": "0x079B",
+      "value": "0xA2CE",
+      "type": "weq"
+    },
+    {
+      "name": "Hellway",
+      "address": "0x079B",
+      "value": "0xA2F7",
+      "type": "weq"
+    },
+    {
+      "name": "Caterpillar Room",
+      "address": "0x079B",
+      "value": "0xA322",
+      "type": "weq"
+    },
+    {
+      "name": "Beta Power Bomb Room",
+      "address": "0x079B",
+      "value": "0xA37C",
+      "type": "weq"
+    },
+    {
+      "name": "Alpha Power Bomb Room",
+      "address": "0x079B",
+      "value": "0xA3AE",
+      "type": "weq"
+    },
+    {
+      "name": "Bat Room",
+      "address": "0x079B",
+      "value": "0xA3DD",
+      "type": "weq"
+    },
+    {
+      "name": "Below Spazer",
+      "address": "0x079B",
+      "value": "0xA408",
+      "type": "weq"
+    },
+    {
+      "name": "Spazer Room",
+      "address": "0x079B",
+      "value": "0xA447",
+      "type": "weq"
+    },
+    {
+      "name": "Warehouse Zeela Room",
+      "address": "0x079B",
+      "value": "0xA471",
+      "type": "weq"
+    },
+    {
+      "name": "Warehouse Energy Tank Room",
+      "address": "0x079B",
+      "value": "0xA4B1",
+      "type": "weq"
+    },
+    {
+      "name": "Warehouse Kihunter Room",
+      "address": "0x079B",
+      "value": "0xA4DA",
+      "type": "weq"
+    },
+    {
+      "name": "Baby Kraid Room",
+      "address": "0x079B",
+      "value": "0xA521",
+      "type": "weq"
+    },
+    {
+      "name": "Kraid Eye Door Room",
+      "address": "0x079B",
+      "value": "0xA56B",
+      "type": "weq"
+    },
+    {
+      "name": "Kraid Room",
+      "address": "0x079B",
+      "value": "0xA59F",
+      "type": "weq"
+    },
+    {
+      "name": "Statues Hallway",
+      "address": "0x079B",
+      "value": "0xA5ED",
+      "type": "weq"
+    },
+    {
+      "name": "Sloaters Refill",
+      "address": "0x079B",
+      "value": "0xA618",
+      "type": "weq"
+    },
+    {
+      "name": "Kraid Recharge Stations",
+      "address": "0x079B",
+      "value": "0xA641",
+      "type": "weq"
+    },
+    {
+      "name": "Statues Room",
+      "address": "0x079B",
+      "value": "0xA66A",
+      "type": "weq"
+    },
+    {
+      "name": "Warehouse Entrance",
+      "address": "0x079B",
+      "value": "0xA6A1",
+      "type": "weq"
+    },
+    {
+      "name": "Varia Suit Room",
+      "address": "0x079B",
+      "value": "0xA6E2",
+      "type": "weq"
+    },
+    {
+      "name": "Warehouse Save Room",
+      "address": "0x079B",
+      "value": "0xA70B",
+      "type": "weq"
+    },
+    {
+      "name": "Red Brinstar Save Room",
+      "address": "0x079B",
+      "value": "0xA734",
+      "type": "weq"
+    },
+    {
+      "name": "Ice Beam Acid Room",
+      "address": "0x079B",
+      "value": "0xA75D",
+      "type": "weq"
+    },
+    {
+      "name": "Cathedral",
+      "address": "0x079B",
+      "value": "0xA788",
+      "type": "weq"
+    },
+    {
+      "name": "Cathedral Entrance",
+      "address": "0x079B",
+      "value": "0xA7B3",
+      "type": "weq"
+    },
+    {
+      "name": "Business Center",
+      "address": "0x079B",
+      "value": "0xA7DE",
+      "type": "weq"
+    },
+    {
+      "name": "Ice Beam Gate Room",
+      "address": "0x079B",
+      "value": "0xA815",
+      "type": "weq"
+    },
+    {
+      "name": "Ice Beam Tutorial Room",
+      "address": "0x079B",
+      "value": "0xA865",
+      "type": "weq"
+    },
+    {
+      "name": "Ice Beam Room",
+      "address": "0x079B",
+      "value": "0xA890",
+      "type": "weq"
+    },
+    {
+      "name": "Ice Beam Snake Room",
+      "address": "0x079B",
+      "value": "0xA8B9",
+      "type": "weq"
+    },
+    {
+      "name": "Crumble Shaft",
+      "address": "0x079B",
+      "value": "0xA8F8",
+      "type": "weq"
+    },
+    {
+      "name": "Crocomire Speedway",
+      "address": "0x079B",
+      "value": "0xA923",
+      "type": "weq"
+    },
+    {
+      "name": "Crocomire's Room",
+      "address": "0x079B",
+      "value": "0xA98D",
+      "type": "weq"
+    },
+    {
+      "name": "Hi Jump Boots Room",
+      "address": "0x079B",
+      "value": "0xA9E5",
+      "type": "weq"
+    },
+    {
+      "name": "Crocomire Escape",
+      "address": "0x079B",
+      "value": "0xAA0E",
+      "type": "weq"
+    },
+    {
+      "name": "Hi Jump Energy Tank Room",
+      "address": "0x079B",
+      "value": "0xAA41",
+      "type": "weq"
+    },
+    {
+      "name": "Post Crocomire Farming Room",
+      "address": "0x079B",
+      "value": "0xAA82",
+      "type": "weq"
+    },
+    {
+      "name": "Post Crocomire Save Room",
+      "address": "0x079B",
+      "value": "0xAAB5",
+      "type": "weq"
+    },
+    {
+      "name": "Post Crocomire Power Bomb Room",
+      "address": "0x079B",
+      "value": "0xAADE",
+      "type": "weq"
+    },
+    {
+      "name": "Post Crocomire Shaft",
+      "address": "0x079B",
+      "value": "0xAB07",
+      "type": "weq"
+    },
+    {
+      "name": "Post Crocomire Missile Room",
+      "address": "0x079B",
+      "value": "0xAB3B",
+      "type": "weq"
+    },
+    {
+      "name": "Grapple Tutorial Room 3",
+      "address": "0x079B",
+      "value": "0xAB64",
+      "type": "weq"
+    },
+    {
+      "name": "Post Crocomire Jump Room",
+      "address": "0x079B",
+      "value": "0xAB8F",
+      "type": "weq"
+    },
+    {
+      "name": "Grapple Tutorial Room 2",
+      "address": "0x079B",
+      "value": "0xABD2",
+      "type": "weq"
+    },
+    {
+      "name": "Grapple Tutorial Room 1",
+      "address": "0x079B",
+      "value": "0xAC00",
+      "type": "weq"
+    },
+    {
+      "name": "Grapple Beam Room",
+      "address": "0x079B",
+      "value": "0xAC2B",
+      "type": "weq"
+    },
+    {
+      "name": "Norfair Reserve Tank Room",
+      "address": "0x079B",
+      "value": "0xAC5A",
+      "type": "weq"
+    },
+    {
+      "name": "Green Bubbles Missile Room",
+      "address": "0x079B",
+      "value": "0xAC83",
+      "type": "weq"
+    },
+    {
+      "name": "Bubble Mountain",
+      "address": "0x079B",
+      "value": "0xACB3",
+      "type": "weq"
+    },
+    {
+      "name": "Speed Booster Hall",
+      "address": "0x079B",
+      "value": "0xACF0",
+      "type": "weq"
+    },
+    {
+      "name": "Speed Booster Room",
+      "address": "0x079B",
+      "value": "0xAD1B",
+      "type": "weq"
+    },
+    {
+      "name": "Single Chamber",
+      "address": "0x079B",
+      "value": "0xAD5E",
+      "type": "weq"
+    },
+    {
+      "name": "Double Chamber",
+      "address": "0x079B",
+      "value": "0xADAD",
+      "type": "weq"
+    },
+    {
+      "name": "Wave Beam Room",
+      "address": "0x079B",
+      "value": "0xADDE",
+      "type": "weq"
+    },
+    {
+      "name": "Spiky Platforms Tunnel",
+      "address": "0x079B",
+      "value": "0xAE07",
+      "type": "weq"
+    },
+    {
+      "name": "Volcano Room",
+      "address": "0x079B",
+      "value": "0xAE32",
+      "type": "weq"
+    },
+    {
+      "name": "Kronic Boost Room",
+      "address": "0x079B",
+      "value": "0xAE74",
+      "type": "weq"
+    },
+    {
+      "name": "Magdollite Tunnel",
+      "address": "0x079B",
+      "value": "0xAEB4",
+      "type": "weq"
+    },
+    {
+      "name": "Purple Shaft",
+      "address": "0x079B",
+      "value": "0xAEDF",
+      "type": "weq"
+    },
+    {
+      "name": "Lava Dive Room",
+      "address": "0x079B",
+      "value": "0xAF14",
+      "type": "weq"
+    },
+    {
+      "name": "Lower Norfair Elevator",
+      "address": "0x079B",
+      "value": "0xAF3F",
+      "type": "weq"
+    },
+    {
+      "name": "Entering Lower Norfair Elevator",
+      "address": "0x079B",
+      "value": "0xAF3F",
+      "type": "weq",
+      "more": [
+        {
+          "address": "0x0E18",
+          "value": "0x01",
+          "type": "eq"
+        }
+      ]
+    },
+    {
+      "name": "Upper Norfair Farming Room",
+      "address": "0x079B",
+      "value": "0xAF72",
+      "type": "weq"
+    },
+    {
+      "name": "Rising Tide",
+      "address": "0x079B",
+      "value": "0xAFA3",
+      "type": "weq"
+    },
+    {
+      "name": "Acid Snakes Tunnel",
+      "address": "0x079B",
+      "value": "0xAFCE",
+      "type": "weq"
+    },
+    {
+      "name": "Spiky Acid Snakes Tunnel",
+      "address": "0x079B",
+      "value": "0xAFFB",
+      "type": "weq"
+    },
+    {
+      "name": "Nutella Refill",
+      "address": "0x079B",
+      "value": "0xB026",
+      "type": "weq"
+    },
+    {
+      "name": "Purple Farming Room",
+      "address": "0x079B",
+      "value": "0xB051",
+      "type": "weq"
+    },
+    {
+      "name": "Bat Cave",
+      "address": "0x079B",
+      "value": "0xB07A",
+      "type": "weq"
+    },
+    {
+      "name": "Norfair Map Room",
+      "address": "0x079B",
+      "value": "0xB0B4",
+      "type": "weq"
+    },
+    {
+      "name": "Bubble Mountain Save Room",
+      "address": "0x079B",
+      "value": "0xB0DD",
+      "type": "weq"
+    },
+    {
+      "name": "Frog Speedway",
+      "address": "0x079B",
+      "value": "0xB106",
+      "type": "weq"
+    },
+    {
+      "name": "Red Pirate Shaft",
+      "address": "0x079B",
+      "value": "0xB139",
+      "type": "weq"
+    },
+    {
+      "name": "Frog Savestation",
+      "address": "0x079B",
+      "value": "0xB167",
+      "type": "weq"
+    },
+    {
+      "name": "Crocomire Save Room",
+      "address": "0x079B",
+      "value": "0xB192",
+      "type": "weq"
+    },
+    {
+      "name": "Lower Norfair Elevator Save Room",
+      "address": "0x079B",
+      "value": "0xB1BB",
+      "type": "weq"
+    },
+    {
+      "name": "Acid Statue Room",
+      "address": "0x079B",
+      "value": "0xB1E5",
+      "type": "weq"
+    },
+    {
+      "name": "Main Hall",
+      "address": "0x079B",
+      "value": "0xB236",
+      "type": "weq"
+    },
+    {
+      "name": "Golden Torizo's Room",
+      "address": "0x079B",
+      "value": "0xB283",
+      "type": "weq"
+    },
+    {
+      "name": "Fast Ripper Room",
+      "address": "0x079B",
+      "value": "0xB2DA",
+      "type": "weq"
+    },
+    {
+      "name": "Golden Torizo Energy Recharge",
+      "address": "0x079B",
+      "value": "0xB305",
+      "type": "weq"
+    },
+    {
+      "name": "Ridley's Room",
+      "address": "0x079B",
+      "value": "0xB32E",
+      "type": "weq"
+    },
+    {
+      "name": "Lower Norfair Farming Room",
+      "address": "0x079B",
+      "value": "0xB37A",
+      "type": "weq"
+    },
+    {
+      "name": "Fast Pillars Setup Room",
+      "address": "0x079B",
+      "value": "0xB3A5",
+      "type": "weq"
+    },
+    {
+      "name": "Unused Crocomire Room",
+      "address": "0x079B",
+      "value": "0xB3E1",
+      "type": "weq"
+    },
+    {
+      "name": "Mickey Mouse Room",
+      "address": "0x079B",
+      "value": "0xB40A",
+      "type": "weq"
+    },
+    {
+      "name": "Pillar Room",
+      "address": "0x079B",
+      "value": "0xB457",
+      "type": "weq"
+    },
+    {
+      "name": "Plowerhouse Room",
+      "address": "0x079B",
+      "value": "0xB482",
+      "type": "weq"
+    },
+    {
+      "name": "The Worst Room In The Game",
+      "address": "0x079B",
+      "value": "0xB4AD",
+      "type": "weq"
+    },
+    {
+      "name": "Amphitheatre",
+      "address": "0x079B",
+      "value": "0xB4E5",
+      "type": "weq"
+    },
+    {
+      "name": "Lower Norfair Spring Ball Maze Room",
+      "address": "0x079B",
+      "value": "0xB510",
+      "type": "weq"
+    },
+    {
+      "name": "Lower Norfair Escape Power Bomb Room",
+      "address": "0x079B",
+      "value": "0xB55A",
+      "type": "weq"
+    },
+    {
+      "name": "Red Kihunter Shaft",
+      "address": "0x079B",
+      "value": "0xB585",
+      "type": "weq"
+    },
+    {
+      "name": "Wasteland",
+      "address": "0x079B",
+      "value": "0xB5D5",
+      "type": "weq"
+    },
+    {
+      "name": "Metal Pirates Room",
+      "address": "0x079B",
+      "value": "0xB62B",
+      "type": "weq"
+    },
+    {
+      "name": "Three Musketeers' Room",
+      "address": "0x079B",
+      "value": "0xB656",
+      "type": "weq"
+    },
+    {
+      "name": "Ridley Tank Room",
+      "address": "0x079B",
+      "value": "0xB698",
+      "type": "weq"
+    },
+    {
+      "name": "Screw Attack Room",
+      "address": "0x079B",
+      "value": "0xB6C1",
+      "type": "weq"
+    },
+    {
+      "name": "Lower Norfair Fireflea Room",
+      "address": "0x079B",
+      "value": "0xB6EE",
+      "type": "weq"
+    },
+    {
+      "name": "Red Kihunter Shaft Save Room",
+      "address": "0x079B",
+      "value": "0xB741",
+      "type": "weq"
+    },
+    {
+      "name": "Bowling Alley",
+      "address": "0x079B",
+      "value": "0xC98E",
+      "type": "weq"
+    },
+    {
+      "name": "Wrecked Ship Entrance",
+      "address": "0x079B",
+      "value": "0xCA08",
+      "type": "weq"
+    },
+    {
+      "name": "Attic",
+      "address": "0x079B",
+      "value": "0xCA52",
+      "type": "weq"
+    },
+    {
+      "name": "Assembly Line",
+      "address": "0x079B",
+      "value": "0xCAAE",
+      "type": "weq"
+    },
+    {
+      "name": "Wrecked Ship Main Shaft",
+      "address": "0x079B",
+      "value": "0xCAF6",
+      "type": "weq"
+    },
+    {
+      "name": "Spiky Death Room",
+      "address": "0x079B",
+      "value": "0xCB8B",
+      "type": "weq"
+    },
+    {
+      "name": "Electric Death Room",
+      "address": "0x079B",
+      "value": "0xCBD5",
+      "type": "weq"
+    },
+    {
+      "name": "Wrecked Ship Energy Tank Room",
+      "address": "0x079B",
+      "value": "0xCC27",
+      "type": "weq"
+    },
+    {
+      "name": "Basement",
+      "address": "0x079B",
+      "value": "0xCC6F",
+      "type": "weq"
+    },
+    {
+      "name": "Wrecked Ship Map Room",
+      "address": "0x079B",
+      "value": "0xCCCB",
+      "type": "weq"
+    },
+    {
+      "name": "Phantoon's Room",
+      "address": "0x079B",
+      "value": "0xCD13",
+      "type": "weq"
+    },
+    {
+      "name": "Sponge Bath",
+      "address": "0x079B",
+      "value": "0xCD5C",
+      "type": "weq"
+    },
+    {
+      "name": "Wrecked Ship West Super Room",
+      "address": "0x079B",
+      "value": "0xCDA8",
+      "type": "weq"
+    },
+    {
+      "name": "Wrecked Ship East Super Room",
+      "address": "0x079B",
+      "value": "0xCDF1",
+      "type": "weq"
+    },
+    {
+      "name": "Gravity Suit Room",
+      "address": "0x079B",
+      "value": "0xCE40",
+      "type": "weq"
+    },
+    {
+      "name": "Wrecked Ship Save Room",
+      "address": "0x079B",
+      "value": "0xCE8A",
+      "type": "weq"
+    },
+    {
+      "name": "Glass Tunnel Save Room",
+      "address": "0x079B",
+      "value": "0xCED2",
+      "type": "weq"
+    },
+    {
+      "name": "Glass Tunnel",
+      "address": "0x079B",
+      "value": "0xCEFB",
+      "type": "weq"
+    },
+    {
+      "name": "West Tunnel",
+      "address": "0x079B",
+      "value": "0xCF54",
+      "type": "weq"
+    },
+    {
+      "name": "East Tunnel",
+      "address": "0x079B",
+      "value": "0xCF80",
+      "type": "weq"
+    },
+    {
+      "name": "Main Street",
+      "address": "0x079B",
+      "value": "0xCFC9",
+      "type": "weq"
+    },
+    {
+      "name": "Fish Tank",
+      "address": "0x079B",
+      "value": "0xD017",
+      "type": "weq"
+    },
+    {
+      "name": "Mama Turtle Room",
+      "address": "0x079B",
+      "value": "0xD055",
+      "type": "weq"
+    },
+    {
+      "name": "Crab Tunnel",
+      "address": "0x079B",
+      "value": "0xD08A",
+      "type": "weq"
+    },
+    {
+      "name": "Mt. Everest",
+      "address": "0x079B",
+      "value": "0xD0B9",
+      "type": "weq"
+    },
+    {
+      "name": "Red Fish Room",
+      "address": "0x079B",
+      "value": "0xD104",
+      "type": "weq"
+    },
+    {
+      "name": "Watering Hole",
+      "address": "0x079B",
+      "value": "0xD13B",
+      "type": "weq"
+    },
+    {
+      "name": "Northwest Maridia Bug Room",
+      "address": "0x079B",
+      "value": "0xD16D",
+      "type": "weq"
+    },
+    {
+      "name": "Crab Shaft",
+      "address": "0x079B",
+      "value": "0xD1A3",
+      "type": "weq"
+    },
+    {
+      "name": "Pseudo Plasma Spark Room",
+      "address": "0x079B",
+      "value": "0xD1DD",
+      "type": "weq"
+    },
+    {
+      "name": "Crab Hole",
+      "address": "0x079B",
+      "value": "0xD21C",
+      "type": "weq"
+    },
+    {
+      "name": "West Sand Hall Tunnel",
+      "address": "0x079B",
+      "value": "0xD252",
+      "type": "weq"
+    },
+    {
+      "name": "Plasma Tutorial Room",
+      "address": "0x079B",
+      "value": "0xD27E",
+      "type": "weq"
+    },
+    {
+      "name": "Plasma Room",
+      "address": "0x079B",
+      "value": "0xD2AA",
+      "type": "weq"
+    },
+    {
+      "name": "Thread The Needle Room",
+      "address": "0x079B",
+      "value": "0xD2D9",
+      "type": "weq"
+    },
+    {
+      "name": "Maridia Elevator Room",
+      "address": "0x079B",
+      "value": "0xD30B",
+      "type": "weq"
+    },
+    {
+      "name": "Plasma Spark Room",
+      "address": "0x079B",
+      "value": "0xD340",
+      "type": "weq"
+    },
+    {
+      "name": "Plasma Climb",
+      "address": "0x079B",
+      "value": "0xD387",
+      "type": "weq"
+    },
+    {
+      "name": "Maridia Map Room",
+      "address": "0x079B",
+      "value": "0xD3B6",
+      "type": "weq"
+    },
+    {
+      "name": "Forgotten Highway Save Room",
+      "address": "0x079B",
+      "value": "0xD3DF",
+      "type": "weq"
+    },
+    {
+      "name": "Toilet Bowl",
+      "address": "0x079B",
+      "value": "0xD408",
+      "type": "weq"
+    },
+    {
+      "name": "Bug Sand Hole",
+      "address": "0x079B",
+      "value": "0xD433",
+      "type": "weq"
+    },
+    {
+      "name": "West Sand Hall",
+      "address": "0x079B",
+      "value": "0xD461",
+      "type": "weq"
+    },
+    {
+      "name": "Oasis",
+      "address": "0x079B",
+      "value": "0xD48E",
+      "type": "weq"
+    },
+    {
+      "name": "East Sand Hall",
+      "address": "0x079B",
+      "value": "0xD4C2",
+      "type": "weq"
+    },
+    {
+      "name": "West Sand Hole",
+      "address": "0x079B",
+      "value": "0xD4EF",
+      "type": "weq"
+    },
+    {
+      "name": "East Sand Hole",
+      "address": "0x079B",
+      "value": "0xD51E",
+      "type": "weq"
+    },
+    {
+      "name": "West Aqueduct Quicksand Room",
+      "address": "0x079B",
+      "value": "0xD54D",
+      "type": "weq"
+    },
+    {
+      "name": "East Aqueduct Quicksand Room",
+      "address": "0x079B",
+      "value": "0xD57A",
+      "type": "weq"
+    },
+    {
+      "name": "Aqueduct",
+      "address": "0x079B",
+      "value": "0xD5A7",
+      "type": "weq"
+    },
+    {
+      "name": "Butterfly Room",
+      "address": "0x079B",
+      "value": "0xD5EC",
+      "type": "weq"
+    },
+    {
+      "name": "Botwoon Hallway",
+      "address": "0x079B",
+      "value": "0xD617",
+      "type": "weq"
+    },
+    {
+      "name": "Pants Room",
+      "address": "0x079B",
+      "value": "0xD646",
+      "type": "weq"
+    },
+    {
+      "name": "East Pants Room",
+      "address": "0x079B",
+      "value": "0xD69A",
+      "type": "weq"
+    },
+    {
+      "name": "Spring Ball Room",
+      "address": "0x079B",
+      "value": "0xD6D0",
+      "type": "weq"
+    },
+    {
+      "name": "Below Botwoon Energy Tank",
+      "address": "0x079B",
+      "value": "0xD6FD",
+      "type": "weq"
+    },
+    {
+      "name": "Colosseum",
+      "address": "0x079B",
+      "value": "0xD72A",
+      "type": "weq"
+    },
+    {
+      "name": "Aqueduct Save Room",
+      "address": "0x079B",
+      "value": "0xD765",
+      "type": "weq"
+    },
+    {
+      "name": "The Precious Room",
+      "address": "0x079B",
+      "value": "0xD78F",
+      "type": "weq"
+    },
+    {
+      "name": "Botwoon Energy Tank Room",
+      "address": "0x079B",
+      "value": "0xD7E4",
+      "type": "weq"
+    },
+    {
+      "name": "Draygon Save Room",
+      "address": "0x079B",
+      "value": "0xD81A",
+      "type": "weq"
+    },
+    {
+      "name": "Maridia Missile Refill Room",
+      "address": "0x079B",
+      "value": "0xD845",
+      "type": "weq"
+    },
+    {
+      "name": "Plasma Beach Quicksand Room",
+      "address": "0x079B",
+      "value": "0xD86E",
+      "type": "weq"
+    },
+    {
+      "name": "Botwoon Quicksand Room",
+      "address": "0x079B",
+      "value": "0xD898",
+      "type": "weq"
+    },
+    {
+      "name": "Shaktool Room",
+      "address": "0x079B",
+      "value": "0xD8C5",
+      "type": "weq"
+    },
+    {
+      "name": "Halfie Climb Room",
+      "address": "0x079B",
+      "value": "0xD913",
+      "type": "weq"
+    },
+    {
+      "name": "Botwoon's Room",
+      "address": "0x079B",
+      "value": "0xD95E",
+      "type": "weq"
+    },
+    {
+      "name": "Space Jump Room",
+      "address": "0x079B",
+      "value": "0xD9AA",
+      "type": "weq"
+    },
+    {
+      "name": "Maridia Health Refill Room",
+      "address": "0x079B",
+      "value": "0xD9D4",
+      "type": "weq"
+    },
+    {
+      "name": "West Cactus Alley Room",
+      "address": "0x079B",
+      "value": "0xD9FE",
+      "type": "weq"
+    },
+    {
+      "name": "East Cactus Alley Room",
+      "address": "0x079B",
+      "value": "0xDA2B",
+      "type": "weq"
+    },
+    {
+      "name": "Draygon's Room",
+      "address": "0x079B",
+      "value": "0xDA60",
+      "type": "weq"
+    },
+    {
+      "name": "Tourian First Room",
+      "address": "0x079B",
+      "value": "0xDAAE",
+      "type": "weq"
+    },
+    {
+      "name": "Metroid Room 1",
+      "address": "0x079B",
+      "value": "0xDAE1",
+      "type": "weq"
+    },
+    {
+      "name": "Metroid Room 2",
+      "address": "0x079B",
+      "value": "0xDB31",
+      "type": "weq"
+    },
+    {
+      "name": "Metroid Room 3",
+      "address": "0x079B",
+      "value": "0xDB7D",
+      "type": "weq"
+    },
+    {
+      "name": "Metroid Room 4",
+      "address": "0x079B",
+      "value": "0xDBCD",
+      "type": "weq"
+    },
+    {
+      "name": "Blue Hopper Room",
+      "address": "0x079B",
+      "value": "0xDC19",
+      "type": "weq"
+    },
+    {
+      "name": "Dust Torizo Room",
+      "address": "0x079B",
+      "value": "0xDC65",
+      "type": "weq"
+    },
+    {
+      "name": "Big Boy Room",
+      "address": "0x079B",
+      "value": "0xDCB1",
+      "type": "weq"
+    },
+    {
+      "name": "Seaweed Room",
+      "address": "0x079B",
+      "value": "0xDCFF",
+      "type": "weq"
+    },
+    {
+      "name": "Tourian Recharge Room",
+      "address": "0x079B",
+      "value": "0xDD2E",
+      "type": "weq"
+    },
+    {
+      "name": "Mother Brain Room",
+      "address": "0x079B",
+      "value": "0xDD58",
+      "type": "weq"
+    },
+    {
+      "name": "Mother Brain 2",
+      "address": "0x079B",
+      "value": "0xDD58",
+      "type": "weq",
+      "more": [
+        {
+          "address": "0x0FCC",
+          "value": "0x7530",
+          "type": "wgt"
+        }
+      ]
+    },
+    {
+      "name": "Tourian Eye Door Room",
+      "address": "0x079B",
+      "value": "0xDDC4",
+      "type": "weq"
+    },
+    {
+      "name": "Rinka Shaft",
+      "address": "0x079B",
+      "value": "0xDDF3",
+      "type": "weq"
+    },
+    {
+      "name": "Lower Tourian Save Room",
+      "address": "0x079B",
+      "value": "0xDE23",
+      "type": "weq"
+    },
+    {
+      "name": "Tourian Escape Room 1",
+      "address": "0x079B",
+      "value": "0xDE4D",
+      "type": "weq"
+    },
+    {
+      "name": "Tourian Escape Room 2",
+      "address": "0x079B",
+      "value": "0xDE7A",
+      "type": "weq"
+    },
+    {
+      "name": "Tourian Escape Room 3",
+      "address": "0x079B",
+      "value": "0xDEA7",
+      "type": "weq"
+    },
+    {
+      "name": "Tourian Escape Room 4",
+      "address": "0x079B",
+      "value": "0xDEDE",
+      "type": "weq"
+    },
+    {
+      "name": "Upper Tourian Save Room",
+      "address": "0x079B",
+      "value": "0xDF1B",
+      "type": "weq"
+    },
+    {
+      "name": "Ceres Elevator Room",
+      "address": "0x079B",
+      "value": "0xDF45",
+      "type": "weq"
+    },
+    {
+      "name": "Falling Tile Room",
+      "address": "0x079B",
+      "value": "0xDF8D",
+      "type": "weq"
+    },
+    {
+      "name": "Magnet Stairs Room",
+      "address": "0x079B",
+      "value": "0xDFD7",
+      "type": "weq"
+    },
+    {
+      "name": "Dead Scientist Room",
+      "address": "0x079B",
+      "value": "0xE021",
+      "type": "weq"
+    },
+    {
+      "name": "58 Escape",
+      "address": "0x079B",
+      "value": "0xE06B",
+      "type": "weq"
+    },
+    {
+      "name": "Ceres Ridley's Room",
+      "address": "0x079B",
+      "value": "0xE0B5",
+      "type": "weq"
+    },
+    {
+      "name": "Debug Room",
+      "address": "0x079B",
+      "value": "0xE82C",
+      "type": "weq"
+    },
+    {
+      "name": "Ceres Escape",
+      "address": "0x0998",
       "value": "0x20",
-      "type": "bit"
+      "type": "eq"
     },
     {
-      "name": "Speed Booster",
-      "address": "0xd878",
-      "value": "0x04",
-      "type": "bit"
+      "name": "Credits",
+      "address": "0x0998",
+      "value": "0x27",
+      "type": "eq"
     },
     {
-      "name": "Wave Beam",
-      "address": "0xd878",
-      "value": "0x10",
-      "type": "bit"
-    },
-    {
-      "name": "Grappling Beam",
-      "address": "0xd877",
-      "value": "0x10",
-      "type": "bit"
-    },
-    {
-      "name": "Space Jump",
-      "address": "0xd883",
-      "value": "0x04",
-      "type": "bit"
-    },
-    {
-      "name": "Power Bombs (Red Tower)",
-      "address": "0xd875",
-      "value": "0x01",
-      "type": "bit"
-    },
-    {
-      "name": "Phantoon",
-      "address": "0xd82b",
-      "value": "0x01",
-      "type": "bit"
-    },
-    {
-      "name": "Gravity Suit",
-      "address": "0xd880",
+      "name": "Hyper Beam",
+      "address": "0x0A77",
       "value": "0x80",
       "type": "bit"
     },
     {
-      "name": "Power Bomb (Etecoons)",
-      "address": "0xd871",
-      "value": "0x20",
+      "name": "Zebes Escape",
+      "address": "0x0FB2",
+      "value": "0xAA4F",
+      "type": "weq"
+    },
+    {
+      "name": "Zebes Awake",
+      "address": "0xD820",
+      "value": "0x01",
       "type": "bit"
     },
     {
-      "name": "Maridia Glass Tube",
-      "address": "0xd821",
+      "name": "Mother Brain Glass Broken",
+      "address": "0xD820",
+      "value": "0x04",
+      "type": "bit"
+    },
+    {
+      "name": "Mother Brain 1",
+      "address": "0xD820",
+      "value": "0x04",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0x0FCC",
+          "value": "0x0000",
+          "type": "weq"
+        }
+      ]
+    },
+    {
+      "name": "Maridia Tube Broken",
+      "address": "0xD821",
       "value": "0x08",
       "type": "bit"
     },
     {
-      "name": "Botwoon",
-      "address": "0xd82c",
-      "value": "0x02",
+      "name": "Shaktool Done Digging",
+      "address": "0xD821",
+      "value": "0x20",
       "type": "bit"
     },
     {
-      "name": "Draygon",
-      "address": "0xd82c",
-      "value": "0x01",
+      "name": "Zebes Set Ablaze",
+      "address": "0xD821",
+      "value": "0x40",
       "type": "bit"
     },
     {
-      "name": "Plasma Beam",
-      "address": "0xd881",
+      "name": "Animals Saved",
+      "address": "0xD821",
       "value": "0x80",
       "type": "bit"
     },
     {
-      "name": "Ice Beam",
-      "address": "0xd876",
+      "name": "Metroid Rooms",
+      "address": "0xD822",
+      "value": "0x08",
+      "type": "bit"
+    },
+    {
+      "name": "Bomb Torizo",
+      "address": "0xD828",
       "value": "0x04",
       "type": "bit"
     },
     {
-      "name": "Golden Torizo",
-      "address": "0xd82a",
-      "value": "0x04",
+      "name": "Kraid",
+      "address": "0xD829",
+      "value": "0x01",
+      "type": "bit"
+    },
+    {
+      "name": "Spore Spawn",
+      "address": "0xD829",
+      "value": "0x02",
       "type": "bit"
     },
     {
       "name": "Ridley",
-      "address": "0xd82a",
+      "address": "0xD82A",
       "value": "0x01",
       "type": "bit"
     },
     {
-      "name": "Reserve Tank (Norfair)",
-      "address": "0xd877",
-      "value": "0x20",
-      "type": "bit"
-    },
-    {
-      "name": "X-Ray",
-      "address": "0x09a5",
-      "value": "0x80",
-      "type": "bit"
-    },
-    {
-      "name": "Golden 4",
-      "address": "0x079b",
-      "value": "0xa66a",
-      "type": "weq"
-    },
-    {
-      "name": "Metroid Rooms",
-      "address": "0xd822",
-      "value": "0x08",
-      "type": "bit"
-    },
-    {
-      "name": "Mother Brain 1 Down",
-      "address": "0xd820",
-      "value": "0x04",
-      "type": "bit"
-    },
-    {
-      "name": "Mother Brain 3 Down (Escape Message)",
-      "address": "0xd82d",
+      "name": "Crocomire",
+      "address": "0xD82A",
       "value": "0x02",
       "type": "bit"
     },
     {
-      "name": "Ship",
-      "address": "0x0fb2",
-      "value": "0xaa4f",
-      "type": "weq"
+      "name": "Golden Torizo",
+      "address": "0xD82A",
+      "value": "0x04",
+      "type": "bit"
+    },
+    {
+      "name": "Phantoon",
+      "address": "0xD82B",
+      "value": "0x01",
+      "type": "bit"
+    },
+    {
+      "name": "Draygon",
+      "address": "0xD82C",
+      "value": "0x01",
+      "type": "bit"
+    },
+    {
+      "name": "Botwoon",
+      "address": "0xD82C",
+      "value": "0x02",
+      "type": "bit"
+    },
+    {
+      "name": "Mother Brain 3",
+      "address": "0xD82D",
+      "value": "0x02",
+      "type": "bit"
+    },
+    {
+      "name": "Ceres Ridley",
+      "address": "0xD82E",
+      "value": "0x01",
+      "type": "bit"
+    },
+    {
+      "name": "Crateria PBs",
+      "address": "0xD870",
+      "value": "0x01",
+      "type": "bit"
+    },
+    {
+      "name": "Ocean Underwater Missiles",
+      "address": "0xD870",
+      "value": "0x02",
+      "type": "bit"
+    },
+    {
+      "name": "Ocean Sky Missiles",
+      "address": "0xD870",
+      "value": "0x04",
+      "type": "bit"
+    },
+    {
+      "name": "Ocean Land Missiles",
+      "address": "0xD870",
+      "value": "0x08",
+      "type": "bit"
+    },
+    {
+      "name": "Moat Missiles",
+      "address": "0xD870",
+      "value": "0x10",
+      "type": "bit"
+    },
+    {
+      "name": "Gauntlet Tank",
+      "address": "0xD870",
+      "type": "bit",
+      "value": "0x20"
+    },
+    {
+      "name": "Mother Brain Missiles",
+      "address": "0xD870",
+      "value": "0x40",
+      "type": "bit"
+    },
+    {
+      "name": "Bombs",
+      "address": "0xD870",
+      "type": "bit",
+      "value": "0x80"
+    },
+    {
+      "name": "Terminator Tank",
+      "address": "0xD871",
+      "value": "0x01",
+      "type": "bit"
+    },
+    {
+      "name": "Gauntlet Right Missiles",
+      "address": "0xD871",
+      "value": "0x02",
+      "type": "bit"
+    },
+    {
+      "name": "Gauntlet Left Missiles",
+      "address": "0xD871",
+      "value": "0x04",
+      "type": "bit"
+    },
+    {
+      "name": "Gauntlet Missiles",
+      "address": "0xD871",
+      "value": "0x02",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0xD871",
+          "value": "0x04",
+          "type": "bit"
+        }
+      ]
+    },
+    {
+      "name": "Crateria Supers",
+      "address": "0xD871",
+      "value": "0x08",
+      "type": "bit"
+    },
+    {
+      "address": "0xD871",
+      "name": "Final Missiles",
+      "value": "0x10",
+      "type": "bit"
+    },
+    {
+      "name": "Etacoon PBs",
+      "address": "0xD871",
+      "value": "0x20",
+      "type": "bit"
+    },
+    {
+      "name": "Spore Spawn Supers",
+      "address": "0xD871",
+      "value": "0x40",
+      "type": "bit"
+    },
+    {
+      "name": "Below Early Super Missiles",
+      "address": "0xD871",
+      "value": "0x80",
+      "type": "bit"
+    },
+    {
+      "name": "Early Supers",
+      "address": "0xD872",
+      "value": "0x01",
+      "type": "bit"
+    },
+    {
+      "name": "Brinstar Reserve Tank",
+      "address": "0xD872",
+      "value": "0x02",
+      "type": "bit"
+    },
+    {
+      "name": "Brinstar Reserve Missiles #2",
+      "address": "0xD872",
+      "value": "0x04",
+      "type": "bit"
+    },
+    {
+      "name": "Brinstar Reserve Missiles #1",
+      "address": "0xD872",
+      "value": "0x08",
+      "type": "bit"
+    },
+    {
+      "name": "Big Pink Top Missiles",
+      "address": "0xD872",
+      "value": "0x20",
+      "type": "bit"
+    },
+    {
+      "name": "Charge Beam Missiles",
+      "address": "0xD872",
+      "value": "0x40",
+      "type": "bit"
+    },
+    {
+      "name": "Charge Beam",
+      "address": "0xD872",
+      "value": "0x80",
+      "type": "bit"
+    },
+    {
+      "name": "Mission Impossible PBs",
+      "address": "0xD873",
+      "value": "0x01",
+      "type": "bit"
+    },
+    {
+      "name": "Green Hills Missiles",
+      "address": "0xD873",
+      "value": "0x02",
+      "type": "bit"
+    },
+    {
+      "name": "Morph Ball",
+      "address": "0xD873",
+      "value": "0x04",
+      "type": "bit"
+    },
+    {
+      "name": "Retro Brinstar PBs",
+      "address": "0xD873",
+      "value": "0x08",
+      "type": "bit"
+    },
+    {
+      "name": "Retro Brinstar Missiles",
+      "address": "0xD873",
+      "value": "0x10",
+      "type": "bit"
+    },
+    {
+      "name": "Retro Brinstar Tank",
+      "address": "0xD873",
+      "value": "0x20",
+      "type": "bit"
+    },
+    {
+      "name": "Etacoon Tank",
+      "address": "0xD873",
+      "value": "0x40",
+      "type": "bit"
+    },
+    {
+      "name": "Etacoon Supers",
+      "address": "0xD873",
+      "value": "0x80",
+      "type": "bit"
+    },
+    {
+      "name": "Etacoon Supers & Tank",
+      "address": "0xD873",
+      "value": "0x40",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0xD873",
+          "value": "0x80",
+          "type": "bit"
+        }
+      ]
+    },
+    {
+      "name": "Waterway Tank",
+      "address": "0xD874",
+      "value": "0x02",
+      "type": "bit"
+    },
+    {
+      "name": "Awakening Missiles",
+      "address": "0xD874",
+      "value": "0x04",
+      "type": "bit"
+    },
+    {
+      "name": "Wave Gate Tank",
+      "address": "0xD874",
+      "value": "0x08",
+      "type": "bit"
+    },
+    {
+      "name": "Billy Mays Missiles #1",
+      "address": "0xD874",
+      "value": "0x10",
+      "type": "bit"
+    },
+    {
+      "name": "Billy Mays Missiles #2",
+      "address": "0xD874",
+      "value": "0x20",
+      "type": "bit"
+    },
+    {
+      "name": "Billy Mays Missiles",
+      "address": "0xD874",
+      "value": "0x10",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0xD874",
+          "value": "0x20",
+          "type": "bit"
+        }
+      ]
+    },
+    {
+      "name": "X-Ray",
+      "address": "0xD874",
+      "value": "0x40",
+      "type": "bit"
+    },
+    {
+      "name": "Beta PBs",
+      "address": "0xD874",
+      "value": "0x80",
+      "type": "bit"
+    },
+    {
+      "name": "Alpha PBs",
+      "address": "0xD875",
+      "value": "0x01",
+      "type": "bit"
+    },
+    {
+      "name": "Alpha PB Missiles",
+      "address": "0xD875",
+      "value": "0x02",
+      "type": "bit"
+    },
+    {
+      "name": "Spazer",
+      "address": "0xD875",
+      "value": "0x04",
+      "type": "bit"
+    },
+    {
+      "name": "Kraid Tank",
+      "address": "0xD875",
+      "value": "0x08",
+      "type": "bit"
+    },
+    {
+      "name": "Kraid Missiles",
+      "address": "0xD875",
+      "value": "0x10",
+      "type": "bit"
+    },
+    {
+      "name": "Varia Suit",
+      "address": "0xD876",
+      "value": "0x01",
+      "type": "bit"
+    },
+    {
+      "name": "Cathedral Missiles",
+      "address": "0xD876",
+      "value": "0x02",
+      "type": "bit"
+    },
+    {
+      "name": "Ice Beam",
+      "address": "0xD876",
+      "value": "0x04",
+      "type": "bit"
+    },
+    {
+      "name": "Crumble Shaft Missiles",
+      "address": "0xD876",
+      "value": "0x08",
+      "type": "bit"
+    },
+    {
+      "name": "Croc Tank",
+      "address": "0xD876",
+      "value": "0x10",
+      "type": "bit"
+    },
+    {
+      "name": "Hi Jump Boots",
+      "address": "0xD876",
+      "value": "0x20",
+      "type": "bit"
+    },
+    {
+      "name": "Croc Escape Missiles",
+      "address": "0xD876",
+      "value": "0x40",
+      "type": "bit"
+    },
+    {
+      "name": "HJB Missiles",
+      "address": "0xD876",
+      "value": "0x80",
+      "type": "bit"
+    },
+    {
+      "name": "HJB Tank",
+      "address": "0xD877",
+      "value": "0x01",
+      "type": "bit"
+    },
+    {
+      "name": "Croc PBs",
+      "address": "0xD877",
+      "value": "0x02",
+      "type": "bit"
+    },
+    {
+      "name": "Cosine Missiles",
+      "address": "0xD877",
+      "value": "0x04",
+      "type": "bit"
+    },
+    {
+      "name": "Grapple Missiles",
+      "address": "0xD877",
+      "value": "0x08",
+      "type": "bit"
+    },
+    {
+      "name": "Grapple Beam",
+      "address": "0xD877",
+      "value": "0x10",
+      "type": "bit"
+    },
+    {
+      "name": "Norfair Reserve Tank",
+      "address": "0xD877",
+      "value": "0x20",
+      "type": "bit"
+    },
+    {
+      "name": "Norfair Reserve Missiles",
+      "address": "0xD877",
+      "value": "0x40",
+      "type": "bit"
+    },
+    {
+      "name": "Norfair Reserve Tank & Missiles",
+      "address": "0xD877",
+      "value": "0x20",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0xD877",
+          "value": "0x40",
+          "type": "bit"
+        }
+      ]
+    },
+    {
+      "name": "Green Bubbles Missiles",
+      "address": "0xD877",
+      "value": "0x80",
+      "type": "bit"
+    },
+    {
+      "name": "Bubble Mountain Missiles",
+      "address": "0xD878",
+      "value": "0x01",
+      "type": "bit"
+    },
+    {
+      "name": "Speed Booster Missiles",
+      "address": "0xD878",
+      "value": "0x02",
+      "type": "bit"
+    },
+    {
+      "name": "Speed Booster",
+      "address": "0xD878",
+      "value": "0x04",
+      "type": "bit"
+    },
+    {
+      "name": "Wave Missiles",
+      "address": "0xD878",
+      "value": "0x08",
+      "type": "bit"
+    },
+    {
+      "name": "Wave Beam",
+      "address": "0xD878",
+      "value": "0x10",
+      "type": "bit"
+    },
+    {
+      "name": "GT Missiles",
+      "address": "0xD878",
+      "value": "0x40",
+      "type": "bit"
+    },
+    {
+      "name": "GT Supers",
+      "address": "0xD878",
+      "value": "0x80",
+      "type": "bit"
+    },
+    {
+      "name": "Mickey Mouse Missiles",
+      "address": "0xD879",
+      "value": "0x02",
+      "type": "bit"
+    },
+    {
+      "name": "Springball Maze Missiles",
+      "address": "0xD879",
+      "value": "0x04",
+      "type": "bit"
+    },
+    {
+      "name": "Springball Maze PBs",
+      "address": "0xD879",
+      "value": "0x08",
+      "type": "bit"
+    },
+    {
+      "name": "Springball Maze PBs & Missiles",
+      "address": "0xD879",
+      "value": "0x04",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0xD879",
+          "value": "0x08",
+          "type": "bit"
+        }
+      ]
+    },
+    {
+      "name": "PBs of Shame",
+      "address": "0xD879",
+      "value": "0x10",
+      "type": "bit"
+    },
+    {
+      "name": "3 Muskateers Missiles",
+      "address": "0xD879",
+      "value": "0x20",
+      "type": "bit"
+    },
+    {
+      "name": "Ridley Tank",
+      "address": "0xD879",
+      "value": "0x40",
+      "type": "bit"
+    },
+    {
+      "name": "Screw Attack",
+      "address": "0xD879",
+      "value": "0x80",
+      "type": "bit"
+    },
+    {
+      "name": "Firefleas Tank",
+      "address": "0xD87A",
+      "value": "0x01",
+      "type": "bit"
+    },
+    {
+      "name": "WS Main Shaft Missiles",
+      "address": "0xD880",
+      "value": "0x01",
+      "type": "bit"
+    },
+    {
+      "name": "WS Reserve Tank",
+      "address": "0xD880",
+      "value": "0x02",
+      "type": "bit"
+    },
+    {
+      "name": "WS Reserve Missiles",
+      "address": "0xD880",
+      "value": "0x04",
+      "type": "bit"
+    },
+    {
+      "name": "WS Attic Missiles",
+      "address": "0xD880",
+      "value": "0x08",
+      "type": "bit"
+    },
+    {
+      "name": "WS Tank",
+      "address": "0xD880",
+      "value": "0x10",
+      "type": "bit"
+    },
+    {
+      "name": "WS Left Supers",
+      "address": "0xD880",
+      "value": "0x20",
+      "type": "bit"
+    },
+    {
+      "name": "WS Right Supers",
+      "address": "0xD880",
+      "value": "0x40",
+      "type": "bit"
+    },
+    {
+      "name": "Gravity Suit",
+      "address": "0xD880",
+      "value": "0x80",
+      "type": "bit"
+    },
+    {
+      "name": "Main Street Missiles",
+      "address": "0xD881",
+      "value": "0x01",
+      "type": "bit"
+    },
+    {
+      "name": "Crab Supers",
+      "address": "0xD881",
+      "value": "0x02",
+      "type": "bit"
+    },
+    {
+      "name": "Mama Turtle Tank",
+      "address": "0xD881",
+      "value": "0x04",
+      "type": "bit"
+    },
+    {
+      "name": "Mama Turtle Missiles",
+      "address": "0xD881",
+      "value": "0x08",
+      "type": "bit"
+    },
+    {
+      "name": "Mama Turtle Tank & Missiles",
+      "address": "0xD881",
+      "value": "0x04",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0xD881",
+          "value": "0x08",
+          "type": "bit"
+        }
+      ]
+    },
+    {
+      "name": "Beach Supers",
+      "address": "0xD881",
+      "value": "0x10",
+      "type": "bit"
+    },
+    {
+      "name": "Beach Missiles",
+      "address": "0xD881",
+      "value": "0x20",
+      "type": "bit"
+    },
+    {
+      "name": "Beach Supers & Missiles",
+      "address": "0xD881",
+      "value": "0x10",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0xD881",
+          "value": "0x20",
+          "type": "bit"
+        }
+      ]
+    },
+    {
+      "name": "False Wall Missiles",
+      "address": "0xD881",
+      "value": "0x40",
+      "type": "bit"
+    },
+    {
+      "name": "Plasma Beam",
+      "address": "0xD881",
+      "value": "0x80",
+      "type": "bit"
+    },
+    {
+      "name": "Maridia Reserve Missiles",
+      "address": "0xD882",
+      "value": "0x01",
+      "type": "bit"
+    },
+    {
+      "name": "Maridia Reserve Tank",
+      "address": "0xD882",
+      "value": "0x02",
+      "type": "bit"
+    },
+    {
+      "name": "Maridia Reserve Tank & Missiles",
+      "address": "0xD882",
+      "value": "0x01",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0xD882",
+          "value": "0x02",
+          "type": "bit"
+        }
+      ]
+    },
+    {
+      "name": "Maridia Sand Pit Missiles",
+      "address": "0xD882",
+      "value": "0x04",
+      "type": "bit"
+    },
+    {
+      "name": "Maridia Sand Pit PBs",
+      "address": "0xD882",
+      "value": "0x08",
+      "type": "bit"
+    },
+    {
+      "name": "Maridia Sand Pit PBs & Missiles",
+      "address": "0xD882",
+      "value": "0x04",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0xD882",
+          "value": "0x08",
+          "type": "bit"
+        }
+      ]
+    },
+    {
+      "name": "Aqueduct Missiles",
+      "address": "0xD882",
+      "value": "0x10",
+      "type": "bit"
+    },
+    {
+      "name": "Aqueduct Supers",
+      "address": "0xD882",
+      "value": "0x20",
+      "type": "bit"
+    },
+    {
+      "name": "Springball",
+      "address": "0xD882",
+      "value": "0x40",
+      "type": "bit"
+    },
+    {
+      "name": "Precious Missiles",
+      "address": "0xD882",
+      "value": "0x80",
+      "type": "bit"
+    },
+    {
+      "name": "Botwoon Tank",
+      "address": "0xD883",
+      "value": "0x01",
+      "type": "bit"
+    },
+    {
+      "name": "Space Jump",
+      "address": "0xD883",
+      "value": "0x04",
+      "type": "bit"
     }
   ]
 }
