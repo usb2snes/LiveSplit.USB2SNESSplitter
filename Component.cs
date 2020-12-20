@@ -287,17 +287,33 @@ namespace LiveSplit.UI.Components
         {
             if (_settings.Config.name == "Super Metroid" && _usb2snes.Connected())
             {
-                var data = await _usb2snes.GetAddress((uint)(0xF509DA), (uint)512);
-                int ms = (data[0] + (data[1] << 8)) * (1000 / 60);
-                int sec = data[2] + (data[3] << 8);
-                int min = data[4] + (data[5] << 8);
-                int hr = data[6] + (data[7] << 8);
-                var gt = new TimeSpan(0, hr, min, sec, ms);
-                _state.SetGameTime(gt);
-                _model.Split();
-            } else {
-                _model.Split();
+                byte[] data;
+                try
+                {
+                    data = await _usb2snes.GetAddress((uint)(0xF509DA), (uint)8);
+                }
+                catch
+                {
+                    Debug.WriteLine("DoSplit: Exception getting address");
+                    _model.Split();
+                    return;
+                }
+
+                if (data.Count() == 0)
+                {
+                    Debug.WriteLine("DoSplit: Get address failed to return result");
+                }
+                else
+                {
+                    int ms = (data[0] + (data[1] << 8)) * (1000 / 60);
+                    int sec = data[2] + (data[3] << 8);
+                    int min = data[4] + (data[5] << 8);
+                    int hr = data[6] + (data[7] << 8);
+                    var gt = new TimeSpan(0, hr, min, sec, ms);
+                    _state.SetGameTime(gt);
+                }
             }
+            _model.Split();
         }
 
         private async void UpdateSplitsWrapper()
@@ -348,12 +364,13 @@ namespace LiveSplit.UI.Components
                         }
                         catch
                         {
+                            Debug.WriteLine("UpdateSplits: Exception getting address");
                             return;
                         }
 
                         if (data.Count() == 0)
                         {
-                            Debug.WriteLine("Get address failed to return result");
+                            Debug.WriteLine("UpdateSplits: Get address failed to return result");
                             return;
                         }
 
@@ -453,13 +470,16 @@ namespace LiveSplit.UI.Components
             }
             catch
             {
+                Debug.WriteLine("doCheckSplit: Exception getting address");
                 return false;
             }
+
             if (data.Count() == 0)
             {
-                Console.WriteLine("Get address failed to return result");
+                Debug.WriteLine("doCheckSplit: Get address failed to return result");
                 return false;
             }
+
             uint value = (uint)data[0];
             uint word = (uint)(data[0] + (data[1] << 8));
             Debug.WriteLine("Address checked : " + split.address + " - value : " + value);
