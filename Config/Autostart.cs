@@ -9,7 +9,7 @@ namespace LiveSplit.UI.Components
         public string value { get; set; }
         public string type { get; set; }
 
-        public uint addressint { get { return Convert.ToUInt32(address, 16); } }
-        public uint valueint { get { return Convert.ToUInt32(value, 16); } }
+        public uint addressInt { get { return Convert.ToUInt32(address, 16); } }
+        public uint valueInt { get { return Convert.ToUInt32(value, 16); } }
     }
 }

@@ -285,32 +285,46 @@ namespace LiveSplit.UI.Components
 
         public async Task DoSplit()
         {
-            if (_settings.Config.name == "Super Metroid" && _usb2snes.Connected())
+            if (_settings.Config.igt != null && _usb2snes.Connected())
             {
-                byte[] data;
-                try
+                uint[] allAddresses = new uint[] { _settings.Config.igt.framesAddressInt, _settings.Config.igt.secondsAddressInt,
+                                                   _settings.Config.igt.minutesAddressInt, _settings.Config.igt.hoursAddressInt };
+                IEnumerable<uint> validAddresses = allAddresses.Where(address => address > 0);
+                uint startingAddress = validAddresses.Min();
+                uint igtDataSize = (validAddresses.Max() + 2) - startingAddress;
+                if (0 == igtDataSize || igtDataSize > 512)
                 {
-                    data = await _usb2snes.GetAddress((uint)(0xF509DA), (uint)8);
-                }
-                catch
-                {
-                    Debug.WriteLine("DoSplit: Exception getting address");
-                    _model.Split();
-                    return;
-                }
-
-                if (data.Count() == 0)
-                {
-                    Debug.WriteLine("DoSplit: Get address failed to return result");
+                    Debug.WriteLine("DoSplit: IGT configuration invalid, skipping it");
                 }
                 else
                 {
-                    int ms = (data[0] + (data[1] << 8)) * (1000 / 60);
-                    int sec = data[2] + (data[3] << 8);
-                    int min = data[4] + (data[5] << 8);
-                    int hr = data[6] + (data[7] << 8);
-                    var gt = new TimeSpan(0, hr, min, sec, ms);
-                    _state.SetGameTime(gt);
+                    byte[] data;
+                    try
+                    {
+                        data = await _usb2snes.GetAddress((0xF50000 + startingAddress), igtDataSize);
+                    }
+                    catch
+                    {
+                        Debug.WriteLine("DoSplit: Exception getting address");
+                        _model.Split();
+                        return;
+                    }
+
+                    if (data.Count() == 0)
+                    {
+                        Debug.WriteLine("DoSplit: Get address failed to return result");
+                    }
+                    else
+                    {
+                        Func<uint, int> readIgt = (address) =>
+                                (0 == address) ? 0 : (data[address - startingAddress] + (data[(address + 1) - startingAddress] << 8));
+                        int ms = (readIgt(_settings.Config.igt.framesAddressInt) * 1000) / 60;
+                        int sec = readIgt(_settings.Config.igt.secondsAddressInt);
+                        int min = readIgt(_settings.Config.igt.minutesAddressInt);
+                        int hr = readIgt(_settings.Config.igt.hoursAddressInt);
+                        var gt = new TimeSpan(0, hr, min, sec, ms);
+                        _state.SetGameTime(gt);
+                    }
                 }
             }
             _model.Split();
@@ -360,7 +374,7 @@ namespace LiveSplit.UI.Components
                         byte[] data;
                         try
                         {
-                            data = await _usb2snes.GetAddress((0xF50000 + _settings.Config.autostart.addressint), (uint)2);
+                            data = await _usb2snes.GetAddress((0xF50000 + _settings.Config.autostart.addressInt), (uint)2);
                         }
                         catch
                         {
@@ -380,40 +394,40 @@ namespace LiveSplit.UI.Components
                         switch (_settings.Config.autostart.type)
                         {
                             case "bit":
-                                if ((value & _settings.Config.autostart.valueint) != 0) { _model.Start(); }
+                                if ((value & _settings.Config.autostart.valueInt) != 0) { _model.Start(); }
                                 break;
                             case "eq":
-                                if (value == _settings.Config.autostart.valueint) { _model.Start(); }
+                                if (value == _settings.Config.autostart.valueInt) { _model.Start(); }
                                 break;
                             case "gt":
-                                if (value > _settings.Config.autostart.valueint) { _model.Start(); }
+                                if (value > _settings.Config.autostart.valueInt) { _model.Start(); }
                                 break;
                             case "lt":
-                                if (value < _settings.Config.autostart.valueint) { _model.Start(); }
+                                if (value < _settings.Config.autostart.valueInt) { _model.Start(); }
                                 break;
                             case "gte":
-                                if (value >= _settings.Config.autostart.valueint) { _model.Start(); }
+                                if (value >= _settings.Config.autostart.valueInt) { _model.Start(); }
                                 break;
                             case "lte":
-                                if (value <= _settings.Config.autostart.valueint) { _model.Start(); }
+                                if (value <= _settings.Config.autostart.valueInt) { _model.Start(); }
                                 break;
                             case "wbit":
-                                if ((word & _settings.Config.autostart.valueint) != 0) { _model.Start(); }
+                                if ((word & _settings.Config.autostart.valueInt) != 0) { _model.Start(); }
                                 break;
                             case "weq":
-                                if (word == _settings.Config.autostart.valueint) { _model.Start(); }
+                                if (word == _settings.Config.autostart.valueInt) { _model.Start(); }
                                 break;
                             case "wgt":
-                                if (word > _settings.Config.autostart.valueint) { _model.Start(); }
+                                if (word > _settings.Config.autostart.valueInt) { _model.Start(); }
                                 break;
                             case "wlt":
-                                if (word < _settings.Config.autostart.valueint) { _model.Start(); }
+                                if (word < _settings.Config.autostart.valueInt) { _model.Start(); }
                                 break;
                             case "wgte":
-                                if (word >= _settings.Config.autostart.valueint) { _model.Start(); }
+                                if (word >= _settings.Config.autostart.valueInt) { _model.Start(); }
                                 break;
                             case "wlte":
-                                if (word <= _settings.Config.autostart.valueint) { _model.Start(); }
+                                if (word <= _settings.Config.autostart.valueInt) { _model.Start(); }
                                 break;
                         }
                     }
@@ -466,7 +480,7 @@ namespace LiveSplit.UI.Components
             byte[] data;
             try
             {
-                data = await _usb2snes.GetAddress((0xF50000 + split.addressint), (uint)2);
+                data = await _usb2snes.GetAddress((0xF50000 + split.addressInt), (uint)2);
             }
             catch
             {

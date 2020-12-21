@@ -6,6 +6,12 @@
     "value": "0x1F",
     "type": "eq"
   },
+  "igt": {
+    "framesAddress": "0x09DA",
+    "secondsAddress": "0x09DC",
+    "minutesAddress": "0x09DE",
+    "hoursAddress": "0x09E0"
+  },
   "alias": {
     "G4": "Statues Room",
     "Ship": "Zebes Escape"
