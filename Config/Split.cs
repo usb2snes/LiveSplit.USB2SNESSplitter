@@ -13,8 +13,8 @@ namespace LiveSplit.UI.Components
         public List<Split> next { get; set; }
         public int posToCheck { get; set; } = 0;
 
-        public uint addressint { get { return Convert.ToUInt32(address, 16); } }
-        public uint valueint { get { return Convert.ToUInt32(value, 16); } }
+        public uint addressInt { get { return Convert.ToUInt32(address, 16); } }
+        public uint valueInt { get { return Convert.ToUInt32(value, 16); } }
 
         public bool check(uint value, uint word)
         {
@@ -22,40 +22,40 @@ namespace LiveSplit.UI.Components
             switch (this.type)
             {
                 case "bit":
-                    if ((value & this.valueint) != 0) { ret = true; }
+                    if ((value & this.valueInt) != 0) { ret = true; }
                     break;
                 case "eq":
-                    if (value == this.valueint) { ret = true; }
+                    if (value == this.valueInt) { ret = true; }
                     break;
                 case "gt":
-                    if (value > this.valueint) { ret = true; }
+                    if (value > this.valueInt) { ret = true; }
                     break;
                 case "lt":
-                    if (value < this.valueint) { ret = true; }
+                    if (value < this.valueInt) { ret = true; }
                     break;
                 case "gte":
-                    if (value >= this.valueint) { ret = true; }
+                    if (value >= this.valueInt) { ret = true; }
                     break;
                 case "lte":
-                    if (value <= this.valueint) { ret = true; }
+                    if (value <= this.valueInt) { ret = true; }
                     break;
                 case "wbit":
-                    if ((word & this.valueint) != 0) { ret = true; }
+                    if ((word & this.valueInt) != 0) { ret = true; }
                     break;
                 case "weq":
-                    if (word == this.valueint) { ret = true; }
+                    if (word == this.valueInt) { ret = true; }
                     break;
                 case "wgt":
-                    if (word > this.valueint) { ret = true; }
+                    if (word > this.valueInt) { ret = true; }
                     break;
                 case "wlt":
-                    if (word < this.valueint) { ret = true; }
+                    if (word < this.valueInt) { ret = true; }
                     break;
                 case "wgte":
-                    if (word >= this.valueint) { ret = true; }
+                    if (word >= this.valueInt) { ret = true; }
                     break;
                 case "wlte":
-                    if (word <= this.valueint) { ret = true; }
+                    if (word <= this.valueInt) { ret = true; }
                     break;
             }
             return ret;

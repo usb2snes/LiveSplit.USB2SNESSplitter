@@ -10,6 +10,7 @@ namespace LiveSplit.UI.Components
 
         public string name { get; set; }
         public Autostart autostart { get; set; }
+        public InGameTime igt { get; set; }
         public Dictionary<string, string> alias { get; set; }
         public List<Split> definitions { get; set; }
 
