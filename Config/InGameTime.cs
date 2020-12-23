@@ -4,6 +4,7 @@ namespace LiveSplit.UI.Components
 {
     internal class InGameTime
     {
+        public string active { get; set; }
         public string framesAddress { get; set; }
         public string secondsAddress { get; set; }
         public string minutesAddress { get; set; }

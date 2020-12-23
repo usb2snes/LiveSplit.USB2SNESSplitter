@@ -285,7 +285,7 @@ namespace LiveSplit.UI.Components
 
         public async Task DoSplit()
         {
-            if (_settings.Config.igt != null && _usb2snes.Connected())
+            if (_settings.Config.igt != null && _settings.Config.igt.active == "1" && _usb2snes.Connected())
             {
                 uint[] allAddresses = new uint[] { _settings.Config.igt.framesAddressInt, _settings.Config.igt.secondsAddressInt,
                                                    _settings.Config.igt.minutesAddressInt, _settings.Config.igt.hoursAddressInt };
@@ -369,7 +369,7 @@ namespace LiveSplit.UI.Components
                 _update_timer.Interval = 33;
                 if (_state.CurrentPhase == TimerPhase.NotRunning)
                 {
-                    if (_settings.Config.autostart.active == "1")
+                    if (_settings.Config.autostart != null && _settings.Config.autostart.active == "1")
                     {
                         byte[] data;
                         try

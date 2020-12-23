@@ -7,6 +7,7 @@
     "type": "eq"
   },
   "igt": {
+    "active": "0",
     "framesAddress": "0x09DA",
     "secondsAddress": "0x09DC",
     "minutesAddress": "0x09DE",
