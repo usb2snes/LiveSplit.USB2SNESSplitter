@@ -2483,6 +2483,26 @@
       "address": "0xD883",
       "value": "0x04",
       "type": "bit"
+    },
+    {
+      "name": "Boss 1",
+      "address": "0xD820",
+      "type": "smboss"
+    },
+    {
+      "name": "Boss 2",
+      "address": "0xD820",
+      "type": "smboss"
+    },
+    {
+      "name": "Boss 3",
+      "address": "0xD820",
+      "type": "smboss"
+    },
+    {
+      "name": "Boss 4",
+      "address": "0xD820",
+      "type": "smboss"
     }
   ]
 }

@@ -80,6 +80,8 @@ namespace LiveSplit.UI.Components
         private Color _error_color = Color.FromArgb(128, 0, 0);
         private Color _connecting_color = Color.FromArgb(128, 128, 0);
         private bool _stateChanged;
+        private byte[] _smEventFlags;
+        private int _smBossCount;
 
         private void init(LiveSplitState state, USB2SnesW.USB2SnesW usb2snesw)
         {
@@ -229,6 +231,8 @@ namespace LiveSplit.UI.Components
         private void _state_OnStart(object sender, EventArgs e)
         {
             Console.WriteLine("On START?");
+            _smEventFlags = new byte[0x10];
+            _smBossCount = 0;
             return;
         }
 
@@ -480,7 +484,11 @@ namespace LiveSplit.UI.Components
             byte[] data;
             try
             {
-                data = await _usb2snes.GetAddress((0xF50000 + split.addressInt), (uint)2);
+                uint numBytes = 2u;
+                if (split.type == "smboss")
+                    numBytes = 0x10u;
+
+                data = await _usb2snes.GetAddress((0xF50000 + split.addressInt), numBytes);
             }
             catch
             {
@@ -497,6 +505,26 @@ namespace LiveSplit.UI.Components
             uint value = (uint)data[0];
             uint word = (uint)(data[0] + (data[1] << 8));
             Debug.WriteLine("Address checked : " + split.address + " - value : " + value);
+
+            if (split.type == "smboss")
+            {
+                if (!data.SequenceEqual(_smEventFlags))
+                {
+                    _smEventFlags = data;
+                    int[] bosses = new int[]{0x9, 0xB, 0xC, 0xA}; // offsets from 0xD820
+                    int bossCount = 0;
+                    foreach (int idx in bosses)
+                    {
+                        bossCount += data[idx] & 0x01;
+                    }
+                    if (bossCount > _smBossCount)
+                    {
+                        _smBossCount = bossCount;
+                        return true;
+                    }
+                }
+                return false;
+            }
             return split.check(value, word);
         }
 
