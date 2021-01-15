@@ -358,7 +358,10 @@ namespace LiveSplit.UI.Components
                 CheckConfig();
             }
 
-            CheckConnection();
+            if (_state.CurrentPhase == TimerPhase.NotRunning || _proto_state != ProtocolState.ATTACHED)
+            {
+                CheckConnection();
+            }
 
             if (_config_state != ConfigState.READY || _proto_state != ProtocolState.ATTACHED)
             {
@@ -485,12 +488,14 @@ namespace LiveSplit.UI.Components
             catch
             {
                 Debug.WriteLine("doCheckSplit: Exception getting address");
+                CheckConnection();
                 return false;
             }
 
             if (data.Count() == 0)
             {
                 Debug.WriteLine("doCheckSplit: Get address failed to return result");
+                CheckConnection();
                 return false;
             }
 
