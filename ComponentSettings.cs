@@ -218,7 +218,7 @@ namespace LiveSplit.UI.Components
 
         private void OnRunModified(object sender, EventArgs e)
         {
-            if (_state.Run.GameName != _currentGameName ||_state.Run.CategoryName != _currentCategoryName)
+            if (_state.Run.GameName != _currentGameName || _state.Run.CategoryName != _currentCategoryName)
             {
                 SaveCurrentRunToSettings();
                 _segmentMap.Clear();
@@ -272,7 +272,8 @@ namespace LiveSplit.UI.Components
             splitMap.Clear();
             foreach (var entry in _segmentMap)
             {
-                splitMap[entry.Key.Name] = entry.Value.AutosplitName;
+                var segmentName = entry.Key.Name.TrimStart(SubsplitTrimStartChars);
+                splitMap[segmentName] = entry.Value.AutosplitName;
             }
         }
 
@@ -337,22 +338,22 @@ namespace LiveSplit.UI.Components
                         _segmentMap[segment] = splitSelection;
                     }
 
-                    if (splitSelection.AutosplitName != segmentName && Config?.definitions.Any(split => split.name == segmentName) == true)
+                    string autosplitName = Config?.GetAutosplitNameFromSegmentName(segmentName);
+                    if (!string.IsNullOrEmpty(autosplitName))
                     {
-                        splitSelection.AutosplitName = segmentName;
+                        splitSelection.AutosplitName = autosplitName;
                     }
                     else if (string.IsNullOrEmpty(splitSelection.AutosplitName))
                     {
                         // This segment doesn't have an autosplit specified, so let's see if we can find a good default
-                        if (CurrentCategorySettings.SplitMap.TryGetValue(segmentName, out string autosplitName))
+                        if (CurrentCategorySettings.SplitMap.TryGetValue(segmentName, out autosplitName))
                         {
                             // We found a match for this segment's name in our loaded layout settings
                             splitSelection.AutosplitName = autosplitName;
                         }
                         else
                         {
-                            // Check if the config has a split definition or alias whose name matches this segment
-                            splitSelection.AutosplitName = Config?.GetAutosplitNameFromSegmentName(segmentName) ?? string.Empty;
+                            splitSelection.AutosplitName = string.Empty;
                         }
                     }
 
@@ -366,8 +367,8 @@ namespace LiveSplit.UI.Components
                     bool ShouldBeEnabled()
                     {
                         var selection = (string)comboBox.SelectedItem;
-                        var autosplitName = Config?.GetAutosplitNameFromSegmentName(segmentName) ?? string.Empty;
-                        return string.IsNullOrEmpty(selection) || string.IsNullOrEmpty(autosplitName) || selection != autosplitName;
+                        var expectedSelection = Config?.GetAutosplitNameFromSegmentName(segmentName) ?? string.Empty;
+                        return string.IsNullOrEmpty(selection) || string.IsNullOrEmpty(expectedSelection) || selection != expectedSelection;
                     }
 
                     comboBox.Enabled = ShouldBeEnabled();
@@ -394,24 +395,28 @@ namespace LiveSplit.UI.Components
             for (int row = 0; row < splitsPanel.RowCount; ++row)
             {
                 var comboBox = (ComboBox)splitsPanel.GetControlFromPosition(1, row);
-                if (string.IsNullOrEmpty((string)comboBox.SelectedItem))
+                var label = (Label)splitsPanel.GetControlFromPosition(0, row);
+                string segmentName = GetSegmentNameFromLabelText(label.Text);
+                string expectedSelection = Config?.GetAutosplitNameFromSegmentName(segmentName);
+                if (!string.IsNullOrEmpty(expectedSelection))
+                {
+                    if((string)comboBox.SelectedItem != expectedSelection)
+                    {
+                        comboBox.SelectedItem = expectedSelection;
+                    }
+                }
+                else if (string.IsNullOrEmpty((string)comboBox.SelectedItem))
                 {
                     // This segment doesn't have an autosplit specified, so let's see if we can find a good default
-                    var label = (Label)splitsPanel.GetControlFromPosition(0, row);
-                    string segmentName = GetSegmentNameFromLabelText(label.Text);
-                    string newSelection;
-                    if (CurrentCategorySettings.SplitMap.TryGetValue(segmentName, out string autosplitName) && !string.IsNullOrEmpty(autosplitName))
+                    if (CurrentCategorySettings.SplitMap.TryGetValue(segmentName, out string autosplitName))
                     {
                         // We found a match for this segment's name in our loaded layout settings
-                        newSelection = autosplitName;
+                        comboBox.SelectedItem = autosplitName;
                     }
                     else
                     {
-                        // Check if the config has a split definition or alias whose name matches this segment
-                        newSelection = Config?.GetAutosplitNameFromSegmentName(segmentName) ?? string.Empty;
+                        comboBox.SelectedItem = string.Empty;
                     }
-
-                    comboBox.SelectedItem = newSelection;
                 }
             }
         }
