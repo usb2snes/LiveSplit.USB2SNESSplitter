@@ -99,9 +99,13 @@ namespace LiveSplit.UI.Components
             {
                 if (!_splitChoices.SequenceEqual(value))
                 {
+                    SuspendLayout();
                     _splitChoices = value;
+                    splitsPanel.SuspendLayout();
+                    splitsPanel.Controls.Container.SuspendLayout();
                     foreach (var comboBox in splitsPanel.Controls.OfType<ComboBox>())
                     {
+                        comboBox.BeginUpdate();
                         string previousSelection = (string)comboBox.SelectedItem;
                         ((BindingSource)comboBox.DataSource).DataSource = SplitChoices;
                         if (SplitChoices.Contains(previousSelection))
@@ -112,9 +116,13 @@ namespace LiveSplit.UI.Components
                         {
                             comboBox.SelectedItem = string.Empty;
                         }
+                        comboBox.EndUpdate();
                     }
 
                     RefreshSplitSelections();
+                    splitsPanel.Controls.Container.ResumeLayout(false);
+                    splitsPanel.ResumeLayout(false);
+                    ResumeLayout(true);
                 }
             }
         }
@@ -313,6 +321,9 @@ namespace LiveSplit.UI.Components
             if (segmentsChanged)
             {
                 _settingsChanged = true;
+                SuspendLayout();
+                splitsPanel.SuspendLayout();
+                splitsPanel.Controls.Container.SuspendLayout();
                 splitsPanel.RowCount = 0;
                 splitsPanel.Controls.Clear();
                 splitsPanel.RowStyles.Clear();
@@ -323,13 +334,13 @@ namespace LiveSplit.UI.Components
                     var segmentName = segment.Name.TrimStart(SubsplitTrimStartChars);
                     ++splitsPanel.RowCount;
                     splitsPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-                    var segmentLabel = new Label
-                    {
-                        Anchor = AnchorStyles.Left,
-                        AutoSize = true,
-                        Margin = new Padding(3),
-                        Text = GetLabelTextFromSegmentName(segmentName),
-                    };
+                    var segmentLabel = new Label();
+                    segmentLabel.SuspendLayout();
+                    segmentLabel.Anchor = AnchorStyles.Left;
+                    segmentLabel.AutoSize = true;
+                    segmentLabel.Margin = new Padding(3);
+                    segmentLabel.Text = GetLabelTextFromSegmentName(segmentName);
+                    segmentLabel.ResumeLayout(false);
 
                     // Add this segment to the map if it's not already there
                     if (!_segmentMap.TryGetValue(segment, out var splitSelection))
@@ -357,12 +368,12 @@ namespace LiveSplit.UI.Components
                         }
                     }
 
-                    var comboBox = new ComboBox
-                    {
-                        Anchor = AnchorStyles.Left | AnchorStyles.Right,
-                        DataSource = new BindingSource { DataSource = SplitChoices },
-                        DropDownStyle = ComboBoxStyle.DropDownList,
-                    };
+                    var comboBox = new ComboBox();
+                    comboBox.SuspendLayout();
+                    comboBox.BeginUpdate();
+                    comboBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+                    comboBox.DataSource = new BindingSource { DataSource = SplitChoices };
+                    comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
 
                     bool ShouldBeEnabled()
                     {
@@ -381,13 +392,21 @@ namespace LiveSplit.UI.Components
                         _settingsChanged = true;
                     };
 
+                    comboBox.EndUpdate();
+                    comboBox.ResumeLayout(false);
                     splitsPanel.Controls.Add(segmentLabel, 0, rowIndex);
                     splitsPanel.Controls.Add(comboBox, 1, rowIndex);
                     ++rowIndex;
                 }
+                RefreshSplitSelections();
+                splitsPanel.Controls.Container.ResumeLayout(false);
+                splitsPanel.ResumeLayout(false);
+                ResumeLayout(true);
             }
-
-            RefreshSplitSelections();
+            else
+            {
+                RefreshSplitSelections();
+            }
         }
 
         private void RefreshSplitSelections()
@@ -412,10 +431,6 @@ namespace LiveSplit.UI.Components
                     {
                         // We found a match for this segment's name in our loaded layout settings
                         comboBox.SelectedItem = autosplitName;
-                    }
-                    else
-                    {
-                        comboBox.SelectedItem = string.Empty;
                     }
                 }
             }
@@ -546,7 +561,9 @@ namespace LiveSplit.UI.Components
                 List<String> devices;
                 devices = await usb.GetDevices();
                 if (devices.Count > 0)
+                {
                     txtDevice.Text = devices[0];
+                }
                 return;
             }
             MessageBox.Show("Could not auto-detect usb2snes compatible device, make sure it's connected and QUsb2Snes is running");
