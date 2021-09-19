@@ -310,7 +310,8 @@ namespace LiveSplit.UI.Components
                 }
                 else
                 {
-                    int ms = (int)data[0][0] + ((int)data[0][1] << 8);
+                    int frames = (int)data[0][0] + ((int)data[0][1] << 8);
+                    int ms = (frames * 1000) / 60;
                     int sec = (int)data[1][0] + ((int)data[1][1] << 8);
                     int min = (int)data[2][0] + ((int)data[2][1] << 8);
                     int hr = (int)data[3][0] + ((int)data[3][1] << 8);
@@ -417,7 +418,7 @@ namespace LiveSplit.UI.Components
         async Task<bool> doCheckSplit(Split split)
         {
             var addressSizePairs = new List<Tuple<uint, uint>>();
-            addressSizePairs.Add(new Tuple<uint, uint>(split.addressInt, 2));// (split.type == "smboss") ? 16 : 2));
+            addressSizePairs.Add(new Tuple<uint, uint>(split.addressInt, 2));
             if (split.more != null)
             {
                 foreach (var moreSplit in split.more)
