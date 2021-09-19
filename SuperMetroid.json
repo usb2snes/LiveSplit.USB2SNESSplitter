@@ -3,8 +3,15 @@
   "autostart": {
     "active": "1",
     "address": "0x0998",
-    "value": "0x1F",
-    "type": "eq"
+    "value": "0x02",
+    "type": "eq",
+    "next": [
+      {
+        "address": "0x0DE2",
+        "value": "0x0C",
+        "type": "eq"
+      }
+    ]
   },
   "igt": {
     "active": "0",

@@ -10,7 +10,7 @@ namespace LiveSplit.UI.Components
 
         public override object Deserialize(IDictionary<string, object> dictionary, Type type, JavaScriptSerializer serializer)
         {
-            return new Game
+            var game = new Game
             {
                 name = serializer.ConvertToType<string>(LookupKeys(dictionary, "name", "game")),
                 autostart = serializer.ConvertToType<Autostart>(LookupKeys(dictionary, "autostart")),
@@ -18,6 +18,12 @@ namespace LiveSplit.UI.Components
                 alias = serializer.ConvertToType<Dictionary<string, string>>(LookupKeys(dictionary, "alias")),
                 definitions = serializer.ConvertToType<List<Split>>(LookupKeys(dictionary, "definitions")),
             };
+            game.autostart.GetSplit().validate();
+            foreach (var split in game.definitions)
+            {
+               split.validate();
+            }
+            return game;
         }
 
         public override IDictionary<string, object> Serialize(object obj, JavaScriptSerializer serializer)

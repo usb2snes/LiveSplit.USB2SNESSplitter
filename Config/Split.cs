@@ -60,5 +60,34 @@ namespace LiveSplit.UI.Components
             }
             return ret;
         }
+
+        public void validate()
+        {
+            if (more != null)
+            {
+                foreach (var moreSplit in more)
+                {
+                    if (moreSplit.more != null)
+                    {
+                        throw new NotSupportedException("Nested 'more' splits are not supported");
+                    }
+                    if (moreSplit.next != null)
+                    {
+                        throw new NotSupportedException("Nested 'next' splits are not supported");
+                    }
+                }
+            }
+            if (next != null)
+            {
+                foreach (var nextSplit in next)
+                {
+                    if (nextSplit.next != null)
+                    {
+                        throw new NotSupportedException("Nested 'next' splits are not supported");
+                    }
+                    nextSplit.validate();
+                }
+            }
+        }
     }
 }

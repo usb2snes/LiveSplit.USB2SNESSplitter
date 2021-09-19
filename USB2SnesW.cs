@@ -71,7 +71,8 @@ namespace USB2SnesW
         {
             public List<string> Results { get; set; }
         }
-        public enum Commands {
+        public enum Commands
+        {
             DeviceList,
             Name,
             GetAddress,
@@ -138,7 +139,8 @@ namespace USB2SnesW
             EventHandler<MessageEventArgs> msgHandler = null;
             EventHandler<ErrorEventArgs> errorHandler = null;
             EventHandler<CloseEventArgs> closeHandler = null;
-            msgHandler = (s, e) => {
+            msgHandler = (s, e) =>
+            {
                 ws.OnMessage -= msgHandler;
                 ws.OnClose -= closeHandler;
                 ws.OnError -= errorHandler;
@@ -149,7 +151,8 @@ namespace USB2SnesW
                     tcs.TrySetResult(new USReply());
 
             };
-            errorHandler = (s, e) => {
+            errorHandler = (s, e) =>
+            {
                 ws.OnMessage -= msgHandler;
                 ws.OnClose -= closeHandler;
                 ws.OnError -= errorHandler;
@@ -158,7 +161,6 @@ namespace USB2SnesW
                 // errorHandler and closeHandler can both be called for the same event, and SetCanceled is not re-entrant
                 tcs.TrySetCanceled();
             };
-            
             closeHandler = (s, e) =>
             {
                 ws.OnMessage -= msgHandler;
@@ -179,23 +181,43 @@ namespace USB2SnesW
             SendCommand(Commands.DeviceList, "");
             USReply rep = await waitForReply();
             return rep.Results;
-      }
+        }
         public void Attach(String device)
         {
             SendCommand(Commands.Attach, device);
         }
-  
-        public async Task<byte[]> GetAddress(uint address, uint size)
+
+        public async Task<List<byte[]>> GetAddress(List<Tuple<uint, uint>> addressSizePairs)
         {
+            uint totalSize = 0;
+            uint startingAddress = 0xFFFFFFFF;
+            uint endingAddress = 0;
             List<String> args = new List<String>();
-            args.Add(address.ToString("X"));
-            args.Add(size.ToString("X"));
+            foreach (var pair in addressSizePairs)
+            {
+                args.Add((0xF50000 + pair.Item1).ToString("X"));
+                args.Add(pair.Item2.ToString("X"));
+                totalSize += pair.Item2;
+                if (startingAddress > pair.Item1)
+                    startingAddress = pair.Item1;
+                if (endingAddress < (pair.Item1 + pair.Item2))
+                    endingAddress = pair.Item1 + pair.Item2;
+            }
+            bool consolidatedRequest = (addressSizePairs.Count > 1) && ((startingAddress + 255) > endingAddress);
+            if (consolidatedRequest)
+            {
+                totalSize = endingAddress - startingAddress;
+                args.Clear();
+                args.Add((0xF50000 + startingAddress).ToString("X"));
+                args.Add(totalSize.ToString("X"));
+            }
             SendCommand(Commands.GetAddress, args);
             var tcs = new TaskCompletionSource<byte[]>();
             EventHandler<MessageEventArgs> msgHandler = null;
             EventHandler<ErrorEventArgs> errorHandler = null;
             EventHandler<CloseEventArgs> closeHandler = null;
-            msgHandler = (s, e) => {
+            msgHandler = (s, e) =>
+            {
                 ws.OnMessage -= msgHandler;
                 ws.OnClose -= closeHandler;
                 ws.OnError -= errorHandler;
@@ -205,7 +227,8 @@ namespace USB2SnesW
                 else
                     tcs.TrySetResult(new byte[0]);
             };
-            errorHandler = (s, e) => {
+            errorHandler = (s, e) =>
+            {
                 ws.OnMessage -= msgHandler;
                 ws.OnClose -= closeHandler;
                 ws.OnError -= errorHandler;
@@ -213,7 +236,6 @@ namespace USB2SnesW
                 Console.WriteLine("Error in get address : " + e.Message);
                 tcs.SetCanceled();
             };
-
             closeHandler = (s, e) =>
             {
                 ws.OnMessage -= msgHandler;
@@ -226,12 +248,34 @@ namespace USB2SnesW
             ws.OnMessage += msgHandler;
             ws.OnError += errorHandler;
             ws.OnClose += closeHandler;
+            var result = new List<byte[]>();
             if (await Task.WhenAny(tcs.Task, Task.Delay(100)) == tcs.Task)
             {
-                return tcs.Task.Result;
-            } else {
-                return new byte[0];
+                if (tcs.Task.Result.Length == totalSize)
+                {
+                    if (consolidatedRequest)
+                    {
+                        foreach (var pair in addressSizePairs)
+                        {
+                            result.Add(tcs.Task.Result.SubArray<byte>(pair.Item1 - startingAddress, pair.Item2));
+                        }
+                    }
+                    else if (addressSizePairs.Count > 1)
+                    {
+                        uint currentPosition = 0;
+                        foreach (var pair in addressSizePairs)
+                        {
+                            result.Add(tcs.Task.Result.SubArray<byte>(currentPosition, pair.Item2));
+                            currentPosition += pair.Item2;
+                        }
+                    }
+                    else
+                    {
+                        result.Add(tcs.Task.Result);
+                    }
+                }
             }
+            return result;
         }
         public void Reset()
         {
@@ -257,7 +301,9 @@ namespace USB2SnesW
                 info.version = result.Results[0];
                 info.romPlaying = result.Results[2];
                 info.flags = result.Results.Skip(3).ToList();
-            } catch(Exception e) {
+            }
+            catch(Exception e)
+            {
                 Console.WriteLine(e.Message);
             }
             return info;

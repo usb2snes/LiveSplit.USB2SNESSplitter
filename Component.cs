@@ -287,44 +287,36 @@ namespace LiveSplit.UI.Components
         {
             if (_settings.Config.igt != null && _settings.Config.igt.active == "1" && _usb2snes.Connected())
             {
-                uint[] allAddresses = new uint[] { _settings.Config.igt.framesAddressInt, _settings.Config.igt.secondsAddressInt,
-                                                   _settings.Config.igt.minutesAddressInt, _settings.Config.igt.hoursAddressInt };
-                IEnumerable<uint> validAddresses = allAddresses.Where(address => address > 0);
-                uint startingAddress = validAddresses.Min();
-                uint igtDataSize = (validAddresses.Max() + 2) - startingAddress;
-                if (0 == igtDataSize || igtDataSize > 512)
+                var addressSizePairs = new List<Tuple<uint, uint>>();
+                addressSizePairs.Add(new Tuple<uint, uint>(_settings.Config.igt.framesAddressInt, 2));
+                addressSizePairs.Add(new Tuple<uint, uint>(_settings.Config.igt.secondsAddressInt, 2));
+                addressSizePairs.Add(new Tuple<uint, uint>(_settings.Config.igt.minutesAddressInt, 2));
+                addressSizePairs.Add(new Tuple<uint, uint>(_settings.Config.igt.hoursAddressInt, 2));
+                List<byte[]> data = null;
+                try
                 {
-                    Debug.WriteLine("DoSplit: IGT configuration invalid, skipping it");
+                    data = await _usb2snes.GetAddress(addressSizePairs);
+                }
+                catch
+                {
+                    Debug.WriteLine("DoSplit: Exception getting address");
+                    _model.Split();
+                    return;
+                }
+
+                if ((null == data) || (data.Count != addressSizePairs.Count))
+                {
+                    Debug.WriteLine("DoSplit: Get address failed to return result");
                 }
                 else
                 {
-                    byte[] data;
-                    try
-                    {
-                        data = await _usb2snes.GetAddress((0xF50000 + startingAddress), igtDataSize);
-                    }
-                    catch
-                    {
-                        Debug.WriteLine("DoSplit: Exception getting address");
-                        _model.Split();
-                        return;
-                    }
-
-                    if (data.Count() == 0)
-                    {
-                        Debug.WriteLine("DoSplit: Get address failed to return result");
-                    }
-                    else
-                    {
-                        Func<uint, int> readIgt = (address) =>
-                                (0 == address) ? 0 : (data[address - startingAddress] + (data[(address + 1) - startingAddress] << 8));
-                        int ms = (readIgt(_settings.Config.igt.framesAddressInt) * 1000) / 60;
-                        int sec = readIgt(_settings.Config.igt.secondsAddressInt);
-                        int min = readIgt(_settings.Config.igt.minutesAddressInt);
-                        int hr = readIgt(_settings.Config.igt.hoursAddressInt);
-                        var gt = new TimeSpan(0, hr, min, sec, ms);
-                        _state.SetGameTime(gt);
-                    }
+                    int frames = (int)data[0][0] + ((int)data[0][1] << 8);
+                    int ms = (frames * 1000) / 60;
+                    int sec = (int)data[1][0] + ((int)data[1][1] << 8);
+                    int min = (int)data[2][0] + ((int)data[2][1] << 8);
+                    int hr = (int)data[3][0] + ((int)data[3][1] << 8);
+                    var gt = new TimeSpan(0, hr, min, sec, ms);
+                    _state.SetGameTime(gt);
                 }
             }
             _model.Split();
@@ -358,7 +350,10 @@ namespace LiveSplit.UI.Components
                 CheckConfig();
             }
 
-            CheckConnection();
+            if (_state.CurrentPhase == TimerPhase.NotRunning || _proto_state != ProtocolState.ATTACHED)
+            {
+                CheckConnection();
+            }
 
             if (_config_state != ConfigState.READY || _proto_state != ProtocolState.ATTACHED)
             {
@@ -371,64 +366,9 @@ namespace LiveSplit.UI.Components
                 {
                     if (_settings.Config.autostart != null && _settings.Config.autostart.active == "1")
                     {
-                        byte[] data;
-                        try
+                        if (await doCheckSplitWithNext(_settings.Config.autostart.GetSplit()))
                         {
-                            data = await _usb2snes.GetAddress((0xF50000 + _settings.Config.autostart.addressInt), (uint)2);
-                        }
-                        catch
-                        {
-                            Debug.WriteLine("UpdateSplits: Exception getting address");
-                            return;
-                        }
-
-                        if (data.Count() == 0)
-                        {
-                            Debug.WriteLine("UpdateSplits: Get address failed to return result");
-                            return;
-                        }
-
-                        uint value = (uint)data[0];
-                        uint word = (uint)(data[0] + (data[1] << 8));
-
-                        switch (_settings.Config.autostart.type)
-                        {
-                            case "bit":
-                                if ((value & _settings.Config.autostart.valueInt) != 0) { _model.Start(); }
-                                break;
-                            case "eq":
-                                if (value == _settings.Config.autostart.valueInt) { _model.Start(); }
-                                break;
-                            case "gt":
-                                if (value > _settings.Config.autostart.valueInt) { _model.Start(); }
-                                break;
-                            case "lt":
-                                if (value < _settings.Config.autostart.valueInt) { _model.Start(); }
-                                break;
-                            case "gte":
-                                if (value >= _settings.Config.autostart.valueInt) { _model.Start(); }
-                                break;
-                            case "lte":
-                                if (value <= _settings.Config.autostart.valueInt) { _model.Start(); }
-                                break;
-                            case "wbit":
-                                if ((word & _settings.Config.autostart.valueInt) != 0) { _model.Start(); }
-                                break;
-                            case "weq":
-                                if (word == _settings.Config.autostart.valueInt) { _model.Start(); }
-                                break;
-                            case "wgt":
-                                if (word > _settings.Config.autostart.valueInt) { _model.Start(); }
-                                break;
-                            case "wlt":
-                                if (word < _settings.Config.autostart.valueInt) { _model.Start(); }
-                                break;
-                            case "wgte":
-                                if (word >= _settings.Config.autostart.valueInt) { _model.Start(); }
-                                break;
-                            case "wlte":
-                                if (word <= _settings.Config.autostart.valueInt) { _model.Start(); }
-                                break;
+                            _model.Start();
                         }
                     }
                 }
@@ -436,38 +376,7 @@ namespace LiveSplit.UI.Components
                 {
                     var splitName = _splits[_state.CurrentSplitIndex];
                     var split = _settings.Config.definitions.Where(x => x.name == splitName).First();
-                    var orignSplit = split;
-                    if (split.next != null && split.posToCheck != 0)
-                    {
-                        split = split.next[split.posToCheck - 1];
-                    }
-                    bool ok = await doCheckSplit(split);
-                    if (orignSplit.next != null && ok)
-                    {
-                        Debug.WriteLine("Next count :" + orignSplit.next.Count + " - Pos to check : " + orignSplit.posToCheck);
-                        if (orignSplit.posToCheck < orignSplit.next.Count())
-                        {
-                            orignSplit.posToCheck++;
-                            ok = false;
-                        }
-                        else
-                        {
-                            orignSplit.posToCheck = 0;
-                        }
-                    }
-                    if (split.more != null)
-                    {
-                        foreach (var moreSplit in split.more)
-                        {
-                            if (!ok)
-                            {
-                                break;
-                            }
-                            ok = ok && await doCheckSplit(moreSplit);
-                        }
-                    }
-
-                    if (ok)
+                    if (await doCheckSplitWithNext(split))
                     {
                         await DoSplit();
                     }
@@ -475,29 +384,83 @@ namespace LiveSplit.UI.Components
             }
         }
 
+        async Task<bool> doCheckSplitWithNext(Split split)
+        {
+            if (split.next == null)
+            {
+                return await doCheckSplit(split);
+            }
+
+            bool ok = false;
+            if (split.posToCheck > 0)
+            {
+                ok = await doCheckSplit(split.next[split.posToCheck - 1]);
+            }
+            else
+            {
+                ok = await doCheckSplit(split);
+            }
+            if (ok)
+            {
+                if (split.posToCheck < split.next.Count())
+                {
+                    split.posToCheck++;
+                    ok = false;
+                }
+                else
+                {
+                    split.posToCheck = 0;
+                }
+            }
+            return ok;
+        }
+
         async Task<bool> doCheckSplit(Split split)
         {
-            byte[] data;
+            var addressSizePairs = new List<Tuple<uint, uint>>();
+            addressSizePairs.Add(new Tuple<uint, uint>(split.addressInt, 2));
+            if (split.more != null)
+            {
+                foreach (var moreSplit in split.more)
+                {
+                    addressSizePairs.Add(new Tuple<uint, uint>(moreSplit.addressInt, 2));
+                }
+            }
+            List<byte[]> data = null;
             try
             {
-                data = await _usb2snes.GetAddress((0xF50000 + split.addressInt), (uint)2);
+                data = await _usb2snes.GetAddress(addressSizePairs);
             }
             catch
             {
                 Debug.WriteLine("doCheckSplit: Exception getting address");
+                CheckConnection();
                 return false;
             }
 
-            if (data.Count() == 0)
+            if ((null == data) || (data.Count != addressSizePairs.Count))
             {
                 Debug.WriteLine("doCheckSplit: Get address failed to return result");
+                CheckConnection();
                 return false;
             }
 
-            uint value = (uint)data[0];
-            uint word = (uint)(data[0] + (data[1] << 8));
-            Debug.WriteLine("Address checked : " + split.address + " - value : " + value);
-            return split.check(value, word);
+            uint value = (uint)data[0][0];
+            uint word = value + ((uint)data[0][1] << 8);
+            bool result = split.check(value, word);
+            if (result && (split.more != null))
+            {
+                int dataIndex = 1;
+                foreach (var moreSplit in split.more)
+                {
+                    value = (uint)data[dataIndex][0];
+                    word = value + ((uint)data[dataIndex][1] << 8);
+                    if (!moreSplit.check(value, word))
+                        return false;
+                    dataIndex++;
+                }
+            }
+            return result;
         }
 
         public void DrawHorizontal(Graphics g, LiveSplitState state, float height, Region clipRegion)
