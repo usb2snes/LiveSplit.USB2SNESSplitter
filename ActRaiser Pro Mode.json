@@ -133,7 +133,12 @@
 			  "type" : "eq"
 		  },
 		  {
-			  "address" : "0x0000EF",
+			  "address" : "0x0000F4",
+			  "value" : "0x00",
+			  "type" : "eq"
+		  },
+		  {
+			  "address" : "0x0000F5",
 			  "value" : "0x00",
 			  "type" : "eq"
 		  }
