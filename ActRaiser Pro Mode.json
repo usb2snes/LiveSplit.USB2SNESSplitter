@@ -1,0 +1,148 @@
+{
+  "name": "ActRaiser",
+  "autostart": {
+    "active": "1",
+    "address": "0x000302",
+    "value": "0xD0",
+	"type": "eq"
+  },
+  "definitions": [
+    {
+      "name": "Fillmore 1",
+      "address": "0x000018",
+      "value": "0x01",
+      "type": "eq",
+	  "more": [
+	  {
+		  "address" : "0x000019",
+		  "value" : "0x02",
+		  "type" : "eq"
+	  }
+	 ]
+    },
+	{
+      "name": "Fillmore 2",
+      "address": "0x000018",
+      "value": "0x02",
+      "type": "eq"
+    },
+	{
+      "name": "Bloodpool 1",
+      "address": "0x000018",
+      "value": "0x02",
+      "type": "eq",
+	  "more": [
+	  {
+		  "address" : "0x000019",
+		  "value" : "0x02",
+		  "type" : "eq"
+	  }
+	 ]
+    },
+	{
+      "name": "Bloodpool 2",
+      "address": "0x000018",
+      "value": "0x03",
+      "type": "eq"
+    },
+	{
+      "name": "Kasandora 1",
+      "address": "0x000018",
+      "value": "0x03",
+      "type": "eq",
+	  "more": [
+	  {
+		  "address" : "0x000019",
+		  "value" : "0x03",
+		  "type" : "eq"
+	  }
+	 ]
+    },
+	{
+      "name": "Kasandora 2",
+      "address": "0x000018",
+      "value": "0x04",
+      "type": "eq"
+    },
+	{
+      "name": "Aitos 1",
+      "address": "0x000018",
+      "value": "0x04",
+      "type": "eq",
+	  "more": [
+	  {
+		  "address" : "0x000019",
+		  "value" : "0x04",
+		  "type" : "eq"
+	  }
+	 ]
+    },
+	{
+      "name": "Aitos 2",
+      "address": "0x000018",
+      "value": "0x05",
+      "type": "eq"
+    },
+	{
+      "name": "Marahna 1",
+      "address": "0x000018",
+      "value": "0x05",
+      "type": "eq",
+	  "more": [
+	  {
+		  "address" : "0x000019",
+		  "value" : "0x04",
+		  "type" : "eq"
+	  }
+	 ]
+    },
+	{
+      "name": "Marahna 2",
+      "address": "0x000018",
+      "value": "0x06",
+      "type": "eq"
+    },
+	{
+      "name": "Northwall 1",
+      "address": "0x000018",
+      "value": "0x06",
+      "type": "eq",
+	  "more": [
+	  {
+		  "address" : "0x000019",
+		  "value" : "0x05",
+		  "type" : "eq"
+	  }
+	 ]
+    },
+	{
+      "name": "Northwall 2",
+      "address": "0x000018",
+      "value": "0x07",
+      "type": "eq"
+    },
+	{
+      "name": "Death Heim",
+      "address": "0x000018",
+      "value": "0x07",
+      "type": "eq",
+	  "more": [
+		  {
+			  "address" : "0x000019",
+			  "value" : "0x08",
+			  "type" : "eq"
+		  },
+		  {
+			  "address" : "0x0000F4",
+			  "value" : "0x00",
+			  "type" : "eq"
+		  },
+		  {
+			  "address" : "0x0000F5",
+			  "value" : "0x00",
+			  "type" : "eq"
+		  }
+	  ]
+    }
+   ]
+}
