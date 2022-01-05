@@ -1,0 +1,1905 @@
+{
+  "game": "The Legend of Zelda: A Link to the Past",
+  "autostart": {
+    "active": "1",
+    "note": "Run starts on fileselect",
+    "address": "0x10",
+    "value": "0x05",
+    "type": "eq"
+  },
+
+  "definitions": [
+ {
+      "name": "Zelda",
+	  "note":"Splits when Zelda is follower and going upstairs",
+      "address": "0xF3CC",
+      "value": "0x01",
+      "type": "eq",
+      "more": [
+        {
+          "address": "0xA0",
+          "value": "0x70",
+          "type": "eq"
+        }
+      ]
+    },
+
+    {
+      "name": "Escape",
+	  "note":"in Sanc, then waits for transition to end",
+      "address": "0xA0",
+      "value": "0x12",
+      "type": "eq",
+      "next": [
+	 {
+          "address": "0x11",
+          "value": "0x00",
+          "type": "eq"
+         }
+	] 
+    },
+
+    {
+      "name": "Escape (Sanc Exit)",
+	  "note":"Splits when in Sanc and exit spotlight gamemode happens",
+      "address": "0xA0",
+      "value": "0x12",
+      "type": "eq",
+      "next": [
+	 {
+          "address": "0x10",
+          "value": "0x0F",
+          "type": "eq"
+         }
+	] 
+    },
+
+	{
+      "name": "Escape (S&Q)",
+	  "note":"Splits when in Sanc and save and quit gamemode happens",
+      "address": "0xA0",
+      "value": "0x12",
+      "type": "eq",
+      "more": [
+	 {
+          "address": "0x10",
+          "value": "0x17",
+          "type": "eq"
+         }
+	] 
+    },
+
+	{
+      "name": "EP Overworld",
+	  "note": "Last entered OW entrance ID",
+      "address": "0x10E",
+      "value": "0x08",
+      "type": "eq"
+    },
+
+    {
+      "name": "EP Dungeon",
+	  "note": "Enter Boss room",
+      "address": "0xA0",
+      "value": "0xC8",
+      "type": "eq"
+    },  
+  
+    {
+      "name": "Armos",
+	  "note": "Heart container pick-up",
+      "address": "0x2D8",
+      "value": "0x37",
+      "type": "eq"
+    },
+
+    {
+      "name": "Eastern Palace",
+	  "note": "Checks pendant bitfield for EP and splits on sword up",
+      "address": "0xF374",
+      "value": "0x04",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0x100",
+          "value": "0x96",
+          "type": "eq"
+        }
+      ]
+    },
+
+	{
+      "name": "DP Overworld",
+	  "note": "Last entered OW entrance ID",
+      "address": "0x10E",
+      "value": "0x09",
+      "type": "eq"
+    },
+
+    {
+      "name": "DP Dungeon",
+	  "note": "Enter Boss room",
+      "address": "0xA0",
+      "value": "0x33",
+      "type": "eq"
+    },
+
+    {
+      "name": "Lanmolas",
+      "address": "0x2D8",
+      "value": "0x39",
+      "type": "eq"
+    },
+
+    {
+      "name": "Desert Palace",
+	  "note": "Checks pendant bitfield for DP and splits on sword up",
+      "address": "0xF374",
+      "value": "0x02",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0x100",
+          "value": "0x96",
+          "type": "eq"
+        }
+      ]
+    },
+
+	{
+      "name": "ToH Overworld",
+	  "note": "Last entered OW entrance ID",
+      "address": "0x10E",
+      "value": "0x33",
+      "type": "eq"
+    },
+
+    {
+      "name": "ToH Dungeon",
+	  "note": "Enter Boss room",
+      "address": "0xA0",
+      "value": "0x07",
+      "type": "eq"
+    },
+
+    {
+      "name": "Moldorm",
+      "address": "0x2D8",
+      "value": "0x38",
+      "type": "eq"
+    },
+
+    {
+      "name": "Tower of Hera",
+	  "note": "Checks pendant bitfield for ToH and splits on sword up",
+      "address": "0xF374",
+      "value": "0x01",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0x100",
+          "value": "0x96",
+          "type": "eq"
+        }
+      ]
+    },
+
+    {
+      "name": "Master Sword",
+	  "note":"Splits when in pedestal area and then grabs sword",
+      "address": "0xA0",
+      "value": "0x80",
+      "type": "eq",
+      "more": [
+        {
+          "address": "0x76",
+          "value": "0x9",
+          "type": "eq"
+        }
+      ]
+    },
+
+	{
+      "name": "CT Overworld",
+	  "note": "Last entered OW entrance ID",
+      "address": "0x10E",
+      "value": "0x24",
+      "type": "eq"
+    },
+	
+    {
+      "name": "Castle Tower",
+	  "note": "Enters Boss room then splits on Boss Music start",
+      "address": "0xA0",
+      "value": "0x20",
+      "type": "eq",
+      "next": [
+        {
+          "address": "0x130",
+          "value": "0x15",
+          "type": "eq"
+         }
+	] 
+    },
+
+    {
+      "name": "Agahnim",
+	  "note":"Splits when Aga game progression advances and the sword up",
+      "address": "0xF3C5",
+      "value": "0x03",
+      "type": "eq",
+      "more": [
+        {
+          "address": "0x100",
+          "value": "0x96",
+          "type": "eq"
+         }
+	] 
+    },
+
+	{
+      "name": "PoD Overworld",
+	  "note": "Last entered OW entrance ID",
+      "address": "0x10E",
+      "value": "0x26",
+      "type": "eq"
+    },
+	
+	{
+      "name": "PoD Kiki Skip",
+	  "note": "Split on entering PoD shooter key room",
+      "address": "0xA0",
+      "value": "0x09",
+      "type": "eq"
+    },
+
+    {
+      "name": "PoD Dungeon",
+	  "note": "Enter Boss room",
+      "address": "0xA0",
+      "value": "0x5A",
+      "type": "eq"
+    },
+
+    {
+      "name": "Helma",
+	  "note":"Heart container pick-up",
+      "address": "0x2D8",
+      "value": "0x20",
+      "type": "eq"
+    },
+
+    {
+      "name": "Palace of Darkness",
+	  "note": "Checks crystal bitfield for PoD and splits on sword up",
+      "address": "0xF37A",
+      "value": "0x02",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0x100",
+          "value": "0x96",
+          "type": "eq"
+        }
+      ]
+    },
+
+	{
+      "name": "TT Overworld",
+	  "note": "Last entered OW entrance ID",
+      "address": "0x10E",
+      "value": "0x34",
+      "type": "eq"
+    },
+
+	{
+      "name": "TT Dungeon",
+	  "note": "Enter Boss room with maiden follower to split",
+      "address": "0xF3CC",
+      "value": "0x06",
+      "type": "eq",
+      "more": [
+        {
+          "address": "0xA0",
+          "value": "0xAC",
+          "type": "eq"
+        }
+      ]
+    },
+
+    {
+      "name": "Blind",
+	  "note":"Heart container pick-up",
+      "address": "0x2D8",
+      "value": "0x20",
+      "type": "eq"
+    },
+
+    {
+      "name": "Thieves' Town",
+	  "note": "Checks crystal bitfield for PoD and splits on sword up",
+      "address": "0xF37A",
+      "value": "0x20",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0x100",
+          "value": "0x96",
+          "type": "eq"
+        }
+      ]
+    },
+
+    {
+      "name": "SW Overworld",
+	  "note": "Overworld screen for skeleton forest",
+      "address": "0x8A",
+      "value": "0x40",
+      "type": "eq"
+    },
+
+    {
+      "name": "SW Dungeon",
+	  "note": "Enter Boss room",
+      "address": "0xA0",
+      "value": "0x29",
+      "type": "eq"
+    },
+
+    {
+      "name": "Mothula",
+	  "note":"Heart container pick-up",
+      "address": "0x2D8",
+      "value": "0x20",
+      "type": "eq"
+    },
+
+    {
+      "name": "Skull Woods",
+	  "note": "Checks crystal bitfield for SW and splits on sword up",
+      "address": "0xF37A",
+      "value": "0x40",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0x100",
+          "value": "0x96",
+          "type": "eq"
+        }
+      ]
+    },
+
+	{
+      "name": "IP Overworld",
+	  "note": "Last entered OW entrance ID",
+      "address": "0x10E",
+      "value": "0x2D",
+      "type": "eq"
+    },
+
+    {
+      "name": "IP Dungeon",
+	  "note": "Enter Boss room",
+      "address": "0xA0",
+      "value": "0xDE",
+      "type": "eq"
+    },
+
+    {
+      "name": "Kholdstare",
+	  "note":"Heart container pick-up",
+      "address": "0x2D8",
+      "value": "0x20",
+      "type": "eq"  
+    },
+
+    {
+      "name": "Ice Palace",
+	  "note": "Checks crystal bitfield for IP and splits on sword up",
+      "address": "0xF37A",
+      "value": "0x04",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0x100",
+          "value": "0x96",
+          "type": "eq"
+        }
+      ]
+    },
+
+	{
+      "name": "SP Overworld",
+	  "note": "Last entered OW entrance ID",
+      "address": "0x10E",
+      "value": "0x25",
+      "type": "eq"
+    },
+	
+    {
+      "name": "SP Dungeon",
+	  "note": "Enter Boss room",
+      "address": "0xA0",
+      "value": "0x06",
+      "type": "eq"
+    },
+
+    {
+      "name": "Arrghus",
+	  "note":"Heart container pick-up",
+      "address": "0x2D8",
+      "value": "0x20",
+      "type": "eq"
+    },
+
+    {
+      "name": "Swamp Palace",
+	  "note": "Checks crystal bitfield for SP and splits on sword up",
+      "address": "0xF37A",
+      "value": "0x10",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0x100",
+          "value": "0x96",
+          "type": "eq"
+        }
+      ]
+    },
+	
+	{
+      "name": "MM Overworld",
+	  "note": "Last entered OW entrance ID",
+      "address": "0x10E",
+      "value": "0x27",
+      "type": "eq"
+    },
+
+    {
+      "name": "MM Dungeon",
+	  "note": "Enter Boss room",
+      "address": "0xA0",
+      "value": "0x90",
+      "type": "eq"
+    },
+
+    {
+      "name": "Vitreous",
+	  "note":"Heart container pick-up",
+      "address": "0x2D8",
+      "value": "0x20",
+      "type": "eq"
+    },
+
+    {
+      "name": "Misery Mire",
+	  "note": "Checks crystal bitfield for PoD and splits on sword up",
+      "address": "0xF37A",
+      "value": "0x01",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0x100",
+          "value": "0x96",
+          "type": "eq"
+        }
+      ]
+    },
+
+	{
+      "name": "TR Overworld",
+	  "note": "Last entered OW entrance ID",
+      "address": "0x10E",
+      "value": "0x35",
+      "type": "eq"
+    },
+	
+    {
+      "name": "TR Dungeon",
+	  "note": "Enter Boss room",
+      "address": "0xA0",
+      "value": "0xA4",
+      "type": "eq"
+    },
+
+    {
+      "name": "Trinexx",
+	  "note":"Heart container pick-up",
+      "address": "0x2D8",
+      "value": "0x20",
+      "type": "eq"
+    },
+
+    {
+      "name": "Turtle Rock",
+	  "note": "Checks crystal bitfield for PoD and splits on sword up",
+      "address": "0xF37A",
+      "value": "0x08",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0x100",
+          "value": "0x96",
+          "type": "eq"
+        }
+      ]
+    },
+	
+    {
+      "name": "GT Big Key",
+	  "note": "have GTBK and then split on mirror back to lobby",
+      "address": "0xF366",
+      "value": "0x04",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0xA0",
+          "value": "0x0C",
+          "type": "eq"
+        }
+      ]
+    },
+
+    {
+      "name": "GT Upstairs",
+	  "note": "Enter Boss room",
+      "address": "0xA0",
+      "value": "0x0D",
+      "type": "eq"
+    },
+
+    {
+      "name": "Agahnim 2",
+	  "note": "looks for Ganon cutscene music",
+      "address": "0x130",
+      "value": "0x1D",
+      "type": "eq"
+    },
+
+    {
+      "name": "Ganon's Tower (Landing)",
+	  "note": "OW flag for pyramid hole and then splits on Link being visible", 
+      "address": "0xF2DB",
+      "value": "0x20",
+      "type": "bit",
+      "next": [
+        {
+          "address": "0x4B",
+          "value": "0x00",
+          "type": "eq"
+        }
+      ]
+    },
+	
+    {
+      "name": "Ganon's Tower (Bat Crash)",
+	  "note": "OW flag for tile changes used for split", 
+      "address": "0xF2DB",
+      "value": "0x20",
+      "type": "bit"
+    },
+
+    {
+      "name": "Ganon",
+	  "note": "game mode for entering Triforce room",
+      "address": "0x10",
+      "value": "0x19",
+      "type": "eq"
+    },
+		
+	{
+      "name": "TR Overworld",
+	  "note": "Last entered Last entered OW entrance ID",
+      "address": "0x10E",
+      "value": "0x18",
+      "type": "eq"
+    },
+
+    {
+      "name": "Digging Game",
+	  "note": "Digging game OW flag set and then split on screen transition to the right",
+      "address": "0xF2E8",
+      "value": "0x40",
+      "type": "bit",
+      "more": [
+        {
+          "address": "0x8A",
+          "value": "0x69",
+          "type": "eq"
+         }
+	] 
+    },
+	
+    {
+      "name": "Chest Game",
+	  "note": "Underworld room flag set on heart piece get. Updates on room exit",
+      "address": "0xF20D",
+      "value": "0x04",
+      "type": "bit"
+    },
+	
+    {
+      "name": "Shopping - Ether",
+	  "note": "Splits when Ether is obtained and Flute select screen is open",
+      "address": "0xF348",
+      "value": "0x01",
+      "type": "eq",
+      "more": [
+        {
+          "address": "0x10",
+          "value": "0x0E",
+          "type": "eq"
+	},
+	{
+          "address": "0x11",
+          "value": "0x0A",
+          "type": "eq"
+         }
+	] 
+    },
+	
+    {
+      "name": "Shopping - Ice Rod",
+	  "note": "Splits when Ether is obtained and Flute select screen is open",
+      "address": "0xF346",
+      "value": "0x01",
+      "type": "eq",
+      "more": [
+        {
+          "address": "0x10",
+          "value": "0x0E",
+          "type": "eq"
+	},
+	{
+          "address": "0x11",
+          "value": "0x0A",
+          "type": "eq"
+         }
+	] 
+    },
+	
+    {
+      "name": "αITEMS - Bow & Arrows",
+      "address": "0xF340",
+      "value": "0x02",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Bow & Silvers",
+      "address": "0xF340",
+      "value": "0x04",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Blue Boomerang",
+      "address": "0xF341",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Red Boomerang",
+      "address": "0xF341",
+      "value": "0x02",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Hookshot",
+      "address": "0xF342",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Mushroom",
+      "address": "0xF344",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Magic Powder",
+      "address": "0xF344",
+      "value": "0x02",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Fire Rod",
+      "address": "0xF345",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Ice Rod",
+      "address": "0xF346",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Bombos",
+      "address": "0xF347",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Ether",
+      "address": "0xF348",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Quake",
+      "address": "0xF349",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Lamp",
+      "address": "0xF34A",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Hammer",
+      "address": "0xF34B",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Shovel",
+      "address": "0xF34C",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Flute",
+      "address": "0xF34C",
+      "value": "0x02",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Flute (Activated)",
+      "address": "0xF34C",
+      "value": "0x03",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Bugnet",
+      "address": "0xF34D",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Book of Mudora",
+      "address": "0xF34E",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Cane of Somaria",
+      "address": "0xF350",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Cane of Byrna",
+      "address": "0xF351",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Cape",
+      "address": "0xF352",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Mirror",
+      "address": "0xF353",
+      "value": "0x02",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Power Glove",
+      "address": "0xF354",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Titan's Mitts",
+      "address": "0xF354",
+      "value": "0x02",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Boots",
+      "address": "0xF355",
+      "value": "0x01",
+      "type": "eq"
+    },
+	
+    {
+      "name": "αITEMS - Flippers",
+      "address": "0xF356",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Moon Pearl",
+      "address": "0xF357",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Fighter Sword",
+      "address": "0xF359",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Master Sword",
+      "address": "0xF359",
+      "value": "0x02",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Tempered Sword",
+      "address": "0xF359",
+      "value": "0x03",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Gold Sword",
+      "address": "0xF359",
+      "value": "0x04",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Fighter Shield",
+      "address": "0xF35A",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Red Shield",
+      "address": "0xF35A",
+      "value": "0x02",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Mirror Shield",
+      "address": "0xF35A",
+      "value": "0x03",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Blue Mail",
+      "address": "0xF35B",
+      "value": "0x01",
+      "type": "eq"
+    },
+
+    {
+      "name": "αITEMS - Red Mail",
+      "address": "0xF35B",
+      "value": "0x02",
+      "type": "eq"
+    },
+	
+	{
+		"name": "αENTRANCE - Link's House",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x01 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Sanctuary",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x02 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Hyrule Castle - West Wing",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x03 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Hyrule Castle - Main Lobby",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x04 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Hyrule Castle - East Wing",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x05 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Old Man Cave - West",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x06 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Old Man Cave - East",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x07 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Eastern Palace",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x08 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Desert Palace - Main Lobby",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x09 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Desert Palace - East",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x0A ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Desert Palace - West",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x0B ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Desert Palace - Back",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x0C ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Sahasrahla's House - West",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x0D ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Sahasrahla's House -  East",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x0E ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Angry Brother -  West",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x0F ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Angry Brother - East",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x10 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Magic Bat",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x11 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Lumberjack Cave",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x12 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Super Bunny - Bottom",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x13 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Super Bunny - Top",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x14 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Turtle Rock - Laser Pots",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x15 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Bumper cave bottom",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x16 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Bumper cave top",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x17 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Turtle Rock - Laser Bridge",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x18 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Turtle Rock - Big Chest",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x19 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - East Death Mountain useless bottom",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x1A ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - East Death Mountain useless top",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x1B ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Spiral Cave Exit",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x1C ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Spiral cave top",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x1D ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Paradox Cave bottom",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x1E ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Paradox Cave middle",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x1F ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Paradox cave Top",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x20 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Kiki cave west",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x21 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Kiki cave east",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x22 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Spectacle Rock",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x23 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Agahnim's Tower",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x24 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Swamp Palace",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x25 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Palace of Darkness",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x26 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Misery Mire",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x27 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Skull Woods west",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x28 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Skull Woods mummy statue",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x29 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Skull Woods big chest",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x2A ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Skull Woods back",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x2B ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Lost Woods hideout",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x2C ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Ice Palace",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x2D ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Death Mountain exit west",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x2E ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Death Mountain exit from summit",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x2F ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Old man home cave west",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x30 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Old man home cave east",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x31 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Hyrule Castle secret entrance",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x32 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Tower of Hera",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x33 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Thieves' Town",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x34 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Turtle Rock - Main Lobby",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x35 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Pyramid Drop",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x36 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Ganon's Tower",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x37 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Graveyard Fairy",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x38 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Kakariko Well",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x39 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Hookshot Cave - Bottom",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x3A ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Hookshot Cave - Top",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x3B ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Lost Woods Chest Game",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x3C ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Swamp Thief cave hideout",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x3D ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Eastern Snitch House",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x3E ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Cucco Easter Egg",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x3F ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Sick Kid",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x40 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Spike Cave",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x41 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Tavern - Front",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x42 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Tavern - Rear",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x43 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Kakariko Inn",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x44 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Sahasrahla's Hideout",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x45 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Kakariko Shop",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x46 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Village of Outcasts Chest Game",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x47 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Village of Outcasts Bombable Hut",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x48 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Library",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x49 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Kakariko Bombable Hut",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x4A ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Chicken Hut",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x4B ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Potion Shop",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x4C ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Aginah's Cave",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x4D ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Dam",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x4E ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Mimic Cave",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x4F ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - East Death Mountain fairy pond cave",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x50 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - South of Grove (Cave 45)",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x51 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Graveyard Ledge",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x52 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Big Bomb Shop",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x53 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - C-Shaped house",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x54 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Southeast of Eastern Ruins fairy cave",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x55 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Mire big fairy",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x5E ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Dark World Lumberjacks Shop",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x60 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Lake Hylia Shop",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x58 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Arrow Game",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x59 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Dark World Sanctuary",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x5A ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - King's Tomb",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x5B ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Waterfall of Wishing",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x5C ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Pond of Happiness",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x5D ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Big fairy (Eastern Ruins)",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x5E ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Mire Shed",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x5F ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Village of Outcasts shop",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x60 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Blind's hut",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x61 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Watto's Cave",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x62 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Pyramid Fairy",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x63 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Smithy's House",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x64 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Light World Fortune Teller (Kakariko)",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x65 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Dark World Fortune Teller",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x66 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - South of Kakariko Chest Game",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x67 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Broccoli's House",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x68 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Bird Hint NPC cave",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x69 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Hamburger Helper's Cave",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x6A ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Ice Rod Cave - Golden Bee",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x56 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Big Fairy (South of Link's house)",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x5E ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Big Fairy (South of Kiki)",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x5E ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Dark Death Mountain shop",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x58 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Dark World Witch Shop",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x60 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Dark West Death Mountain Big fairy",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x5E ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Aginah's Cave",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x4D ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Desert Big Fairy",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x5E ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Light World Fortune Teller (Lake Hylia)",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x65 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Dark Lake Hylia Shop",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x60 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Red Shield Shop",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x57 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Bumpkin Residency",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x6B ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Link's House Bonk Rocks Fairy Pond",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x71 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Bomb Shop Bonk Rocks Fairy Pond",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x71 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Desert Thief Hideout",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x6D ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Bonk Rocks Heart Piece Cave",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x6E ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Lake Hylia Falls Thief Hideout",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x6F ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Dark Lake Hylia Falls Dev Cave",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x70 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Mini Moldorm Cave",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x6C ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Checkerboard Cave",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x72 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Hammerpegs Cave",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x83 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Ice Rod Cave",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x84 ",
+		"type": "eq"
+	},
+	{
+		"name": "αENTRANCE - Dark Ice Rod Big Fairy",
+		"note": "Last entered OW entrance ID",
+		"address": "0x10E",
+		"value": "0x5E ",
+		"type": "eq"
+	},
+	
+    {
+      "name": "αALT SPLIT - Eastern Palace (Fanfare/Pendant Get)",
+	  "note": "looks for fanfare music to start, may be slightly off from actual prize get. generic split but may add dungeon specifics later for these",
+      "address": "0x130",
+      "value": "0x13",
+      "type": "eq"
+    },
+	
+    {
+      "name": "αALT SPLIT - Desert Palace (Fanfare/Pendant Get)",
+	  "note": "looks for fanfare music to start, may be slightly off from actual prize get",
+      "address": "0x130",
+      "value": "0x13",
+      "type": "eq"
+    },
+	
+    {
+      "name": "αALT SPLIT - Tower of Hera (Fanfare/Pendant Get)",
+	  "note": "looks for fanfare music to start, may be slightly off from actual prize get",
+      "address": "0x130",
+      "value": "0x13",
+      "type": "eq"
+    },
+	
+    {
+      "name": "αALT SPLIT - Palace of Darkness (Fanfare/Crystal Get)",
+	  "note": "looks for fanfare music to start, may be slightly off from actual prize get",
+      "address": "0x130",
+      "value": "0x13",
+      "type": "eq"
+    },
+	
+    {
+      "name": "αALT SPLIT - Thieves' Town (Fanfare/Crystal Get)",
+	  "note": "looks for fanfare music to start, may be slightly off from actual prize get",
+      "address": "0x130",
+      "value": "0x13",
+      "type": "eq"
+    },
+	
+    {
+      "name": "αALT SPLIT - Skull Woods (Fanfare/Crystal Get)",
+	  "note": "looks for fanfare music to start, may be slightly off from actual prize get",
+      "address": "0x130",
+      "value": "0x13",
+      "type": "eq"
+    },
+	
+    {
+      "name": "αALT SPLIT - Ice Palace (Fanfare/Crystal Get)",
+	  "note": "looks for fanfare music to start, may be slightly off from actual prize get",
+      "address": "0x130",
+      "value": "0x13",
+      "type": "eq"
+    },
+	
+    {
+      "name": "αALT SPLIT - Swamp Palace (Fanfare/Crystal Get)",
+	  "note": "looks for fanfare music to start, may be slightly off from actual prize get",
+      "address": "0x130",
+      "value": "0x13",
+      "type": "eq"
+    },
+	
+    {
+      "name": "αALT SPLIT - Misery Mire (Fanfare/Crystal Get)",
+	  "note": "looks for fanfare music to start, may be slightly off from actual prize get",
+      "address": "0x130",
+      "value": "0x13",
+      "type": "eq"
+    },
+	
+    {
+      "name": "αALT SPLIT - Turtle Rock (Fanfare/Crystal Get)",
+	  "note": "looks for fanfare music to start, may be slightly off from actual prize get",
+      "address": "0x130",
+      "value": "0x13",
+      "type": "eq"
+    }
+	
+  ]
+}
