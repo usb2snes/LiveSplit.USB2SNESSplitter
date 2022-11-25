@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using WebSocketSharp;
-using LiveSplit.Options;
+
 
 namespace USB2SnesW
 {

@@ -19,7 +19,10 @@ namespace LiveSplit.UI.Components
             _serializer = new JavaScriptSerializer();
             _serializer.RegisterConverters(new[] { new ConfigFileJsonConverter() });
         }
-
+        public string toJson()
+        {
+            return _serializer.Serialize(this);
+        }
         internal static Game FromJSON(string json)
         {
             return _serializer.Deserialize<Game>(json);

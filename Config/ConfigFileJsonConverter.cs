@@ -28,7 +28,18 @@ namespace LiveSplit.UI.Components
 
         public override IDictionary<string, object> Serialize(object obj, JavaScriptSerializer serializer)
         {
-            throw new NotImplementedException();
+            Game game = obj as Game;
+            Dictionary<string, object> result = new Dictionary<string, object>();
+            result["game"] = game.name;
+            if (game.autostart != null)
+                result["autostart"] = game.autostart;
+            if (game.igt != null)
+                result["igt"] = game.igt;
+            if (game.alias != null)
+                result["alias"] = game.alias;
+            if (game.definitions.Count > 0)
+                result["definitions"] = game.definitions;
+            return result;
         }
 
         private static object LookupKeys(IDictionary<string, object> dictionary, params string[] keys)

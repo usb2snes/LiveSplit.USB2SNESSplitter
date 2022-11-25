@@ -3,29 +3,17 @@ using System.Collections.Generic;
 
 namespace LiveSplit.UI.Components
 {
-    internal class Autostart
+    internal class Autostart : Split
     {
         public string active { get; set; }
-        public string address { get; set; }
-        public string value { get; set; }
-        public string type { get; set; }
-        public List<Split> more { get; set; }
-        public List<Split> next { get; set; }
 
+        public Autostart()
+        {
+            name = "Autostart";
+        }
         public Split GetSplit()
         {
-            if (split == null)
-            {
-                split = new Split();
-                split.address = address;
-                split.value = value;
-                split.type = type;
-                split.more = more;
-                split.next = next;
-            }
-            return split;
+            return this;
         }
-
-        private Split split = null;
     }
 }

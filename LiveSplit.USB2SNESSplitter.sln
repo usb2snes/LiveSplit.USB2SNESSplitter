@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30309.148
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveSplit.USB2SNESSplitter", "LiveSplit.USB2SNESSplitter.csproj", "{213769A9-C192-4169-AF51-9547C0C22A14}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveSplit.USB2SNESSplitterTests", "LiveSplit.USB2SNESSplitterTests\LiveSplit.USB2SNESSplitterTests.csproj", "{3D128E49-2978-47F1-99B6-F8CCEEE25985}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DefinitionHelper", "DefinitionHelper\DefinitionHelper.csproj", "{7EB81978-FE9D-44A6-9531-DED2438CD4EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +28,12 @@ Global
 		{3D128E49-2978-47F1-99B6-F8CCEEE25985}.Release Candidate|Any CPU.Build.0 = Release|Any CPU
 		{3D128E49-2978-47F1-99B6-F8CCEEE25985}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D128E49-2978-47F1-99B6-F8CCEEE25985}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EB81978-FE9D-44A6-9531-DED2438CD4EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EB81978-FE9D-44A6-9531-DED2438CD4EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EB81978-FE9D-44A6-9531-DED2438CD4EB}.Release Candidate|Any CPU.ActiveCfg = Release|Any CPU
+		{7EB81978-FE9D-44A6-9531-DED2438CD4EB}.Release Candidate|Any CPU.Build.0 = Release|Any CPU
+		{7EB81978-FE9D-44A6-9531-DED2438CD4EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EB81978-FE9D-44A6-9531-DED2438CD4EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

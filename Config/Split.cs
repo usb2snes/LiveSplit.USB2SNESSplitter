@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Web.Script.Serialization;
 
 namespace LiveSplit.UI.Components
 {
@@ -7,13 +8,19 @@ namespace LiveSplit.UI.Components
     {
         public string name { get; set; }
         public string address { get; set; }
+
+        [ScriptIgnore]
         public string value { get; set; }
         public string type { get; set; }
         public List<Split> more { get; set; }
         public List<Split> next { get; set; }
+
+        [ScriptIgnore]
         public int posToCheck { get; set; } = 0;
 
+        [ScriptIgnore]
         public uint addressInt { get { return Convert.ToUInt32(address, 16); } }
+        [ScriptIgnore]
         public uint valueInt { get { return Convert.ToUInt32(value, 16); } }
 
         public bool check(uint value, uint word)
@@ -91,3 +98,4 @@ namespace LiveSplit.UI.Components
         }
     }
 }
+
