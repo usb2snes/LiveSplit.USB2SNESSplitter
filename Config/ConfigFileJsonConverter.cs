@@ -19,9 +19,12 @@ namespace LiveSplit.UI.Components
                 definitions = serializer.ConvertToType<List<Split>>(LookupKeys(dictionary, "definitions")),
             };
             game.autostart.GetSplit().validate();
-            foreach (var split in game.definitions)
+            if (game.definitions != null)
             {
-               split.validate();
+                foreach (var split in game.definitions)
+                {
+                    split.validate();
+                }
             }
             return game;
         }
@@ -37,7 +40,7 @@ namespace LiveSplit.UI.Components
                 result["igt"] = game.igt;
             if (game.alias != null)
                 result["alias"] = game.alias;
-            if (game.definitions.Count > 0)
+            if (game.definitions != null && game.definitions.Count > 0)
                 result["definitions"] = game.definitions;
             return result;
         }

@@ -103,7 +103,7 @@ namespace USB2SnesW
                 }
                 catch (Exception e)
                 {
-                    Log.Error($"Error when connecting to Usb2Snes: {e}");
+                    //Log.Error($"Error when connecting to Usb2Snes: {e}");
                     tcs.TrySetResult(false);
                 }
 

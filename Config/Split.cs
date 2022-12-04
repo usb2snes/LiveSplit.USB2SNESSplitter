@@ -8,8 +8,6 @@ namespace LiveSplit.UI.Components
     {
         public string name { get; set; }
         public string address { get; set; }
-
-        [ScriptIgnore]
         public string value { get; set; }
         public string type { get; set; }
         public List<Split> more { get; set; }
