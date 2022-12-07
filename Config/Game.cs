@@ -22,6 +22,7 @@ namespace LiveSplit.UI.Components
         public string toJson()
         {
             return _serializer.Serialize(this);
+
         }
         internal static Game FromJSON(string json)
         {

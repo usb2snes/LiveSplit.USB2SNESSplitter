@@ -15,6 +15,8 @@ using USB2SnesW;
 using System.Timers;
 using System.Windows.Threading;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Newtonsoft.Json;
+using System.Security.Policy;
 
 namespace LiveSplit.UI.Components
 {
@@ -30,6 +32,19 @@ namespace LiveSplit.UI.Components
             TryingToAttach,
             Attached,
             Ready
+        };
+        private Dictionary<String, String> typeToText = new Dictionary<String, String>()
+        {
+            { "eq", "byte equal"},
+            { "weq", "word equal" },
+            { "bit", "byte bit set" },
+            { "wbit", "word bit set"},
+            { "lt", "byte less than"},
+            { "wlt", "word less than" },
+            { "lte", "byte less or equal" },
+            { "wlte", "word less or equal"},
+            { "gte", "byte greater or equal"},
+            { "wgte", "word greater or equal" }
         };
         private Game game;
         private Split currentSplit;
@@ -56,6 +71,15 @@ namespace LiveSplit.UI.Components
             splitChecker.onSplitNok = splitCheckIsBad;
             splitChecker.onCheckedSplit = currentlyChecking;
             splitChecker.onUsb2snesError = usb2snesCommandFailed;
+            var listValues = typeToText.Values.ToList<string>();
+            listValues.Sort();
+            foreach (string s in listValues)
+            {
+                typeComboBox.Items.Add(s);
+                subSplitTypeComboBox.Items.Add(s);
+            }
+            subSplitUIEnable(false);
+            SetUIEnable(false);
         }
         private void splitCheckIsGood()
         {
@@ -173,6 +197,7 @@ namespace LiveSplit.UI.Components
                     }
                 }
                 listSplits.Items[0].Selected = true;
+                SetUIEnable(true);
                 //currentSplit = game.autostart.GetSplit();
                 //updateSplitInfos();
             }
@@ -183,22 +208,43 @@ namespace LiveSplit.UI.Components
             addressTextBox.Clear();
             subSplitAddress.Clear();
             valueTextBox.Clear();
+            valueDecTextBox.Clear();
             splitNameTextBox.Clear();
+            subSplitValue.Clear();
+            subSplitValueDecTextBox.Clear();
             subSplitTypeComboBox.Text = "";
             typeComboBox.Text = "";
+        }
+        private void SetUIEnable(bool enabled)
+        {
+            listSplits.Enabled = enabled;
+            addressTextBox.Enabled = enabled;
+            splitNameTextBox.Enabled = enabled;
+            valueTextBox.Enabled = enabled;
+            valueDecTextBox.Enabled = enabled;
+            typeComboBox.Enabled = enabled;
+            buttonOrderDown.Enabled = enabled;
+            buttonOrderUp.Enabled = enabled;
+            addSplitButton.Enabled = enabled;
+            delSplitButton.Enabled = enabled;
+            addNextButton.Enabled = enabled;
+            addMoreButton.Enabled = enabled;
         }
 
         private void listSplits_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listSplits.SelectedItems.Count == 0)
                 return;
+            int index = listSplits.SelectedIndices[0];
             var itemName = listSplits.SelectedItems[0];
-            if (itemName.Text == "Autostart")
+            if (index == 0)
             {
                 currentSplit = game.autostart;
+                delSplitButton.Enabled = false;
                 updateSplitInfos();
                 return;
             }
+            delSplitButton.Enabled = true;
             foreach (var def in game.definitions)
             {
                 if (itemName.Text == def.name)
@@ -208,14 +254,14 @@ namespace LiveSplit.UI.Components
                     break;
                 }
             }
-
         }
         private void updateSplitInfos()
         {
             Console.WriteLine("Update split info");
             splitNameTextBox.Text = currentSplit.name;
             addressTextBox.Text = currentSplit.address;
-            typeComboBox.Text = currentSplit.type;
+            if (currentSplit.type != null)
+                typeComboBox.Text = typeToText[currentSplit.type];
             valueTextBox.Text = currentSplit.value;
             subSplitView.Rows.Clear();
             hasMore = false;
@@ -224,13 +270,15 @@ namespace LiveSplit.UI.Components
             {
                 addMoreButton.Enabled = true;
                 addNextButton.Enabled = true;
+                subSplitUIEnable(false);
             }
             else
             {
                 addMoreButton.Enabled = false;
                 addNextButton.Enabled = false;
             }
-
+            subSplitAddress.Text = "";
+            subSplitTypeComboBox.Text = "";
             if (currentSplit.next != null)
             {
                 hasNext = true;
@@ -263,8 +311,6 @@ namespace LiveSplit.UI.Components
                     cpt++;
                 }
             }
-            subSplitAddress.Text = "";
-            subSplitTypeComboBox.Text = "";
         }
 
         private void splitNameTextBox_TextChanged(object sender, EventArgs e)
@@ -283,11 +329,21 @@ namespace LiveSplit.UI.Components
         }
         private void typeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            currentSplit.type = typeComboBox.Text;
+            if (typeComboBox.Text == "")
+                return;
+            string result;
+            typeToText.TryGetValue(typeComboBox.Text, out result);
+            currentSplit.type = result;
         }
         private void valueTextBox_TextChanged(object sender, EventArgs e)
         {
             currentSplit.value = valueTextBox.Text;
+            valueDecTextBox.Text = String.Format("{0}", currentSplit.valueInt);
+        }
+        private void valueDecTextBox_TextChanged(object sender, EventArgs e)
+        {
+            currentSplit.value = String.Format("0x{0:X}", Convert.ToUInt32(valueDecTextBox.Text));
+            valueTextBox.Text = currentSplit.value;
         }
 
         private void NewGame_Click(object sender, EventArgs e)
@@ -308,6 +364,7 @@ namespace LiveSplit.UI.Components
                 TitleLabel.Text = game.name;
                 game.definitions = new List<Split>();
                 updateSplitInfos();
+                SetUIEnable(true);
             }
             
         }
@@ -335,11 +392,14 @@ namespace LiveSplit.UI.Components
             if (fileName == null)
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "Json File | *.json";
                 var result = saveFileDialog.ShowDialog();
                 if (result == DialogResult.OK)
                     fileName = saveFileDialog.FileName;
+                else
+                    return;
             }
-            String json = game.toJson();
+            String json = JsonConvert.SerializeObject(game, Newtonsoft.Json.Formatting.Indented);
             File.WriteAllText(fileName, json);
         }
         private void initCheck()
@@ -386,7 +446,13 @@ namespace LiveSplit.UI.Components
             subSplitView.Rows.Add(split.name);
             subSplitView.Rows[subSplitIndex].Selected = true;
         }
-
+        private void subSplitUIEnable(bool enabled)
+        {
+            subSplitAddress.Enabled = enabled;
+            subSplitTypeComboBox.Enabled = enabled;
+            subSplitValue.Enabled = enabled;
+            subSplitValueDecTextBox.Enabled = enabled;
+        }
         private void subSplitAddress_TextChanged(object sender, EventArgs e)
         {
             if (hasNext == false && hasMore == false)
@@ -401,15 +467,16 @@ namespace LiveSplit.UI.Components
 
         private void subSplitTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (hasNext == false && hasMore == false)
+            if ((hasNext == false && hasMore == false) || subSplitTypeComboBox.Text == "")
                 return;
             Split subSplit = null;
             if (hasNext)
                 subSplit = currentSplit.next[subSplitIndex];
             if (hasMore)
                 subSplit = currentSplit.more[subSplitIndex];
-            subSplit.type = subSplitTypeComboBox.Text;
-
+            string result;
+            typeToText.TryGetValue(subSplitTypeComboBox.Text, out result);
+            subSplit.type = result;
         }
 
         private void subSplitValue_TextChanged(object sender, EventArgs e)
@@ -422,6 +489,20 @@ namespace LiveSplit.UI.Components
             if (hasMore)
                 subSplit = currentSplit.more[subSplitIndex];
             subSplit.value = subSplitValue.Text;
+            subSplitValueDecTextBox.Text = String.Format("{0}", subSplit.valueInt);
+        }
+
+        private void subSplitValueDecTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (hasNext == false && hasMore == false)
+                return;
+            Split subSplit = null;
+            if (hasNext)
+                subSplit = currentSplit.next[subSplitIndex];
+            if (hasMore)
+                subSplit = currentSplit.more[subSplitIndex];
+            subSplit.value = String.Format("0x{0:X}", Convert.ToUInt32(subSplitValueDecTextBox.Text));
+            subSplitValue.Text = subSplit.value;
         }
 
         private void subSplitView_SelectionChanged(object sender, EventArgs e)
@@ -429,6 +510,8 @@ namespace LiveSplit.UI.Components
             Console.WriteLine("Selection changed");
             if (subSplitView.SelectedCells.Count == 0)
                 return;
+            if (subSplitValue.Enabled == false)
+                subSplitUIEnable(true);
             Split subSplit = null;
             subSplitIndex = subSplitView.SelectedCells[0].RowIndex;
             Console.WriteLine("subsplit Row changed");
@@ -437,8 +520,46 @@ namespace LiveSplit.UI.Components
             if (hasMore)
                 subSplit = currentSplit.more[subSplitIndex];
             subSplitAddress.Text = subSplit.address;
-            subSplitTypeComboBox.Text = subSplit.type;
+            if (subSplit.type != null)
+                subSplitTypeComboBox.Text = typeToText[subSplit.type];
             subSplitValue.Text = subSplit.value;
+        }
+
+        private void delSplit_Click(object sender, EventArgs e)
+        {
+            int index = listSplits.SelectedItems[0].Index;
+            if (index == 0)
+                return;
+            listSplits.Items.RemoveAt(index);
+            game.definitions.RemoveAt(index - 1);
+        }
+
+        private void buttonOderUp_Click(object sender, EventArgs e)
+        {
+            int index = listSplits.SelectedIndices[0];
+            if (index < 2)
+                return;
+            int indexInDef = index - 1;
+            Split changedSplit = game.definitions[indexInDef];
+            game.definitions[indexInDef] = game.definitions[indexInDef - 1];
+            game.definitions[indexInDef - 1] = changedSplit;
+            listSplits.Items[index - 1].Text = changedSplit.name;
+            listSplits.Items[index].Text = game.definitions[indexInDef].name;
+            listSplits.Items[index - 1].Selected = true;
+        }
+
+        private void buttonOrderDown_Click(object sender, EventArgs e)
+        {
+            int index = listSplits.SelectedIndices[0];
+            if (index == listSplits.Items.Count - 1)
+                return;
+            int indexInDef = index - 1;
+            Split changedSplit = game.definitions[indexInDef];
+            game.definitions[indexInDef] = game.definitions[indexInDef + 1];
+            game.definitions[indexInDef + 1] = changedSplit;
+            listSplits.Items[index + 1].Text = changedSplit.name;
+            listSplits.Items[index].Text = game.definitions[indexInDef].name;
+            listSplits.Items[index + 1].Selected = true;
         }
     }
 }

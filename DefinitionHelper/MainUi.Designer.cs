@@ -49,7 +49,7 @@
             this.subSplitTypeComboBox = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.addSplitButton = new System.Windows.Forms.Button();
-            this.delSplit = new System.Windows.Forms.Button();
+            this.delSplitButton = new System.Windows.Forms.Button();
             this.usb2snesLabel = new System.Windows.Forms.Label();
             this.checkButton = new System.Windows.Forms.Button();
             this.splitOkButton = new System.Windows.Forms.Button();
@@ -61,6 +61,13 @@
             this.subSplitView = new System.Windows.Forms.DataGridView();
             this.subSplitName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.subSplitStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.label10 = new System.Windows.Forms.Label();
+            this.valueDecTextBox = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.subSplitValueDecTextBox = new System.Windows.Forms.TextBox();
+            this.buttonOrderUp = new System.Windows.Forms.Button();
+            this.buttonOrderDown = new System.Windows.Forms.Button();
+            this.label12 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.subSplitView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -68,6 +75,7 @@
             // 
             this.listSplits.HideSelection = false;
             this.listSplits.Location = new System.Drawing.Point(37, 142);
+            this.listSplits.MultiSelect = false;
             this.listSplits.Name = "listSplits";
             this.listSplits.Size = new System.Drawing.Size(193, 264);
             this.listSplits.TabIndex = 0;
@@ -126,7 +134,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(285, 158);
+            this.label2.Location = new System.Drawing.Point(257, 158);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(41, 13);
             this.label2.TabIndex = 6;
@@ -135,16 +143,16 @@
             // splitNameTextBox
             // 
             this.splitNameTextBox.AcceptsReturn = true;
-            this.splitNameTextBox.Location = new System.Drawing.Point(369, 155);
+            this.splitNameTextBox.Location = new System.Drawing.Point(312, 155);
             this.splitNameTextBox.Name = "splitNameTextBox";
-            this.splitNameTextBox.Size = new System.Drawing.Size(100, 20);
+            this.splitNameTextBox.Size = new System.Drawing.Size(216, 20);
             this.splitNameTextBox.TabIndex = 7;
             this.splitNameTextBox.TextChanged += new System.EventHandler(this.splitNameTextBox_TextChanged);
             // 
             // addressTextBox
             // 
             this.addressTextBox.AcceptsReturn = true;
-            this.addressTextBox.Location = new System.Drawing.Point(369, 194);
+            this.addressTextBox.Location = new System.Drawing.Point(312, 191);
             this.addressTextBox.Name = "addressTextBox";
             this.addressTextBox.Size = new System.Drawing.Size(100, 20);
             this.addressTextBox.TabIndex = 8;
@@ -153,28 +161,16 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(281, 197);
+            this.label3.Location = new System.Drawing.Point(253, 194);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(45, 13);
+            this.label3.Size = new System.Drawing.Size(51, 13);
             this.label3.TabIndex = 9;
-            this.label3.Text = "Address";
+            this.label3.Text = "Address :";
             // 
             // typeComboBox
             // 
             this.typeComboBox.FormattingEnabled = true;
-            this.typeComboBox.Items.AddRange(new object[] {
-            "eq",
-            "bit",
-            "lt",
-            "gte",
-            "lte",
-            "wbit",
-            "weq",
-            "wgt",
-            "wlt",
-            "wgte",
-            "wlte"});
-            this.typeComboBox.Location = new System.Drawing.Point(348, 228);
+            this.typeComboBox.Location = new System.Drawing.Point(386, 248);
             this.typeComboBox.Name = "typeComboBox";
             this.typeComboBox.Size = new System.Drawing.Size(121, 21);
             this.typeComboBox.TabIndex = 10;
@@ -183,7 +179,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(247, 231);
+            this.label4.Location = new System.Drawing.Point(281, 251);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(95, 13);
             this.label4.TabIndex = 11;
@@ -220,7 +216,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(345, 300);
+            this.label6.Location = new System.Drawing.Point(345, 312);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(79, 13);
             this.label6.TabIndex = 16;
@@ -229,7 +225,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(285, 328);
+            this.label7.Location = new System.Drawing.Point(261, 341);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(45, 13);
             this.label7.TabIndex = 17;
@@ -237,7 +233,7 @@
             // 
             // subSplitAddress
             // 
-            this.subSplitAddress.Location = new System.Drawing.Point(369, 325);
+            this.subSplitAddress.Location = new System.Drawing.Point(345, 338);
             this.subSplitAddress.Name = "subSplitAddress";
             this.subSplitAddress.Size = new System.Drawing.Size(100, 20);
             this.subSplitAddress.TabIndex = 18;
@@ -246,18 +242,6 @@
             // subSplitTypeComboBox
             // 
             this.subSplitTypeComboBox.FormattingEnabled = true;
-            this.subSplitTypeComboBox.Items.AddRange(new object[] {
-            "eq",
-            "bit",
-            "lt",
-            "gte",
-            "lte",
-            "wbit",
-            "weq",
-            "wgt",
-            "wlt",
-            "wgte",
-            "wlte"});
             this.subSplitTypeComboBox.Location = new System.Drawing.Point(348, 363);
             this.subSplitTypeComboBox.Name = "subSplitTypeComboBox";
             this.subSplitTypeComboBox.Size = new System.Drawing.Size(121, 21);
@@ -283,14 +267,15 @@
             this.addSplitButton.UseVisualStyleBackColor = true;
             this.addSplitButton.Click += new System.EventHandler(this.addSplitButton_Click);
             // 
-            // delSplit
+            // delSplitButton
             // 
-            this.delSplit.Location = new System.Drawing.Point(131, 427);
-            this.delSplit.Name = "delSplit";
-            this.delSplit.Size = new System.Drawing.Size(99, 23);
-            this.delSplit.TabIndex = 22;
-            this.delSplit.Text = "Delete Definition";
-            this.delSplit.UseVisualStyleBackColor = true;
+            this.delSplitButton.Location = new System.Drawing.Point(131, 427);
+            this.delSplitButton.Name = "delSplitButton";
+            this.delSplitButton.Size = new System.Drawing.Size(99, 23);
+            this.delSplitButton.TabIndex = 22;
+            this.delSplitButton.Text = "Delete Definition";
+            this.delSplitButton.UseVisualStyleBackColor = true;
+            this.delSplitButton.Click += new System.EventHandler(this.delSplit_Click);
             // 
             // usb2snesLabel
             // 
@@ -325,36 +310,36 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(284, 267);
+            this.label5.Location = new System.Drawing.Point(247, 292);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(34, 13);
+            this.label5.Size = new System.Drawing.Size(59, 13);
             this.label5.TabIndex = 26;
-            this.label5.Text = "Value";
+            this.label5.Text = "Value Hex:";
             // 
             // valueTextBox
             // 
-            this.valueTextBox.Location = new System.Drawing.Point(348, 264);
+            this.valueTextBox.Location = new System.Drawing.Point(312, 289);
             this.valueTextBox.Name = "valueTextBox";
-            this.valueTextBox.Size = new System.Drawing.Size(100, 20);
+            this.valueTextBox.Size = new System.Drawing.Size(70, 20);
             this.valueTextBox.TabIndex = 27;
             this.valueTextBox.TextChanged += new System.EventHandler(this.valueTextBox_TextChanged);
             // 
             // subSplitValue
             // 
-            this.subSplitValue.Location = new System.Drawing.Point(348, 391);
+            this.subSplitValue.Location = new System.Drawing.Point(312, 394);
             this.subSplitValue.Name = "subSplitValue";
-            this.subSplitValue.Size = new System.Drawing.Size(100, 20);
+            this.subSplitValue.Size = new System.Drawing.Size(70, 20);
             this.subSplitValue.TabIndex = 28;
             this.subSplitValue.TextChanged += new System.EventHandler(this.subSplitValue_TextChanged);
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(284, 397);
+            this.label9.Location = new System.Drawing.Point(257, 394);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(34, 13);
+            this.label9.Size = new System.Drawing.Size(59, 13);
             this.label9.TabIndex = 29;
-            this.label9.Text = "Value";
+            this.label9.Text = "Value Hex:";
             // 
             // checkStatusLabel
             // 
@@ -378,7 +363,7 @@
             this.subSplitView.Name = "subSplitView";
             this.subSplitView.ReadOnly = true;
             this.subSplitView.RowHeadersVisible = false;
-            this.subSplitView.Size = new System.Drawing.Size(265, 187);
+            this.subSplitView.Size = new System.Drawing.Size(218, 187);
             this.subSplitView.TabIndex = 31;
             this.subSplitView.SelectionChanged += new System.EventHandler(this.subSplitView_SelectionChanged);
             // 
@@ -394,12 +379,82 @@
             this.subSplitStatus.Name = "subSplitStatus";
             this.subSplitStatus.ReadOnly = true;
             // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(388, 292);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(60, 13);
+            this.label10.TabIndex = 32;
+            this.label10.Text = "Value Dec:";
+            // 
+            // valueDecTextBox
+            // 
+            this.valueDecTextBox.Location = new System.Drawing.Point(453, 289);
+            this.valueDecTextBox.Name = "valueDecTextBox";
+            this.valueDecTextBox.Size = new System.Drawing.Size(75, 20);
+            this.valueDecTextBox.TabIndex = 33;
+            this.valueDecTextBox.TextChanged += new System.EventHandler(this.valueDecTextBox_TextChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(388, 397);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(57, 13);
+            this.label11.TabIndex = 34;
+            this.label11.Text = "Value Dec";
+            // 
+            // subSplitValueDecTextBox
+            // 
+            this.subSplitValueDecTextBox.Location = new System.Drawing.Point(454, 394);
+            this.subSplitValueDecTextBox.Name = "subSplitValueDecTextBox";
+            this.subSplitValueDecTextBox.Size = new System.Drawing.Size(74, 20);
+            this.subSplitValueDecTextBox.TabIndex = 35;
+            this.subSplitValueDecTextBox.TextChanged += new System.EventHandler(this.subSplitValueDecTextBox_TextChanged);
+            // 
+            // buttonOrderUp
+            // 
+            this.buttonOrderUp.Location = new System.Drawing.Point(12, 209);
+            this.buttonOrderUp.Name = "buttonOrderUp";
+            this.buttonOrderUp.Size = new System.Drawing.Size(18, 40);
+            this.buttonOrderUp.TabIndex = 36;
+            this.buttonOrderUp.Text = "^";
+            this.buttonOrderUp.UseVisualStyleBackColor = true;
+            this.buttonOrderUp.Click += new System.EventHandler(this.buttonOderUp_Click);
+            // 
+            // buttonOrderDown
+            // 
+            this.buttonOrderDown.Location = new System.Drawing.Point(13, 256);
+            this.buttonOrderDown.Name = "buttonOrderDown";
+            this.buttonOrderDown.Size = new System.Drawing.Size(18, 57);
+            this.buttonOrderDown.TabIndex = 37;
+            this.buttonOrderDown.Text = "V";
+            this.buttonOrderDown.UseVisualStyleBackColor = true;
+            this.buttonOrderDown.Click += new System.EventHandler(this.buttonOrderDown_Click);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(261, 232);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(273, 13);
+            this.label12.TabIndex = 38;
+            this.label12.Text = "Byte: one byte get checked. Word: 2 bytes get checked";
+            // 
             // MainUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(836, 500);
+            this.ClientSize = new System.Drawing.Size(797, 500);
+            this.Controls.Add(this.label12);
+            this.Controls.Add(this.buttonOrderDown);
+            this.Controls.Add(this.buttonOrderUp);
+            this.Controls.Add(this.subSplitValueDecTextBox);
+            this.Controls.Add(this.label11);
+            this.Controls.Add(this.valueDecTextBox);
+            this.Controls.Add(this.label10);
             this.Controls.Add(this.subSplitView);
             this.Controls.Add(this.checkStatusLabel);
             this.Controls.Add(this.label9);
@@ -409,7 +464,7 @@
             this.Controls.Add(this.splitOkButton);
             this.Controls.Add(this.checkButton);
             this.Controls.Add(this.usb2snesLabel);
-            this.Controls.Add(this.delSplit);
+            this.Controls.Add(this.delSplitButton);
             this.Controls.Add(this.addSplitButton);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.subSplitTypeComboBox);
@@ -462,7 +517,7 @@
         private System.Windows.Forms.ComboBox subSplitTypeComboBox;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button addSplitButton;
-        private System.Windows.Forms.Button delSplit;
+        private System.Windows.Forms.Button delSplitButton;
         private System.Windows.Forms.Label usb2snesLabel;
         private System.Windows.Forms.Button checkButton;
         private System.Windows.Forms.Button splitOkButton;
@@ -476,6 +531,13 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn subSplitColumnStatus;
         private System.Windows.Forms.DataGridViewTextBoxColumn subSplitName;
         private System.Windows.Forms.DataGridViewTextBoxColumn subSplitStatus;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox valueDecTextBox;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TextBox subSplitValueDecTextBox;
+        private System.Windows.Forms.Button buttonOrderUp;
+        private System.Windows.Forms.Button buttonOrderDown;
+        private System.Windows.Forms.Label label12;
     }
 }
 
