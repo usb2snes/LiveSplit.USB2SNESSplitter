@@ -28,11 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.listSplits = new System.Windows.Forms.ListView();
             this.label1 = new System.Windows.Forms.Label();
-            this.OpenGame = new System.Windows.Forms.Button();
-            this.NewGame = new System.Windows.Forms.Button();
-            this.SaveGame = new System.Windows.Forms.Button();
             this.TitleLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.splitNameTextBox = new System.Windows.Forms.TextBox();
@@ -68,20 +64,14 @@
             this.buttonOrderUp = new System.Windows.Forms.Button();
             this.buttonOrderDown = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
+            this.OpenGame = new System.Windows.Forms.Button();
+            this.NewGame = new System.Windows.Forms.Button();
+            this.SaveGame = new System.Windows.Forms.Button();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.listSplits = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.subSplitView)).BeginInit();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // listSplits
-            // 
-            this.listSplits.HideSelection = false;
-            this.listSplits.Location = new System.Drawing.Point(37, 142);
-            this.listSplits.MultiSelect = false;
-            this.listSplits.Name = "listSplits";
-            this.listSplits.Size = new System.Drawing.Size(193, 264);
-            this.listSplits.TabIndex = 0;
-            this.listSplits.UseCompatibleStateImageBehavior = false;
-            this.listSplits.View = System.Windows.Forms.View.List;
-            this.listSplits.SelectedIndexChanged += new System.EventHandler(this.listSplits_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -91,36 +81,6 @@
             this.label1.Size = new System.Drawing.Size(87, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "List of Definitions";
-            // 
-            // OpenGame
-            // 
-            this.OpenGame.Location = new System.Drawing.Point(467, 12);
-            this.OpenGame.Name = "OpenGame";
-            this.OpenGame.Size = new System.Drawing.Size(75, 23);
-            this.OpenGame.TabIndex = 2;
-            this.OpenGame.Text = "Open";
-            this.OpenGame.UseVisualStyleBackColor = true;
-            this.OpenGame.Click += new System.EventHandler(this.OpenGame_Click);
-            // 
-            // NewGame
-            // 
-            this.NewGame.Location = new System.Drawing.Point(386, 12);
-            this.NewGame.Name = "NewGame";
-            this.NewGame.Size = new System.Drawing.Size(75, 23);
-            this.NewGame.TabIndex = 3;
-            this.NewGame.Text = "New";
-            this.NewGame.UseVisualStyleBackColor = true;
-            this.NewGame.Click += new System.EventHandler(this.NewGame_Click);
-            // 
-            // SaveGame
-            // 
-            this.SaveGame.Location = new System.Drawing.Point(48, 12);
-            this.SaveGame.Name = "SaveGame";
-            this.SaveGame.Size = new System.Drawing.Size(75, 23);
-            this.SaveGame.TabIndex = 4;
-            this.SaveGame.Text = "Save";
-            this.SaveGame.UseVisualStyleBackColor = true;
-            this.SaveGame.Click += new System.EventHandler(this.SaveGame_Click);
             // 
             // TitleLabel
             // 
@@ -212,6 +172,7 @@
             this.addMoreButton.TabIndex = 15;
             this.addMoreButton.Text = "Add More";
             this.addMoreButton.UseVisualStyleBackColor = true;
+            this.addMoreButton.Click += new System.EventHandler(this.addMoreButton_Click);
             // 
             // label6
             // 
@@ -442,12 +403,70 @@
             this.label12.TabIndex = 38;
             this.label12.Text = "Byte: one byte get checked. Word: 2 bytes get checked";
             // 
+            // OpenGame
+            // 
+            this.OpenGame.Location = new System.Drawing.Point(286, 3);
+            this.OpenGame.Name = "OpenGame";
+            this.OpenGame.Size = new System.Drawing.Size(75, 23);
+            this.OpenGame.TabIndex = 2;
+            this.OpenGame.Text = "Open";
+            this.OpenGame.UseVisualStyleBackColor = true;
+            this.OpenGame.Click += new System.EventHandler(this.OpenGame_Click);
+            // 
+            // NewGame
+            // 
+            this.NewGame.Location = new System.Drawing.Point(79, 3);
+            this.NewGame.Name = "NewGame";
+            this.NewGame.Size = new System.Drawing.Size(75, 23);
+            this.NewGame.TabIndex = 3;
+            this.NewGame.Text = "New";
+            this.NewGame.UseVisualStyleBackColor = true;
+            this.NewGame.Click += new System.EventHandler(this.NewGame_Click);
+            // 
+            // SaveGame
+            // 
+            this.SaveGame.Location = new System.Drawing.Point(3, 3);
+            this.SaveGame.Name = "SaveGame";
+            this.SaveGame.Size = new System.Drawing.Size(70, 23);
+            this.SaveGame.TabIndex = 4;
+            this.SaveGame.Text = "Save";
+            this.SaveGame.UseVisualStyleBackColor = true;
+            this.SaveGame.Click += new System.EventHandler(this.SaveGame_Click);
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 4;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 29.53216F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70.46783F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 99F));
+            this.tableLayoutPanel1.Controls.Add(this.SaveGame, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.NewGame, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.OpenGame, 3, 0);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(211, 12);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(383, 37);
+            this.tableLayoutPanel1.TabIndex = 39;
+            // 
+            // listSplits
+            // 
+            this.listSplits.FormattingEnabled = true;
+            this.listSplits.Location = new System.Drawing.Point(37, 168);
+            this.listSplits.Name = "listSplits";
+            this.listSplits.Size = new System.Drawing.Size(193, 212);
+            this.listSplits.TabIndex = 40;
+            this.listSplits.SelectedIndexChanged += new System.EventHandler(this.listSplits_SelectedIndexChanged);
+            // 
             // MainUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(797, 500);
+            this.Controls.Add(this.listSplits);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.buttonOrderDown);
             this.Controls.Add(this.buttonOrderUp);
@@ -481,26 +500,18 @@
             this.Controls.Add(this.splitNameTextBox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.TitleLabel);
-            this.Controls.Add(this.SaveGame);
-            this.Controls.Add(this.NewGame);
-            this.Controls.Add(this.OpenGame);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.listSplits);
             this.Name = "MainUI";
             this.Text = "Definition Helper";
             ((System.ComponentModel.ISupportInitialize)(this.subSplitView)).EndInit();
+            this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.ListView listSplits;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button OpenGame;
-        private System.Windows.Forms.Button NewGame;
-        private System.Windows.Forms.Button SaveGame;
         private System.Windows.Forms.Label TitleLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox splitNameTextBox;
@@ -538,6 +549,11 @@
         private System.Windows.Forms.Button buttonOrderUp;
         private System.Windows.Forms.Button buttonOrderDown;
         private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Button OpenGame;
+        private System.Windows.Forms.Button NewGame;
+        private System.Windows.Forms.Button SaveGame;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.ListBox listSplits;
     }
 }
 

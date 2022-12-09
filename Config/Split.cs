@@ -20,7 +20,22 @@ namespace LiveSplit.UI.Components
         [JsonIgnoreAttribute]
         public uint addressInt { get { if (address == "") return 0; return Convert.ToUInt32(address, 16); } }
         [JsonIgnoreAttribute]
-        public uint valueInt { get { if (value == "") return 0; return Convert.ToUInt32(value, 16); } }
+        public uint valueInt
+        {
+            get
+            {
+                if (value == "")
+                    return 0;
+                try
+                {
+                    return Convert.ToUInt32(value, 16);
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+        }
 
         public bool check(uint value, uint word)
         {

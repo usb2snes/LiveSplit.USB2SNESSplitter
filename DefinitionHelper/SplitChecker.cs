@@ -148,6 +148,7 @@ namespace LiveSplit.UI.Components
             }
             uint value = (uint)data[0][0];
             uint word = value + ((uint)data[0][1] << 8);
+            //Console.WriteLine("In SplitChecker Sendvalue to UI {0}{1} - {1:X}", data[0][0], data[0][1], word);
             onCheckedSplit.Invoke(split, word);
             bool result = split.check(value, word);
             return result;
