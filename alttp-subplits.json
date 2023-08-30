@@ -921,903 +921,903 @@
 		"name": "αENTRANCE - Link's House",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x01 ",
+		"value": "0x01",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Sanctuary",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x02 ",
+		"value": "0x02",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Hyrule Castle - West Wing",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x03 ",
+		"value": "0x03",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Hyrule Castle - Main Lobby",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x04 ",
+		"value": "0x04",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Hyrule Castle - East Wing",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x05 ",
+		"value": "0x05",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Old Man Cave - West",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x06 ",
+		"value": "0x06",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Old Man Cave - East",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x07 ",
+		"value": "0x07",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Eastern Palace",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x08 ",
+		"value": "0x08",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Desert Palace - Main Lobby",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x09 ",
+		"value": "0x09",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Desert Palace - East",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x0A ",
+		"value": "0x0A",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Desert Palace - West",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x0B ",
+		"value": "0x0B",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Desert Palace - Back",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x0C ",
+		"value": "0x0C",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Sahasrahla's House - West",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x0D ",
+		"value": "0x0D",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Sahasrahla's House -  East",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x0E ",
+		"value": "0x0E",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Angry Brother -  West",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x0F ",
+		"value": "0x0F",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Angry Brother - East",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x10 ",
+		"value": "0x10",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Magic Bat",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x11 ",
+		"value": "0x11",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Lumberjack Cave",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x12 ",
+		"value": "0x12",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Super Bunny - Bottom",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x13 ",
+		"value": "0x13",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Super Bunny - Top",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x14 ",
+		"value": "0x14",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Turtle Rock - Laser Pots",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x15 ",
+		"value": "0x15",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Bumper cave bottom",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x16 ",
+		"value": "0x16",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Bumper cave top",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x17 ",
+		"value": "0x17",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Turtle Rock - Laser Bridge",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x18 ",
+		"value": "0x18",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Turtle Rock - Big Chest",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x19 ",
+		"value": "0x19",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - East Death Mountain useless bottom",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x1A ",
+		"value": "0x1A",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - East Death Mountain useless top",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x1B ",
+		"value": "0x1B",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Spiral Cave Exit",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x1C ",
+		"value": "0x1C",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Spiral cave top",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x1D ",
+		"value": "0x1D",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Paradox Cave bottom",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x1E ",
+		"value": "0x1E",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Paradox Cave middle",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x1F ",
+		"value": "0x1F",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Paradox cave Top",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x20 ",
+		"value": "0x20",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Kiki cave west",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x21 ",
+		"value": "0x21",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Kiki cave east",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x22 ",
+		"value": "0x22",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Spectacle Rock",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x23 ",
+		"value": "0x23",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Agahnim's Tower",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x24 ",
+		"value": "0x24",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Swamp Palace",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x25 ",
+		"value": "0x25",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Palace of Darkness",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x26 ",
+		"value": "0x26",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Misery Mire",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x27 ",
+		"value": "0x27",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Skull Woods west",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x28 ",
+		"value": "0x28",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Skull Woods mummy statue",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x29 ",
+		"value": "0x29",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Skull Woods big chest",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x2A ",
+		"value": "0x2A",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Skull Woods back",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x2B ",
+		"value": "0x2B",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Lost Woods hideout",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x2C ",
+		"value": "0x2C",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Ice Palace",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x2D ",
+		"value": "0x2D",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Death Mountain exit west",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x2E ",
+		"value": "0x2E",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Death Mountain exit from summit",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x2F ",
+		"value": "0x2F",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Old man home cave west",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x30 ",
+		"value": "0x30",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Old man home cave east",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x31 ",
+		"value": "0x31",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Hyrule Castle secret entrance",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x32 ",
+		"value": "0x32",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Tower of Hera",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x33 ",
+		"value": "0x33",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Thieves' Town",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x34 ",
+		"value": "0x34",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Turtle Rock - Main Lobby",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x35 ",
+		"value": "0x35",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Pyramid Drop",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x36 ",
+		"value": "0x36",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Ganon's Tower",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x37 ",
+		"value": "0x37",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Graveyard Fairy",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x38 ",
+		"value": "0x38",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Kakariko Well",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x39 ",
+		"value": "0x39",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Hookshot Cave - Bottom",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x3A ",
+		"value": "0x3A",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Hookshot Cave - Top",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x3B ",
+		"value": "0x3B",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Lost Woods Chest Game",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x3C ",
+		"value": "0x3C",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Swamp Thief cave hideout",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x3D ",
+		"value": "0x3D",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Eastern Snitch House",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x3E ",
+		"value": "0x3E",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Cucco Easter Egg",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x3F ",
+		"value": "0x3F",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Sick Kid",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x40 ",
+		"value": "0x40",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Spike Cave",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x41 ",
+		"value": "0x41",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Tavern - Front",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x42 ",
+		"value": "0x42",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Tavern - Rear",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x43 ",
+		"value": "0x43",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Kakariko Inn",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x44 ",
+		"value": "0x44",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Sahasrahla's Hideout",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x45 ",
+		"value": "0x45",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Kakariko Shop",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x46 ",
+		"value": "0x46",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Village of Outcasts Chest Game",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x47 ",
+		"value": "0x47",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Village of Outcasts Bombable Hut",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x48 ",
+		"value": "0x48",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Library",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x49 ",
+		"value": "0x49",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Kakariko Bombable Hut",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x4A ",
+		"value": "0x4A",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Chicken Hut",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x4B ",
+		"value": "0x4B",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Potion Shop",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x4C ",
+		"value": "0x4C",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Aginah's Cave",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x4D ",
+		"value": "0x4D",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Dam",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x4E ",
+		"value": "0x4E",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Mimic Cave",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x4F ",
+		"value": "0x4F",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - East Death Mountain fairy pond cave",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x50 ",
+		"value": "0x50",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - South of Grove (Cave 45)",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x51 ",
+		"value": "0x51",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Graveyard Ledge",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x52 ",
+		"value": "0x52",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Big Bomb Shop",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x53 ",
+		"value": "0x53",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - C-Shaped house",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x54 ",
+		"value": "0x54",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Southeast of Eastern Ruins fairy cave",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x55 ",
+		"value": "0x55",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Mire big fairy",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x5E ",
+		"value": "0x5E",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Dark World Lumberjacks Shop",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x60 ",
+		"value": "0x60",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Lake Hylia Shop",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x58 ",
+		"value": "0x58",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Arrow Game",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x59 ",
+		"value": "0x59",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Dark World Sanctuary",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x5A ",
+		"value": "0x5A",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - King's Tomb",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x5B ",
+		"value": "0x5B",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Waterfall of Wishing",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x5C ",
+		"value": "0x5C",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Pond of Happiness",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x5D ",
+		"value": "0x5D",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Big fairy (Eastern Ruins)",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x5E ",
+		"value": "0x5E",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Mire Shed",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x5F ",
+		"value": "0x5F",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Village of Outcasts shop",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x60 ",
+		"value": "0x60",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Blind's hut",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x61 ",
+		"value": "0x61",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Watto's Cave",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x62 ",
+		"value": "0x62",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Pyramid Fairy",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x63 ",
+		"value": "0x63",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Smithy's House",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x64 ",
+		"value": "0x64",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Light World Fortune Teller (Kakariko)",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x65 ",
+		"value": "0x65",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Dark World Fortune Teller",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x66 ",
+		"value": "0x66",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - South of Kakariko Chest Game",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x67 ",
+		"value": "0x67",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Broccoli's House",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x68 ",
+		"value": "0x68",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Bird Hint NPC cave",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x69 ",
+		"value": "0x69",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Hamburger Helper's Cave",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x6A ",
+		"value": "0x6A",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Ice Rod Cave - Golden Bee",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x56 ",
+		"value": "0x56",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Big Fairy (South of Link's house)",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x5E ",
+		"value": "0x5E",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Big Fairy (South of Kiki)",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x5E ",
+		"value": "0x5E",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Dark Death Mountain shop",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x58 ",
+		"value": "0x58",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Dark World Witch Shop",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x60 ",
+		"value": "0x60",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Dark West Death Mountain Big fairy",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x5E ",
+		"value": "0x5E",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Aginah's Cave",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x4D ",
+		"value": "0x4D",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Desert Big Fairy",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x5E ",
+		"value": "0x5E",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Light World Fortune Teller (Lake Hylia)",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x65 ",
+		"value": "0x65",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Dark Lake Hylia Shop",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x60 ",
+		"value": "0x60",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Red Shield Shop",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x57 ",
+		"value": "0x57",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Bumpkin Residency",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x6B ",
+		"value": "0x6B",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Link's House Bonk Rocks Fairy Pond",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x71 ",
+		"value": "0x71",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Bomb Shop Bonk Rocks Fairy Pond",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x71 ",
+		"value": "0x71",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Desert Thief Hideout",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x6D ",
+		"value": "0x6D",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Bonk Rocks Heart Piece Cave",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x6E ",
+		"value": "0x6E",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Lake Hylia Falls Thief Hideout",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x6F ",
+		"value": "0x6F",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Dark Lake Hylia Falls Dev Cave",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x70 ",
+		"value": "0x70",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Mini Moldorm Cave",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x6C ",
+		"value": "0x6C",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Checkerboard Cave",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x72 ",
+		"value": "0x72",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Hammerpegs Cave",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x83 ",
+		"value": "0x83",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Ice Rod Cave",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x84 ",
+		"value": "0x84",
 		"type": "eq"
 	},
 	{
 		"name": "αENTRANCE - Dark Ice Rod Big Fairy",
 		"note": "Last entered OW entrance ID",
 		"address": "0x10E",
-		"value": "0x5E ",
+		"value": "0x5E",
 		"type": "eq"
 	},
 	
