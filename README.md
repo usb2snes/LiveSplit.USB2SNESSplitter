@@ -8,6 +8,11 @@ Run the Usb2Snes application (QUsb2Snes recommanded)
 
 You need to add the component to your Livesplit layout, don't activate the autosplitter in the splits configuration. Then go into the component settings to select a device and a setting file, and to specify which split condition to use for each segment.
 
+## Already existing definition files
+You can find a collection of already existing definition files here: [Usb2Snes-Livesplit-Definitions](https://github.com/ChTBoner/Usb2Snes-Livesplit-Definitions)
+
+
+## Make your own definition file
 Look at the provided Super Metroid.json or alttp.json setting file to see how a config file looks.
 
 If you need multiple address to validate a split you can use the `more` keyword
