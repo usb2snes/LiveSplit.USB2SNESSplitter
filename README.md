@@ -8,6 +8,8 @@ Run the Usb2Snes application (QUsb2Snes recommanded)
 
 You need to add the component to your Livesplit layout, don't activate the autosplitter in the splits configuration. Then go into the component settings to select a device and a setting file, and to specify which split condition to use for each segment.
 
+Note: if you're using a USB connection to an FxPak/Sd2Snes, the firmware stops communicating for periods of about 80 milliseconds, several times per second. So your splits will sometimes be randomly delayed by up to this amount.
+
 ## Already existing definition files
 You can find a collection of already existing definition files here: [Usb2Snes-Livesplit-Definitions](https://github.com/ChTBoner/Usb2Snes-Livesplit-Definitions)
 
