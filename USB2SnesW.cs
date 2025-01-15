@@ -85,7 +85,7 @@ namespace USB2SnesW
         public USB2SnesW()
         {
             Console.WriteLine("Creating USB2Snes");
-            ws = new WebSocket("ws://localhost:8080");
+            ws = new WebSocket("ws://localhost:23074");
             Console.WriteLine(ws);
         }
 
