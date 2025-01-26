@@ -82,10 +82,18 @@ namespace USB2SnesW
         }
         private WebSocket ws;
 
-        public USB2SnesW()
+        public USB2SnesW(bool legacyPort = false)
         {
             Console.WriteLine("Creating USB2Snes");
-            ws = new WebSocket("ws://localhost:8080");
+            if (legacyPort)
+            {
+                ws = new WebSocket("ws://localhost:8080");
+            }
+            else
+            {
+                ws = new WebSocket("ws://localhost:23074");
+            }
+            
             Console.WriteLine(ws);
         }
 

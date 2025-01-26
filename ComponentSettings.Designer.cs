@@ -42,6 +42,7 @@
             this.txtDevice = new System.Windows.Forms.TextBox();
             this.txtConfigFile = new System.Windows.Forms.TextBox();
             this.chkReset = new System.Windows.Forms.CheckBox();
+            this.legacyPort = new System.Windows.Forms.CheckBox();
             this.chkStatus = new System.Windows.Forms.CheckBox();
             this.errorPanel = new System.Windows.Forms.TableLayoutPanel();
             this.errorIcon = new System.Windows.Forms.PictureBox();
@@ -149,6 +150,7 @@
             devicePanel.Controls.Add(lblDevice);
             devicePanel.Controls.Add(this.txtDevice);
             devicePanel.Controls.Add(btnDetect);
+            devicePanel.Controls.Add(this.legacyPort);
             devicePanel.Location = new System.Drawing.Point(0, 0);
             devicePanel.Margin = new System.Windows.Forms.Padding(0);
             devicePanel.Name = "devicePanel";
@@ -162,6 +164,17 @@
             this.txtDevice.Size = new System.Drawing.Size(100, 20);
             this.txtDevice.TabIndex = 0;
             this.txtDevice.TextChanged += new System.EventHandler(this.txtDevice_TextChanged);
+            //
+            // legacyPort
+            //
+            this.legacyPort.AutoSize = true;
+            this.legacyPort.Location = new System.Drawing.Point(256, 5);
+            this.legacyPort.Name = "legacyPort";
+            this.legacyPort.Size = new System.Drawing.Size(150, 17);
+            this.legacyPort.TabIndex = 1;
+            this.legacyPort.Text = "Use port 8080 (legacy)";
+            this.legacyPort.UseVisualStyleBackColor = true;
+            this.legacyPort.CheckedChanged += new System.EventHandler(this.legacyPort_CheckedChanged);
             // 
             // configPanel
             // 
@@ -329,6 +342,7 @@
         private System.Windows.Forms.TextBox txtDevice;
         private System.Windows.Forms.TextBox txtConfigFile;
         private System.Windows.Forms.CheckBox chkReset;
+        private System.Windows.Forms.CheckBox legacyPort;
         private System.Windows.Forms.CheckBox chkStatus;
         private System.Windows.Forms.TableLayoutPanel errorPanel;
         private System.Windows.Forms.Label errorMessage;

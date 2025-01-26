@@ -111,7 +111,7 @@ namespace LiveSplit.UI.Components
 
         public USB2SNESComponent(LiveSplitState state)
         {
-            init(state, new USB2SnesW.USB2SnesW());
+            init(state, new USB2SnesW.USB2SnesW(_settings.LegacyPort));
         }
 
         internal USB2SNESComponent(LiveSplitState state, USB2SnesW.USB2SnesW usb2snesw)

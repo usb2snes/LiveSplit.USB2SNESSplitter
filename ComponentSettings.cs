@@ -39,6 +39,7 @@ namespace LiveSplit.UI.Components
         private Dictionary<string, GameSettings> _gameSettingsMap = new Dictionary<string, GameSettings>();
         private Dictionary<ISegment, AutosplitSelection> _segmentMap = new Dictionary<ISegment, AutosplitSelection>();
         private string _device = string.Empty;
+        private bool _legacyPort = false;
         private bool _resetSNES = false;
         private bool _showStatusMessage = true;
 
@@ -48,6 +49,12 @@ namespace LiveSplit.UI.Components
         {
             get => _device;
             set => SetAndNotifyIfChanged(ref _device, value);
+        }
+
+        public bool LegacyPort
+        {
+            get => _legacyPort;
+            set => SetAndNotifyIfChanged(ref _legacyPort, value);
         }
 
         public bool ResetSNES
@@ -137,6 +144,7 @@ namespace LiveSplit.UI.Components
             InitializeComponent();
 
             txtDevice.DataBindings.Add(nameof(TextBox.Text), this, nameof(Device), false, DataSourceUpdateMode.OnPropertyChanged);
+            legacyPort.DataBindings.Add(nameof(CheckBox.Checked), this, nameof(LegacyPort), false, DataSourceUpdateMode.OnPropertyChanged);
             chkReset.DataBindings.Add(nameof(CheckBox.Checked), this, nameof(ResetSNES), false, DataSourceUpdateMode.OnPropertyChanged);
             chkStatus.DataBindings.Add(nameof(CheckBox.Checked), this, nameof(ShowStatusMessage), false, DataSourceUpdateMode.OnPropertyChanged);
 
@@ -163,6 +171,10 @@ namespace LiveSplit.UI.Components
 
                 case 3:
                     LoadSettings_3(settingsElement);
+                    break;
+
+                case 4:
+                    LoadSettings_4(settingsElement);
                     break;
 
                 default:
@@ -481,8 +493,9 @@ namespace LiveSplit.UI.Components
 
         private int CreateSettingsNode(XmlDocument document, XmlElement parent)
         {
-            return SettingsHelper.CreateSetting(document, parent, "Version", 3) ^
+            return SettingsHelper.CreateSetting(document, parent, "Version", 4) ^
             SettingsHelper.CreateSetting(document, parent, nameof(Device), Device) ^
+            SettingsHelper.CreateSetting(document, parent, nameof(LegacyPort), LegacyPort) ^
             SettingsHelper.CreateSetting(document, parent, nameof(ResetSNES), ResetSNES) ^
             SettingsHelper.CreateSetting(document, parent, nameof(ShowStatusMessage), ShowStatusMessage) ^
             CreateGamesSettingsNode(document, parent);
@@ -541,6 +554,12 @@ namespace LiveSplit.UI.Components
             }
         }
 
+        private void LoadSettings_4(XmlElement settingsElement)
+        {
+            LoadSettings_3(settingsElement);
+            LegacyPort = SettingsHelper.ParseBool(settingsElement[nameof(LegacyPort)]);
+        }
+
         private void btnBrowse_Click(object sender, EventArgs e)
         {
             var ofd = new OpenFileDialog();
@@ -553,7 +572,7 @@ namespace LiveSplit.UI.Components
 
         private async void btnDetect_Click(object sender, EventArgs e)
         {
-            USB2SnesW.USB2SnesW usb = new USB2SnesW.USB2SnesW();
+            USB2SnesW.USB2SnesW usb = new USB2SnesW.USB2SnesW(_legacyPort);
             await usb.Connect();
             
             if (usb.Connected())
@@ -567,6 +586,11 @@ namespace LiveSplit.UI.Components
                 return;
             }
             MessageBox.Show("Could not auto-detect usb2snes compatible device, make sure it's connected and QUsb2Snes is running");
+        }
+
+        private void legacyPort_CheckedChanged(object sender, EventArgs e)
+        {
+            MessageBox.Show("Please restart LiveSplit for this change to take effect!");
         }
 
         private void errorMessage_TextChanged(object sender, EventArgs e)
