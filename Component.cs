@@ -81,7 +81,7 @@ namespace LiveSplit.UI.Components
         private Color _connecting_color = Color.FromArgb(128, 128, 0);
         private bool _stateChanged;
 
-        private void init(LiveSplitState state, USB2SnesW.USB2SnesW usb2snesw)
+        private void init(LiveSplitState state)
         {
             _state = state;
             _config_state = ConfigState.NONE;
@@ -106,17 +106,11 @@ namespace LiveSplit.UI.Components
             _state.OnStart += _state_OnStart;
             HorizontalWidth = 3;
             VerticalHeight = 3;
-            _usb2snes = usb2snesw;
         }
 
         public USB2SNESComponent(LiveSplitState state)
         {
-            init(state, new USB2SnesW.USB2SnesW(_settings.LegacyPort));
-        }
-
-        internal USB2SNESComponent(LiveSplitState state, USB2SnesW.USB2SnesW usb2snesw)
-        {
-            init(state, usb2snesw);
+            init(state);
         }
 
         private void SetConfigState(ConfigState state)
@@ -267,6 +261,7 @@ namespace LiveSplit.UI.Components
         public void SetSettings(XmlNode settings)
         {
             _settings.SetSettings(settings);
+            _usb2snes = new USB2SnesW.USB2SnesW(_settings.LegacyPort);
         }
 
         public int GetSettingsHashCode()

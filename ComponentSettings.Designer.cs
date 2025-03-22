@@ -172,10 +172,9 @@
             this.legacyPort.Name = "legacyPort";
             this.legacyPort.Size = new System.Drawing.Size(150, 17);
             this.legacyPort.TabIndex = 1;
-            this.legacyPort.Text = "Use port 8080 (legacy)";
+            this.legacyPort.Text = "Use port 8080 (restart required)";
             this.legacyPort.UseVisualStyleBackColor = true;
-            this.legacyPort.CheckedChanged += new System.EventHandler(this.legacyPort_CheckedChanged);
-            // 
+        // 
             // configPanel
             // 
             configPanel.AutoSize = true;

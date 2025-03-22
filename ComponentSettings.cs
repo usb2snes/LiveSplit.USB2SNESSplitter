@@ -588,11 +588,6 @@ namespace LiveSplit.UI.Components
             MessageBox.Show("Could not auto-detect usb2snes compatible device, make sure it's connected and QUsb2Snes is running");
         }
 
-        private void legacyPort_CheckedChanged(object sender, EventArgs e)
-        {
-            MessageBox.Show("Please restart LiveSplit for this change to take effect!");
-        }
-
         private void errorMessage_TextChanged(object sender, EventArgs e)
         {
             errorPanel.Visible = !string.IsNullOrEmpty(errorMessage.Text);
