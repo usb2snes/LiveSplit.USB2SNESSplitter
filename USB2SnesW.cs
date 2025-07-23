@@ -54,6 +54,7 @@ namespace USB2SnesW
                 m_taskCompletionSource.TrySetResult(true);
             }
         }
+        private string m_url;
 
         class USRequest
         {
@@ -78,22 +79,34 @@ namespace USB2SnesW
             GetAddress,
             Reset,
             Attach,
+            AppVersion,
             Info
         }
         private WebSocket ws;
+        public bool Legacy { get; }
 
         public USB2SnesW()
         {
-            Console.WriteLine("Creating USB2Snes");
+            Debug.WriteLine("Creating USB2Snes");
+            m_url = "ws://localhost:8080";
             ws = new WebSocket("ws://localhost:8080");
-            Console.WriteLine(ws);
+            Legacy = true;
         }
-
+        public USB2SnesW(string host, int port)
+        {
+            Debug.WriteLine("Creating USB2Snes");
+            m_url = "ws://" + host + ":" + port;
+            if (port == 8080)
+                Legacy = true;
+        }
         public async Task<bool> Connect()
         {
-            if (ws.ReadyState == WebSocketState.Open)
+            if (ws?.ReadyState == WebSocketState.Open)
                 return true;
-
+            if (ws == null)
+            {
+                ws = new WebSocket(m_url);
+            }
             var tcs = new TaskCompletionSource<bool>();
             using (WebSocketConnectionListener listener = new WebSocketConnectionListener(ws, tcs))
             {
@@ -128,9 +141,15 @@ namespace USB2SnesW
             ws.Send(json);
         }
         
-        public void SetName(String name)
+        public async Task SetName(String name)
         {
             SendCommand(Commands.Name, name);
+        }
+        public async Task<string> AppName()
+        {
+            SendCommand(Commands.AppVersion, "");
+            var reply = await waitForReply();
+            return reply.Results[0];
         }
 
         private async Task<USReply> waitForReply()
@@ -144,7 +163,7 @@ namespace USB2SnesW
                 ws.OnMessage -= msgHandler;
                 ws.OnClose -= closeHandler;
                 ws.OnError -= errorHandler;
-
+                Debug.WriteLine("Received reply");
                 if (e.IsText)
                     tcs.TrySetResult(new JavaScriptSerializer().Deserialize<USReply>(e.Data));
                 else
@@ -157,7 +176,7 @@ namespace USB2SnesW
                 ws.OnClose -= closeHandler;
                 ws.OnError -= errorHandler;
 
-                Console.WriteLine("Error in wait for reply : " + e.Message);
+                Debug.WriteLine("Error in wait for reply : " + e.Message);
                 // errorHandler and closeHandler can both be called for the same event, and SetCanceled is not re-entrant
                 tcs.TrySetCanceled();
             };
@@ -167,7 +186,7 @@ namespace USB2SnesW
                 ws.OnClose -= closeHandler;
                 ws.OnError -= errorHandler;
 
-                Console.WriteLine("wsAttach: Connection closed");
+                Debug.WriteLine("wsAttach: Connection closed");
                 // errorHandler and closeHandler can both be called for the same event, and SetCanceled is not re-entrant
                 tcs.TrySetCanceled();
             };
@@ -179,6 +198,7 @@ namespace USB2SnesW
         public async Task<List<String>> GetDevices()
         {
             SendCommand(Commands.DeviceList, "");
+            Debug.WriteLine("usb2snew.GetDevice()");
             USReply rep = await waitForReply();
             return rep.Results;
         }
@@ -277,7 +297,7 @@ namespace USB2SnesW
             }
             return result;
         }
-        public void Reset()
+        public async Task Reset()
         {
             SendCommand(Commands.Reset, "");
         }

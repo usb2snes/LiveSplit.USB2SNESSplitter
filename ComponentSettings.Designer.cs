@@ -72,6 +72,7 @@
             // lblDevice
             // 
             lblDevice.AutoSize = true;
+            lblDevice.Enabled = false;
             lblDevice.Location = new System.Drawing.Point(3, 7);
             lblDevice.Margin = new System.Windows.Forms.Padding(3, 3, 0, 0);
             lblDevice.Name = "lblDevice";
@@ -101,6 +102,7 @@
             // 
             // btnDetect
             // 
+            btnDetect.Enabled = false;
             btnDetect.Location = new System.Drawing.Point(172, 2);
             btnDetect.Name = "btnDetect";
             btnDetect.Size = new System.Drawing.Size(75, 23);
@@ -157,6 +159,7 @@
             // 
             // txtDevice
             // 
+            this.txtDevice.Enabled = false;
             this.txtDevice.Location = new System.Drawing.Point(66, 3);
             this.txtDevice.Name = "txtDevice";
             this.txtDevice.Size = new System.Drawing.Size(100, 20);

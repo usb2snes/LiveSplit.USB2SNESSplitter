@@ -70,31 +70,29 @@ namespace LiveSplit.UI.Components
         private TimerModel _model;
         private List<string> _splits;
         private ConfigState _config_state;
-        private ProtocolState _proto_state;
         private DateTime _first_draw_time = DateTime.MinValue;
         private Stopwatch _ready_timer;
-        private string _attached_device;
         private bool _inTimer;
-        private USB2SnesW.USB2SnesW _usb2snes;
+        //private USB2SnesW.USB2SnesW _usb2snes;
+        private Connector _connector;
+        private int _ready_attempt = 0;
         private Color _ok_color = Color.FromArgb(0, 128, 0);
         private Color _error_color = Color.FromArgb(128, 0, 0);
         private Color _connecting_color = Color.FromArgb(128, 128, 0);
         private bool _stateChanged;
 
-        private void init(LiveSplitState state, USB2SnesW.USB2SnesW usb2snesw)
+        private void init(LiveSplitState state, Connector connector)
         {
             _state = state;
             _config_state = ConfigState.NONE;
-            _proto_state = ProtocolState.NONE;
             _ready_timer = new Stopwatch();
-            _attached_device = string.Empty;
             _settings = new ComponentSettings(_state)
             {
                 Dock = DockStyle.Fill,
             };
             _model = new TimerModel() { CurrentState = _state };
             _state.RegisterTimerModel(_model);
-            _stateChanged = false;
+            //_stateChanged = false;
             _splits = new List<string>();
             _inTimer = false;
 
@@ -106,17 +104,13 @@ namespace LiveSplit.UI.Components
             _state.OnStart += _state_OnStart;
             HorizontalWidth = 3;
             VerticalHeight = 3;
-            _usb2snes = usb2snesw;
+
+            _connector = connector;
         }
 
         public USB2SNESComponent(LiveSplitState state)
         {
-            init(state, new USB2SnesW.USB2SnesW());
-        }
-
-        internal USB2SNESComponent(LiveSplitState state, USB2SnesW.USB2SnesW usb2snesw)
-        {
-            init(state, usb2snesw);
+            init(state, new Connector());
         }
 
         private void SetConfigState(ConfigState state)
@@ -125,15 +119,6 @@ namespace LiveSplit.UI.Components
             {
                 _stateChanged = true;
                 _config_state = state;
-            }
-        }
-
-        private void SetProtocolState(ProtocolState state)
-        {
-            if (_proto_state != state)
-            {
-                _stateChanged = true;
-                _proto_state = state;
             }
         }
 
@@ -150,79 +135,37 @@ namespace LiveSplit.UI.Components
             }
         }
 
-        private void CheckConnection()
+        private async Task CheckConnection()
         {
-            if (!_usb2snes.Connected())
+            if (_connector.State() == Connector.ConnectorState.READY)
+                return;
+            if (_connector.State() == Connector.ConnectorState.NONE)
             {
-                if (_proto_state != ProtocolState.CONNECTING)
+                
+                bool connected = await _connector.Connect();
+                if (connected)
                 {
-                    SetProtocolState(ProtocolState.CONNECTING);
-                    _attached_device = string.Empty;
-
-                    Task<bool> t = _usb2snes.Connect();
-                    t.ContinueWith((t1) =>
-                    {
-                        if (t1.Result)
-                        {
-                            _usb2snes.SetName("LiveSplit AutoSplitter");
-                            CheckAttachment();
-                        }
-                        else
-                        {
-                            SetProtocolState(ProtocolState.FAILED_TO_CONNECT);
-                        }
-                    });
+                    await _connector.SetName("LiveSplit AutoSplitter");
+                    _ready_attempt = 0;
+                    await _connector.GetReady();
                 }
+                _stateChanged = true;
             }
             else
             {
-                CheckAttachment();
-            }
-        }
-
-        private async void CheckAttachment()
-        {
-            if (string.IsNullOrEmpty(_attached_device) || _attached_device != _settings.Device)
-            {
-                if (_proto_state != ProtocolState.ATTACHING)
+                if (_connector.State() == Connector.ConnectorState.CONNECTED)
                 {
-                    SetProtocolState(ProtocolState.ATTACHING);
-
-                    List<String> devices;
-                    try
+                    _stateChanged = true;
+                    Debug.WriteLine("Ready attempt : ", _ready_attempt);
+                    bool ready = await _connector.GetReady();
+                    if (ready == false)
+                        _ready_attempt++;
+                    if (_ready_attempt == 5)
                     {
-                        devices = await _usb2snes.GetDevices();
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("Exception getting devices: " + e);
-                        devices = new List<String>();
-                    }
-
-                    string device = _settings.Device;
-                    if (!devices.Contains(device))
-                    {
-                        SetProtocolState(ProtocolState.DEVICE_NOT_FOUND);
-                    }
-                    else
-                    {
-                        _usb2snes.Attach(device);
-                        var info = await _usb2snes.Info(); // Info is the only neutral way to know if we are attached to the device
-                        if (string.IsNullOrEmpty(info.version))
-                        {
-                            SetProtocolState(ProtocolState.FAILED_TO_ATTACH);
-                        }
-                        else
-                        {
-                            _attached_device = device;
-                            SetProtocolState(ProtocolState.ATTACHED);
-                        }
+                        _connector.Disconnect();
+                        _ready_attempt = 0;
                     }
                 }
-            }
-            else
-            {
-                SetProtocolState(ProtocolState.ATTACHED);
             }
         }
 
@@ -234,11 +177,11 @@ namespace LiveSplit.UI.Components
 
         private void _state_OnReset(object sender, TimerPhase value)
         {
-            if (_usb2snes.Connected())
+            if (_connector.State() != Connector.ConnectorState.NONE)
             {
                 if (_settings.ResetSNES)
                 {
-                    _usb2snes.Reset();
+                    _connector.Reset();
                 }
             }
         }
@@ -246,9 +189,9 @@ namespace LiveSplit.UI.Components
         public void Dispose()
         {
             _update_timer?.Dispose();
-            if (_usb2snes.Connected())
+            if (_connector.State() != Connector.ConnectorState.NONE)
             {
-                _usb2snes.Disconnect();
+                _connector.Disconnect();
             }
             _state.OnStart -= _state_OnStart;
             _state.OnReset -= _state_OnReset;
@@ -278,14 +221,14 @@ namespace LiveSplit.UI.Components
         {
             if (invalidator != null && (_stateChanged || _ready_timer.IsRunning))
             {
-                _stateChanged = false;
+                //_stateChanged = false;
                 invalidator.Invalidate(0, 0, width, height);
             }
         }
 
         public async Task DoSplit()
         {
-            if (_settings.Config.igt != null && _settings.Config.igt.active == "1" && _usb2snes.Connected())
+            if (_settings.Config.igt != null && _settings.Config.igt.active == "1" && _connector.State() == Connector.ConnectorState.READY)
             {
                 var addressSizePairs = new List<Tuple<uint, uint>>();
                 addressSizePairs.Add(new Tuple<uint, uint>(_settings.Config.igt.framesAddressInt, 2));
@@ -295,7 +238,7 @@ namespace LiveSplit.UI.Components
                 List<byte[]> data = null;
                 try
                 {
-                    data = await _usb2snes.GetAddress(addressSizePairs);
+                    data = await _connector.GetAddress(addressSizePairs);
                 }
                 catch
                 {
@@ -338,7 +281,7 @@ namespace LiveSplit.UI.Components
             catch (Exception e)
             {
                 Log.Error($"{ComponentName} failed to update splits: {e}");
-                CheckConnection();
+                await CheckConnection();
             }
             _inTimer = false;
         }
@@ -350,12 +293,12 @@ namespace LiveSplit.UI.Components
                 CheckConfig();
             }
 
-            if (_state.CurrentPhase == TimerPhase.NotRunning || _proto_state != ProtocolState.ATTACHED)
+            if (_state.CurrentPhase == TimerPhase.NotRunning || _connector.State() != Connector.ConnectorState.READY)
             {
-                CheckConnection();
+                await CheckConnection();
             }
 
-            if (_config_state != ConfigState.READY || _proto_state != ProtocolState.ATTACHED)
+            if (_config_state != ConfigState.READY || _connector.State() != Connector.ConnectorState.READY)
             {
                 _update_timer.Interval = 1000;
             }
@@ -429,19 +372,19 @@ namespace LiveSplit.UI.Components
             List<byte[]> data = null;
             try
             {
-                data = await _usb2snes.GetAddress(addressSizePairs);
+                data = await _connector.GetAddress(addressSizePairs);
             }
             catch
             {
                 Debug.WriteLine("doCheckSplit: Exception getting address");
-                CheckConnection();
+                await CheckConnection();
                 return false;
             }
 
             if ((null == data) || (data.Count != addressSizePairs.Count))
             {
                 Debug.WriteLine("doCheckSplit: Get address failed to return result");
-                CheckConnection();
+                await CheckConnection();
                 return false;
             }
 
@@ -479,7 +422,7 @@ namespace LiveSplit.UI.Components
             Color borderColor = _error_color;
             string statusMessage = string.Empty;
 
-            if (_config_state == ConfigState.READY && _proto_state == ProtocolState.ATTACHED)
+            if (_config_state == ConfigState.READY && _connector.State() == Connector.ConnectorState.READY)
             {
                 borderColor = _ok_color;
 
@@ -512,32 +455,50 @@ namespace LiveSplit.UI.Components
                 }
                 else if (_config_state == ConfigState.READY)
                 {
-                    switch (_proto_state)
+                    //Debug.WriteLine("Update ui Connector state : " + _connector.State());
+                    switch (_connector.State())
                     {
-                        case ProtocolState.CONNECTING:
+                        case Connector.ConnectorState.CONNECTING:
                             borderColor = _connecting_color;
-                            statusMessage = "Connecting to Usb2Snes";
+                            statusMessage = "Connecting to Usb2SnesW or NWA emulator";
                             break;
 
-                        case ProtocolState.FAILED_TO_CONNECT:
-                            borderColor = _error_color;
-                            statusMessage = "Failed to connect to Usb2Snes";
-                            break;
-
-                        case ProtocolState.DEVICE_NOT_FOUND:
-                            borderColor = _error_color;
-                            statusMessage = $"Device {_settings.Device} not found. Ensure device is running a game and connected to your PC";
-                            break;
-
-                        case ProtocolState.ATTACHING:
+                        case Connector.ConnectorState.CONNECTED:
                             borderColor = _connecting_color;
-                            statusMessage = $"Attaching to {_settings.Device}";
+                            statusMessage = $"Connected to {_connector.ConnectorName()}";
                             break;
 
-                        case ProtocolState.FAILED_TO_ATTACH:
-                            borderColor = _error_color;
-                            statusMessage = $"Failed to attach to {_settings.Device}";
+                        case Connector.ConnectorState.GETTING_READY:
+                            borderColor = _connecting_color;
+                            statusMessage = $"Connected to {_connector.ConnectorName()}, getting ready";
                             break;
+                        case Connector.ConnectorState.NONE:
+                            borderColor = _error_color;
+                            statusMessage = "Connected to nothing";
+                            break;
+                    }
+                    if (_connector.Error() != Connector.ConnectorError.NONE)
+                    {
+                        switch (_connector.Error())
+                        {
+                            case Connector.ConnectorError.NO_SERVER:
+                                borderColor = _error_color;
+                                statusMessage = "Nothing to connect to. No Usb2snesW server or Emulator with NWA support";
+                                break;
+
+                            case Connector.ConnectorError.USB2SNES_NO_DEVICE:
+                                borderColor = _error_color;
+                                statusMessage = "No device to attach on the Usb2SnesW server";
+                                break;
+                            case Connector.ConnectorError.NWA_NO_VALID_CORE:
+                                borderColor = _error_color;
+                                statusMessage = $"Emulator {_connector.DeviceName()} does not have a SNES core loaded";
+                                break;
+                            case Connector.ConnectorError.NWA_NO_GAME_RUNNING:
+                                borderColor = _error_color;
+                                statusMessage = $"Emulator {_connector.DeviceName()} is not running a game";
+                                break;
+                        }
                     }
                 }
             }

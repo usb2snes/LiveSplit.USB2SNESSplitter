@@ -460,11 +460,11 @@ namespace LiveSplit.UI.Components
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(Device))
+            /*if (string.IsNullOrWhiteSpace(Device))
             {
                 errorMessage.Text = "You must specify a Device name";
                 return false;
-            }
+            }*/
 
             foreach (var segment in _state.Run)
             {
