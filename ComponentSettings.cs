@@ -44,11 +44,11 @@ namespace LiveSplit.UI.Components
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Device
+        /*public string Device
         {
             get => _device;
             set => SetAndNotifyIfChanged(ref _device, value);
-        }
+        }*/
 
         public bool ResetSNES
         {
@@ -136,7 +136,7 @@ namespace LiveSplit.UI.Components
 
             InitializeComponent();
 
-            txtDevice.DataBindings.Add(nameof(TextBox.Text), this, nameof(Device), false, DataSourceUpdateMode.OnPropertyChanged);
+            //txtDevice.DataBindings.Add(nameof(TextBox.Text), this, nameof(Device), false, DataSourceUpdateMode.OnPropertyChanged);
             chkReset.DataBindings.Add(nameof(CheckBox.Checked), this, nameof(ResetSNES), false, DataSourceUpdateMode.OnPropertyChanged);
             chkStatus.DataBindings.Add(nameof(CheckBox.Checked), this, nameof(ShowStatusMessage), false, DataSourceUpdateMode.OnPropertyChanged);
 
@@ -482,7 +482,7 @@ namespace LiveSplit.UI.Components
         private int CreateSettingsNode(XmlDocument document, XmlElement parent)
         {
             return SettingsHelper.CreateSetting(document, parent, "Version", 3) ^
-            SettingsHelper.CreateSetting(document, parent, nameof(Device), Device) ^
+            //SettingsHelper.CreateSetting(document, parent, nameof(Device), Device) ^
             SettingsHelper.CreateSetting(document, parent, nameof(ResetSNES), ResetSNES) ^
             SettingsHelper.CreateSetting(document, parent, nameof(ShowStatusMessage), ShowStatusMessage) ^
             CreateGamesSettingsNode(document, parent);
@@ -507,7 +507,7 @@ namespace LiveSplit.UI.Components
 
         private void LoadSettings_1(XmlElement settingsElement)
         {
-            Device = SettingsHelper.ParseString(settingsElement[nameof(Device)]);
+            //Device = SettingsHelper.ParseString(settingsElement[nameof(Device)]);
             ResetSNES = SettingsHelper.ParseBool(settingsElement[nameof(ResetSNES)]);
             ShowStatusMessage = false;
 

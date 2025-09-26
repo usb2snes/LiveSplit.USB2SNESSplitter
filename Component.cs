@@ -498,6 +498,10 @@ namespace LiveSplit.UI.Components
                                 borderColor = _error_color;
                                 statusMessage = $"Emulator {_connector.DeviceName()} is not running a game";
                                 break;
+                            case Connector.ConnectorError.NWA_ERROR:
+                                borderColor = _error_color;
+                                statusMessage = $"Emulator {_connector.DeviceName()} error";
+                                break;
                         }
                     }
                 }

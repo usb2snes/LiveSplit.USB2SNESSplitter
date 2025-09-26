@@ -182,7 +182,8 @@ namespace LiveSplit.UI.Components
             NO_SERVER,
             USB2SNES_NO_DEVICE,
             NWA_NO_VALID_CORE,
-            NWA_NO_GAME_RUNNING
+            NWA_NO_GAME_RUNNING,
+            NWA_ERROR
         }
         private USB2SnesW.USB2SnesW usb2snesClient = null;
         private NWAClient nwaClient = null;
@@ -284,7 +285,23 @@ namespace LiveSplit.UI.Components
         }
         public async Task<List<byte[]>> GetAddress(List<Tuple<uint, uint>> addressSizePairs)
         {
-            return await connector.GetAddress(addressSizePairs);
+            try
+            {
+                var result = await connector.GetAddress(addressSizePairs);
+                if (result.Count == 0)
+                {
+                    _state = ConnectorState.NONE;
+                }
+                return result;
+
+            } catch (Exception ex) {
+                _state = ConnectorState.NONE;
+                if (connector is Usb2SnesConnector)
+                    _error = ConnectorError.USB2SNES_NO_DEVICE;
+                else
+                    _error = ConnectorError.NWA_ERROR;
+                return new List<byte[]>(); 
+            }
         }
         public ConnectorState  State() { return _state; }
 
