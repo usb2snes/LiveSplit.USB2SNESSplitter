@@ -73,7 +73,6 @@ namespace LiveSplit.UI.Components
         private DateTime _first_draw_time = DateTime.MinValue;
         private Stopwatch _ready_timer;
         private bool _inTimer;
-        //private USB2SnesW.USB2SnesW _usb2snes;
         private Connector _connector;
         private int _ready_attempt = 0;
         private Color _ok_color = Color.FromArgb(0, 128, 0);
@@ -147,7 +146,7 @@ namespace LiveSplit.UI.Components
                 {
                     await _connector.SetName("LiveSplit AutoSplitter");
                     _ready_attempt = 0;
-                    await _connector.GetReady();
+                    //await _connector.GetReady();
                 }
                 _stateChanged = true;
             }

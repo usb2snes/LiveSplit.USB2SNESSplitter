@@ -125,7 +125,7 @@ namespace LiveSplit.UI.Components
                 {
                     return false;
                 }
-                if (reply["platform"] != "SNES")
+                if (reply["platform"] != "SNES" && reply["platform"] != "snes")
                 {
                     _error = ConnectorError.NWA_NO_VALID_CORE;
                     return false;
@@ -185,8 +185,6 @@ namespace LiveSplit.UI.Components
             NWA_NO_GAME_RUNNING,
             NWA_ERROR
         }
-        private USB2SnesW.USB2SnesW usb2snesClient = null;
-        private NWAClient nwaClient = null;
         private string usb2snesHost = "localhost";
         private int usb2snesPort = 23074;
         private IIConnector connector = null;
@@ -227,14 +225,15 @@ namespace LiveSplit.UI.Components
             usb2snesPort = port;
         }
         public Connector() {
-            nwaClient = new NWAClient();
         }
         public async Task<bool> Connect()
         {
             _error = ConnectorError.NONE;
             _state = ConnectorState.CONNECTING;
+            if (connector != null)
+                connector.Disconnect();
             Debug.WriteLine("Trying to connect to NWA");
-            nwaClient = new NWAClient();
+            var nwaClient = new NWAClient();
             bool nwaHere = await nwaClient.Connect();
             if (nwaHere)
             {
@@ -242,9 +241,10 @@ namespace LiveSplit.UI.Components
                 _state = ConnectorState.CONNECTED;
                 return true;
             }
-            Debug.WriteLine("Trying to connect to Usb2snes");
+            nwaClient.Disconnect();
+            Debug.WriteLine("--Trying to connect to Usb2snes");
             // default port
-            usb2snesClient = new USB2SnesW.USB2SnesW(usb2snesHost, usb2snesPort);
+            var usb2snesClient = new USB2SnesW.USB2SnesW(usb2snesHost, usb2snesPort);
             bool usbhere = await usb2snesClient.Connect();
             if (usbhere)
             {
@@ -254,7 +254,7 @@ namespace LiveSplit.UI.Components
                 return true;
             }
             // legacy port
-            Debug.WriteLine("Trying to connect to Usb2snes legacy");
+            Debug.WriteLine("--Trying to connect to Usb2snes legacy");
             usb2snesClient = new USB2SnesW.USB2SnesW(usb2snesHost, 8080);
             usbhere = await usb2snesClient.Connect();
             if (usbhere)
@@ -264,6 +264,7 @@ namespace LiveSplit.UI.Components
                 _state = ConnectorState.CONNECTED;
                 return true;
             }
+            usb2snesClient.Disconnect();
             _error = ConnectorError.NO_SERVER;
             _state = ConnectorState.NONE;
             return false;
@@ -271,7 +272,7 @@ namespace LiveSplit.UI.Components
         public async Task<bool> GetReady()
         {
             _state = ConnectorState.GETTING_READY;
-            Debug.WriteLine("GConnector getready");
+            Debug.WriteLine("=GConnector getready");
             bool ready = await connector.GetReady();
             if (ready)
                 _state = ConnectorState.READY;
