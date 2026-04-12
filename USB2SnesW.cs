@@ -9,7 +9,7 @@ using WebSocketSharp;
 
 namespace USB2SnesW
 {
-    internal class USB2SnesW
+    internal class USB2SnesW : IDisposable
     {
         private sealed class WebSocketConnectionListener : IDisposable
         {
@@ -307,6 +307,10 @@ namespace USB2SnesW
             return live;
         }
         public void Disconnect()
+        {
+            ws.Close();
+        }
+        public void Dispose()
         {
             ws.Close();
         }

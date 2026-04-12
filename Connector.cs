@@ -232,6 +232,7 @@ namespace LiveSplit.UI.Components
             _state = ConnectorState.CONNECTING;
             if (connector != null)
                 connector.Disconnect();
+            connector = null;
             Debug.WriteLine("Trying to connect to NWA");
             var nwaClient = new NWAClient();
             bool nwaHere = await nwaClient.Connect();

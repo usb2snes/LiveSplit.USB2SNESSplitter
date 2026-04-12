@@ -14,7 +14,7 @@ using static NWA.NWAClient;
 
 namespace NWA
 {
-    public class NWAClient
+    public class NWAClient : IDisposable
     {
         public enum ErrorKind
         {
@@ -141,6 +141,12 @@ namespace NWA
         public void Disconnect()
         {
             tcpClient.Close();
+        }
+        public void Dispose()
+        {
+            if (tcpClient.Connected)
+                Disconnect();
+            tcpClient.Dispose();
         }
 
         /// <summary>

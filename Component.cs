@@ -105,6 +105,11 @@ namespace LiveSplit.UI.Components
             VerticalHeight = 3;
 
             _connector = connector;
+            TextWriterTraceListener[] listeners = new TextWriterTraceListener[] {
+                new TextWriterTraceListener(System.IO.Directory.GetCurrentDirectory() + "\\autosplitter-log.txt")
+            };
+            Debug.Listeners.AddRange(listeners);
+            Debug.AutoFlush = true;
         }
 
         public USB2SNESComponent(LiveSplitState state)
@@ -155,7 +160,7 @@ namespace LiveSplit.UI.Components
                 if (_connector.State() == Connector.ConnectorState.CONNECTED)
                 {
                     _stateChanged = true;
-                    Debug.WriteLine("Ready attempt : ", _ready_attempt);
+                    Debug.WriteLine("Ready attempt : {0}", _ready_attempt);
                     bool ready = await _connector.GetReady();
                     if (ready == false)
                         _ready_attempt++;
@@ -267,7 +272,7 @@ namespace LiveSplit.UI.Components
         private async void UpdateSplitsWrapper()
         {
             // "_inTimer" is a very questionable attempt at locking, but it's probably fine here.
-            if (_inTimer)
+            if (_inTimer && _update_timer.Interval != 33)
             {
                 Debug.WriteLine("In timer already! !!!");
                 return;
@@ -310,6 +315,7 @@ namespace LiveSplit.UI.Components
                     {
                         if (await doCheckSplitWithNext(_settings.Config.autostart.GetSplit()))
                         {
+                            Debug.WriteLine("Autostart triggered, started");
                             _model.Start();
                         }
                     }
@@ -320,6 +326,7 @@ namespace LiveSplit.UI.Components
                     var split = _settings.Config.definitions.Where(x => x.name == splitName).First();
                     if (await doCheckSplitWithNext(split))
                     {
+                        Debug.WriteLine("Succesfully split for {0}", split.name);
                         await DoSplit();
                     }
                 }
@@ -347,6 +354,7 @@ namespace LiveSplit.UI.Components
                 if (split.posToCheck < split.next.Count())
                 {
                     split.posToCheck++;
+                    Debug.WriteLine("Checking next split sub part : {0}", split.posToCheck);
                     ok = false;
                 }
                 else
