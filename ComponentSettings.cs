@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using System.Xml;
@@ -41,6 +42,7 @@ namespace LiveSplit.UI.Components
         private string _device = string.Empty;
         private bool _resetSNES = false;
         private bool _showStatusMessage = true;
+        private HttpClient _httpClient;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
