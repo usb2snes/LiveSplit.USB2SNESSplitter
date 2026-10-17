@@ -185,11 +185,13 @@ namespace LiveSplit.UI.Components
             NWA_NO_GAME_RUNNING,
             NWA_ERROR
         }
+        private const int MaxConsecutiveFailedReads = 10;
         private string usb2snesHost = "localhost";
         private int usb2snesPort = 23074;
         private IIConnector connector = null;
         private ConnectorError _error = ConnectorError.NONE;
         private ConnectorState _state;
+        private int _failedReads = 0;
         public async Task Reset()
         {
             await connector.Reset();
@@ -230,51 +232,86 @@ namespace LiveSplit.UI.Components
         {
             _error = ConnectorError.NONE;
             _state = ConnectorState.CONNECTING;
+            _failedReads = 0;
             if (connector != null)
                 connector.Disconnect();
             connector = null;
             Debug.WriteLine("Trying to connect to NWA");
-            var nwaClient = new NWAClient();
-            bool nwaHere = await nwaClient.Connect();
-            if (nwaHere)
+            if (await ConnectNWA())
             {
-                connector = new NWAConnector(nwaClient);
                 _state = ConnectorState.CONNECTED;
                 return true;
             }
-            nwaClient.Disconnect();
             Debug.WriteLine("--Trying to connect to Usb2snes");
             // default port
-            var usb2snesClient = new USB2SnesW.USB2SnesW(usb2snesHost, usb2snesPort);
-            bool usbhere = await usb2snesClient.Connect();
-            if (usbhere)
+            if (await ConnectUsb2Snes(usb2snesPort))
             {
-                string name = await usb2snesClient.AppName();
-                connector = new Usb2SnesConnector(usb2snesClient, name);
                 _state = ConnectorState.CONNECTED;
                 return true;
             }
             // legacy port
             Debug.WriteLine("--Trying to connect to Usb2snes legacy");
-            usb2snesClient = new USB2SnesW.USB2SnesW(usb2snesHost, 8080);
-            usbhere = await usb2snesClient.Connect();
-            if (usbhere)
+            if (await ConnectUsb2Snes(8080))
             {
-                string name = await usb2snesClient.AppName();
-                connector = new Usb2SnesConnector(usb2snesClient, name);
                 _state = ConnectorState.CONNECTED;
                 return true;
             }
-            usb2snesClient.Disconnect();
             _error = ConnectorError.NO_SERVER;
             _state = ConnectorState.NONE;
+            return false;
+        }
+        private async Task<bool> ConnectNWA()
+        {
+            var nwaClient = new NWAClient();
+            try
+            {
+                if (await nwaClient.Connect())
+                {
+                    connector = new NWAConnector(nwaClient);
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("NWA connection failed : " + e.Message);
+            }
+            nwaClient.Disconnect();
+            return false;
+        }
+        private async Task<bool> ConnectUsb2Snes(int port)
+        {
+            var usb2snesClient = new USB2SnesW.USB2SnesW(usb2snesHost, port);
+            try
+            {
+                if (await usb2snesClient.Connect())
+                {
+                    string name = await usb2snesClient.AppName();
+                    connector = new Usb2SnesConnector(usb2snesClient, name);
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Usb2snes connection failed : " + e.Message);
+            }
+            usb2snesClient.Disconnect();
             return false;
         }
         public async Task<bool> GetReady()
         {
             _state = ConnectorState.GETTING_READY;
             Debug.WriteLine("=GConnector getready");
-            bool ready = await connector.GetReady();
+            bool ready;
+            try
+            {
+                ready = await connector.GetReady();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("GetReady failed : " + e.Message);
+                Disconnect();
+                return false;
+            }
             if (ready)
                 _state = ConnectorState.READY;
             else
@@ -283,7 +320,15 @@ namespace LiveSplit.UI.Components
         }
         public async Task SetName(string name)
         {
-            await connector.SetName(name);
+            try
+            {
+                await connector.SetName(name);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("SetName failed : " + e.Message);
+                Disconnect();
+            }
         }
         public async Task<List<byte[]>> GetAddress(List<Tuple<uint, uint>> addressSizePairs)
         {
@@ -292,7 +337,16 @@ namespace LiveSplit.UI.Components
                 var result = await connector.GetAddress(addressSizePairs);
                 if (result.Count == 0)
                 {
-                    _state = ConnectorState.NONE;
+                    _failedReads++;
+                    Debug.WriteLine("GetAddress failed, attempt : " + _failedReads);
+                    if (_failedReads >= MaxConsecutiveFailedReads)
+                    {
+                        _state = ConnectorState.NONE;
+                    }
+                }
+                else
+                {
+                    _failedReads = 0;
                 }
                 return result;
 

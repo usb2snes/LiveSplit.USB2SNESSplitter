@@ -101,6 +101,7 @@ namespace NWA
                 listMap = lMap;
             }
         }
+        private const int DefaultTimeoutMs = 1000;
         private TcpClient tcpClient = new TcpClient();
         private NetworkStream ns;
         public NWAClient()
@@ -112,15 +113,17 @@ namespace NWA
         /// </summary>
         /// <param name="host">The host to connect to</param>
         /// <param name="port">The port, default is 0xBEEF</param>
-        /// <param name="timeout">timeout before abording the connection, default is 200 ms</param>
+        /// <param name="timeout">timeout before abording the connection, default is 1000 ms</param>
         /// <returns></returns>
-        public async Task<bool> Connect(string host = "localhost", int port = 0xBEEF, int timeout = 200)
+        public async Task<bool> Connect(string host = "localhost", int port = 0xBEEF, int timeout = DefaultTimeoutMs)
         {
-            var cts = new CancellationTokenSource();
-            cts.CancelAfter(timeout);
-
-            //var coTask = tcpClient.ConnectAsync(host, port, cts.Token);
             var coTask = tcpClient.ConnectAsync(host, port);
+            if (await Task.WhenAny(coTask, Task.Delay(timeout)) != coTask)
+            {
+                tcpClient.Close();
+                ObserveException(coTask);
+                return false;
+            }
             try
             {
                 await coTask;
@@ -154,9 +157,9 @@ namespace NWA
         /// </summary>
         /// <param name="command">the commande to execute</param>
         /// <param name="args">the arguments for the command</param>
-        /// <param name="timeout">a optionnal timeout (in ms)</param>
+        /// <param name="timeout">a optionnal timeout (in ms), 0 to wait forever. The connection is closed on timeout</param>
         /// <returns>returns the NWA reply</returns>
-        public async Task<NWAReply> DoCommand(string command, List<string> args = null, int timeout = 0)
+        public async Task<NWAReply> DoCommand(string command, List<string> args = null, int timeout = DefaultTimeoutMs)
         {
             if (ns == null)
                 throw new Exception();
@@ -170,8 +173,23 @@ namespace NWA
             nwaString += "\n";
             Console.WriteLine("Executing : " + nwaString);
             var data = System.Text.Encoding.ASCII.GetBytes(nwaString);
+            var commandTask = WriteAndReadReply(data);
+            if (timeout > 0 && await Task.WhenAny(commandTask, Task.Delay(timeout)) != commandTask)
+            {
+                Disconnect();
+                ObserveException(commandTask);
+                throw new TimeoutException("NWA command " + command + " timed out");
+            }
+            return await commandTask;
+        }
+        private async Task<NWAReply> WriteAndReadReply(byte[] data)
+        {
             await ns.WriteAsync(data, 0, data.Length);
-            return await readReply(timeout);
+            return await readReply();
+        }
+        private static void ObserveException(Task task)
+        {
+            task.ContinueWith(t => t.Exception, TaskContinuationOptions.OnlyOnFaulted);
         }
         public async Task<string> MyNameIs(string name)
         {
@@ -200,7 +218,7 @@ namespace NWA
         {
             return await DoAsciiCommand("CORE_CURRENT_INFO");
         }
-        private async Task<List<Dictionary<string, string>>> DoListAsciiCommand(string command, List<string> args = null, int timeout = 0)
+        private async Task<List<Dictionary<string, string>>> DoListAsciiCommand(string command, List<string> args = null, int timeout = DefaultTimeoutMs)
         {
             var commandTask = DoCommand(command, args, timeout);
             var reply = await commandTask;
@@ -217,7 +235,7 @@ namespace NWA
                 throw new Exception();
             }
         }
-        private async Task<Dictionary<string, string>> DoAsciiCommand(string command, List<string> args = null, int timeout = 0)
+        private async Task<Dictionary<string, string>> DoAsciiCommand(string command, List<string> args = null, int timeout = DefaultTimeoutMs)
         {
             var reply = await DoCommand(command, args, timeout);
             if (reply.replyType == NWAReplyType.ASCII)

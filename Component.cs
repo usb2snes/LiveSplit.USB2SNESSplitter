@@ -101,6 +101,9 @@ namespace LiveSplit.UI.Components
 
             _state.OnReset += _state_OnReset;
             _state.OnStart += _state_OnStart;
+            _state.OnSplit += _state_OnSplitIndexChanged;
+            _state.OnUndoSplit += _state_OnSplitIndexChanged;
+            _state.OnSkipSplit += _state_OnSplitIndexChanged;
             HorizontalWidth = 3;
             VerticalHeight = 3;
 
@@ -173,14 +176,33 @@ namespace LiveSplit.UI.Components
             }
         }
 
+        private void ResetSplitProgress()
+        {
+            var config = _settings.Config;
+            if (config == null)
+                return;
+            if (config.autostart != null)
+                config.autostart.posToCheck = 0;
+            foreach (var split in config.definitions)
+            {
+                split.posToCheck = 0;
+            }
+        }
+
         private void _state_OnStart(object sender, EventArgs e)
         {
             Console.WriteLine("On START?");
-            return;
+            ResetSplitProgress();
+        }
+
+        private void _state_OnSplitIndexChanged(object sender, EventArgs e)
+        {
+            ResetSplitProgress();
         }
 
         private void _state_OnReset(object sender, TimerPhase value)
         {
+            ResetSplitProgress();
             if (_connector.State() != Connector.ConnectorState.NONE)
             {
                 if (_settings.ResetSNES)
@@ -199,6 +221,9 @@ namespace LiveSplit.UI.Components
             }
             _state.OnStart -= _state_OnStart;
             _state.OnReset -= _state_OnReset;
+            _state.OnSplit -= _state_OnSplitIndexChanged;
+            _state.OnUndoSplit -= _state_OnSplitIndexChanged;
+            _state.OnSkipSplit -= _state_OnSplitIndexChanged;
         }
 
         public Control GetSettingsControl(LayoutMode mode)
@@ -272,7 +297,7 @@ namespace LiveSplit.UI.Components
         private async void UpdateSplitsWrapper()
         {
             // "_inTimer" is a very questionable attempt at locking, but it's probably fine here.
-            if (_inTimer && _update_timer.Interval != 33)
+            if (_inTimer)
             {
                 Debug.WriteLine("In timer already! !!!");
                 return;
@@ -285,9 +310,11 @@ namespace LiveSplit.UI.Components
             catch (Exception e)
             {
                 Log.Error($"{ComponentName} failed to update splits: {e}");
-                await CheckConnection();
             }
-            _inTimer = false;
+            finally
+            {
+                _inTimer = false;
+            }
         }
 
         public async Task UpdateSplits()

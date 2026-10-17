@@ -82,7 +82,10 @@ namespace USB2SnesW
             AppVersion,
             Info
         }
+        private const int GetAddressTimeoutMs = 100;
+        private const int WaitForReplyTimeoutMs = 5000;
         private WebSocket ws;
+        private Task<byte[]> _pendingRead = null;
         public bool Legacy { get; }
 
         public USB2SnesW()
@@ -193,6 +196,16 @@ namespace USB2SnesW
             ws.OnMessage += msgHandler;
             ws.OnError += errorHandler;
             ws.OnClose += closeHandler;
+            if (await Task.WhenAny(tcs.Task, Task.Delay(WaitForReplyTimeoutMs)) != tcs.Task)
+            {
+                ws.OnMessage -= msgHandler;
+                ws.OnClose -= closeHandler;
+                ws.OnError -= errorHandler;
+
+                Debug.WriteLine("waitForReply: timed out waiting for reply");
+                ws.CloseAsync();
+                throw new TimeoutException("Timed out waiting for a reply from Usb2Snes");
+            }
             return await tcs.Task;
         }
         public async Task<List<String>> GetDevices()
@@ -209,6 +222,18 @@ namespace USB2SnesW
 
         public async Task<List<byte[]>> GetAddress(List<Tuple<uint, uint>> addressSizePairs)
         {
+            var result = new List<byte[]>();
+            if (_pendingRead != null)
+            {
+                if (await Task.WhenAny(_pendingRead, Task.Delay(GetAddressTimeoutMs)) != _pendingRead)
+                {
+                    Debug.WriteLine("GetAddress: still waiting on a previous reply");
+                    return result;
+                }
+                var staleRead = _pendingRead;
+                _pendingRead = null;
+                await staleRead;
+            }
             uint totalSize = 0;
             uint startingAddress = 0xFFFFFFFF;
             uint endingAddress = 0;
@@ -268,8 +293,12 @@ namespace USB2SnesW
             ws.OnMessage += msgHandler;
             ws.OnError += errorHandler;
             ws.OnClose += closeHandler;
-            var result = new List<byte[]>();
-            if (await Task.WhenAny(tcs.Task, Task.Delay(100)) == tcs.Task)
+            if (await Task.WhenAny(tcs.Task, Task.Delay(GetAddressTimeoutMs)) != tcs.Task)
+            {
+                Debug.WriteLine("GetAddress: timed out waiting for reply");
+                _pendingRead = tcs.Task;
+            }
+            else
             {
                 if (tcs.Task.Result.Length == totalSize)
                 {
