@@ -16,15 +16,12 @@ namespace LiveSplit.UI.Components
                 autostart = serializer.ConvertToType<Autostart>(LookupKeys(dictionary, "autostart")),
                 igt = serializer.ConvertToType<InGameTime>(LookupKeys(dictionary, "igt")),
                 alias = serializer.ConvertToType<Dictionary<string, string>>(LookupKeys(dictionary, "alias")),
-                definitions = serializer.ConvertToType<List<Split>>(LookupKeys(dictionary, "definitions")),
+                definitions = serializer.ConvertToType<List<Split>>(LookupKeys(dictionary, "definitions")) ?? new List<Split>(),
             };
-            game.autostart.GetSplit().validate();
-            if (game.definitions != null)
+            game.autostart?.GetSplit().validate();
+            foreach (var split in game.definitions)
             {
-                foreach (var split in game.definitions)
-                {
-                    split.validate();
-                }
+                split.validate();
             }
             return game;
         }
