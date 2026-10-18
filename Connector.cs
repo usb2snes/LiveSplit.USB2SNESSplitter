@@ -3,8 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using WebSocketSharp;
@@ -37,8 +39,8 @@ namespace LiveSplit.UI.Components
                 _serverName = name;
             }
             public string DeviceName()
-            { 
-                return _deviceName; 
+            {
+                return _deviceName;
             }
             public async Task SetName(string name)
             {
@@ -53,7 +55,7 @@ namespace LiveSplit.UI.Components
                 client?.Reset();
             }
             public string Name()
-            { 
+            {
                 if (client.Legacy)
                     return "Unknow " + _serverName;
                 return _serverName;
@@ -67,7 +69,7 @@ namespace LiveSplit.UI.Components
                 if (deviceList.Count == 0)
                 {
                     _error = ConnectorError.USB2SNES_NO_DEVICE;
-                    return false;                    
+                    return false;
                 }
                 _deviceName = deviceList[0];
                 client.Attach(deviceList[0]);
@@ -185,13 +187,25 @@ namespace LiveSplit.UI.Components
             NWA_NO_GAME_RUNNING,
             NWA_ERROR
         }
-        private const int MaxConsecutiveFailedReads = 10;
+        private const int ReadFailureDisconnectMs = 2000;
         private string usb2snesHost = "localhost";
         private int usb2snesPort = 23074;
         private IIConnector connector = null;
         private ConnectorError _error = ConnectorError.NONE;
         private ConnectorState _state;
-        private int _failedReads = 0;
+        private readonly Stopwatch _sinceLastRead = new Stopwatch();
+
+        // Failures we expect from a dropped or misbehaving connection.
+        private static bool IsConnectionError(Exception e)
+        {
+            return e is IOException
+                || e is SocketException
+                || e is TimeoutException
+                || e is OperationCanceledException
+                || e is ObjectDisposedException
+                || e is WebSocketException
+                || e is NWAErrorException;
+        }
         public async Task Reset()
         {
             await connector.Reset();
@@ -203,7 +217,7 @@ namespace LiveSplit.UI.Components
             connector = null;
         }
         public string DeviceName()
-        { 
+        {
             return connector?.DeviceName();
         }
         public string ConnectorName()
@@ -232,29 +246,37 @@ namespace LiveSplit.UI.Components
         {
             _error = ConnectorError.NONE;
             _state = ConnectorState.CONNECTING;
-            _failedReads = 0;
             if (connector != null)
                 connector.Disconnect();
             connector = null;
-            Debug.WriteLine("Trying to connect to NWA");
-            if (await ConnectNWA())
+            try
             {
-                _state = ConnectorState.CONNECTED;
-                return true;
+                Debug.WriteLine("Trying to connect to NWA");
+                if (await ConnectNWA())
+                {
+                    _state = ConnectorState.CONNECTED;
+                    return true;
+                }
+                Debug.WriteLine("--Trying to connect to Usb2snes");
+                // default port
+                if (await ConnectUsb2Snes(usb2snesPort))
+                {
+                    _state = ConnectorState.CONNECTED;
+                    return true;
+                }
+                // legacy port
+                Debug.WriteLine("--Trying to connect to Usb2snes legacy");
+                if (await ConnectUsb2Snes(8080))
+                {
+                    _state = ConnectorState.CONNECTED;
+                    return true;
+                }
             }
-            Debug.WriteLine("--Trying to connect to Usb2snes");
-            // default port
-            if (await ConnectUsb2Snes(usb2snesPort))
+            catch
             {
-                _state = ConnectorState.CONNECTED;
-                return true;
-            }
-            // legacy port
-            Debug.WriteLine("--Trying to connect to Usb2snes legacy");
-            if (await ConnectUsb2Snes(8080))
-            {
-                _state = ConnectorState.CONNECTED;
-                return true;
+                // Don't leave the state stuck in CONNECTING
+                _state = ConnectorState.NONE;
+                throw;
             }
             _error = ConnectorError.NO_SERVER;
             _state = ConnectorState.NONE;
@@ -271,9 +293,14 @@ namespace LiveSplit.UI.Components
                     return true;
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (IsConnectionError(e))
             {
                 Debug.WriteLine("NWA connection failed : " + e.Message);
+            }
+            catch
+            {
+                nwaClient.Disconnect();
+                throw;
             }
             nwaClient.Disconnect();
             return false;
@@ -290,9 +317,14 @@ namespace LiveSplit.UI.Components
                     return true;
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (IsConnectionError(e))
             {
                 Debug.WriteLine("Usb2snes connection failed : " + e.Message);
+            }
+            catch
+            {
+                usb2snesClient.Disconnect();
+                throw;
             }
             usb2snesClient.Disconnect();
             return false;
@@ -306,14 +338,23 @@ namespace LiveSplit.UI.Components
             {
                 ready = await connector.GetReady();
             }
-            catch (Exception e)
+            catch (Exception e) when (IsConnectionError(e))
             {
                 Debug.WriteLine("GetReady failed : " + e.Message);
                 Disconnect();
                 return false;
             }
+            catch
+            {
+                // Don't leave the state stuck in GETTING_READY
+                Disconnect();
+                throw;
+            }
             if (ready)
+            {
                 _state = ConnectorState.READY;
+                _sinceLastRead.Restart();
+            }
             else
                 _state = ConnectorState.CONNECTED;
             return ready;
@@ -324,7 +365,7 @@ namespace LiveSplit.UI.Components
             {
                 await connector.SetName(name);
             }
-            catch (Exception e)
+            catch (Exception e) when (IsConnectionError(e))
             {
                 Debug.WriteLine("SetName failed : " + e.Message);
                 Disconnect();
@@ -332,32 +373,42 @@ namespace LiveSplit.UI.Components
         }
         public async Task<List<byte[]>> GetAddress(List<Tuple<uint, uint>> addressSizePairs)
         {
+            List<byte[]> result;
             try
             {
-                var result = await connector.GetAddress(addressSizePairs);
-                if (result.Count == 0)
-                {
-                    _failedReads++;
-                    Debug.WriteLine("GetAddress failed, attempt : " + _failedReads);
-                    if (_failedReads >= MaxConsecutiveFailedReads)
-                    {
-                        _state = ConnectorState.NONE;
-                    }
-                }
-                else
-                {
-                    _failedReads = 0;
-                }
-                return result;
-
-            } catch (Exception ex) {
-                _state = ConnectorState.NONE;
-                if (connector is Usb2SnesConnector)
-                    _error = ConnectorError.USB2SNES_NO_DEVICE;
-                else
-                    _error = ConnectorError.NWA_ERROR;
-                return new List<byte[]>(); 
+                result = await connector.GetAddress(addressSizePairs);
             }
+            catch (Exception e) when (IsConnectionError(e))
+            {
+                Debug.WriteLine("GetAddress failed : " + e.Message);
+                DisconnectAfterReadFailure();
+                return new List<byte[]>();
+            }
+            catch
+            {
+                DisconnectAfterReadFailure();
+                throw;
+            }
+            if (result.Count != 0)
+            {
+                _sinceLastRead.Restart();
+            }
+            else
+            {
+                // A single slow or missed read shouldn't force a full reconnect mid-run
+                Debug.WriteLine("GetAddress failed, " + _sinceLastRead.ElapsedMilliseconds + "ms since last successful read");
+                if (_sinceLastRead.ElapsedMilliseconds >= ReadFailureDisconnectMs)
+                    DisconnectAfterReadFailure();
+            }
+            return result;
+        }
+        private void DisconnectAfterReadFailure()
+        {
+            if (connector is Usb2SnesConnector)
+                _error = ConnectorError.USB2SNES_NO_DEVICE;
+            else
+                _error = ConnectorError.NWA_ERROR;
+            Disconnect();
         }
         public ConnectorState  State() { return _state; }
 

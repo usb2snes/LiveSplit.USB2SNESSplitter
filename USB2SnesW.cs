@@ -82,7 +82,7 @@ namespace USB2SnesW
             AppVersion,
             Info
         }
-        private const int GetAddressTimeoutMs = 100;
+        private const int GetAddressTimeoutMs = 500;
         private const int WaitForReplyTimeoutMs = 5000;
         private WebSocket ws;
         private Task<byte[]> _pendingRead = null;
@@ -232,7 +232,10 @@ namespace USB2SnesW
                 }
                 var staleRead = _pendingRead;
                 _pendingRead = null;
-                await staleRead;
+                // A cancelled read means the socket errored or closed. Throw so the connector
+                // reconnects right away rather than sending into a dead socket.
+                if (staleRead.IsCanceled)
+                    throw new OperationCanceledException("Previous GetAddress was cancelled, connection lost");
             }
             uint totalSize = 0;
             uint startingAddress = 0xFFFFFFFF;
@@ -279,7 +282,7 @@ namespace USB2SnesW
                 ws.OnError -= errorHandler;
 
                 Console.WriteLine("Error in get address : " + e.Message);
-                tcs.SetCanceled();
+                tcs.TrySetCanceled();
             };
             closeHandler = (s, e) =>
             {
@@ -288,7 +291,7 @@ namespace USB2SnesW
                 ws.OnError -= errorHandler;
 
                 Console.WriteLine("Connection closed");
-                tcs.SetCanceled();
+                tcs.TrySetCanceled();
             };
             ws.OnMessage += msgHandler;
             ws.OnError += errorHandler;
